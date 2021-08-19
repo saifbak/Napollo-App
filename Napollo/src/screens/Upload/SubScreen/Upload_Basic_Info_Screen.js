@@ -294,7 +294,13 @@ const Upload_Basic_Info_Screen = props => {
                 showsVerticalScrollIndicator={false}>
                 {songErrView}
 
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+
+                    width: '100%',
+                  }}>
                   <Icon
                     name="md-information-circle"
                     size={20}
@@ -303,10 +309,11 @@ const Upload_Basic_Info_Screen = props => {
                   <Text
                     style={{
                       color: '#999',
-                      fontSize: scale(8),
+                      fontSize: scale(10),
                       fontFamily: 'Helvetica-Regular',
                       marginLeft: scale(3),
                       textAlign: 'left',
+                      width: '90%',
                     }}>
                     &nbsp;Featured artists names must be seperated with a&nbsp;
                     <Text style={{color: '#f68128'}}>comma ( , ) .</Text>

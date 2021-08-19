@@ -13,12 +13,15 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import {Formik, useFormik} from 'formik';
-import * as Yup from 'yup';
 import LoginBtn from '../../Components/Button/LoginBtn';
 import Icons from '../../Components/IconsContainer/Icons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {login, clearData} from '../../redux/actions/userActions';
+import {
+  login,
+  clearData,
+  storeUserCoordinates,
+  store_User_Location,
+} from '../../redux/actions/userActions';
 import {clearRegisterError} from '../../redux/actions/artistActions';
 import {useSelector, useDispatch} from 'react-redux';
 import LoadingAnime from '../../Components/Loading/Loading';
@@ -26,82 +29,67 @@ import {CLEAR_USER_LOGIN_ERROR} from '../../redux/constants/index';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Message from '../../Components/Message/Message';
 import ErrorPopUp from '../../Components/Modal/MainErrorPopUp';
+import Geolocation from 'react-native-geolocation-service';
+import Geocoder from 'react-native-geocoder';
+import {getUserCallingCode} from '../../utils/loggedInUserType';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 
-// const initialValues = {
-//   username: '',
-//   password: '',
-// };
-// const validationSchema = Yup.object({
-//   username: Yup.string().required('Username / Email is required'),
-//   password: Yup.string()
-//     .required('Password is required')
-//     .min(6, 'Password should be more than 5 charcaters'),
-// });
-
 const LoginScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
-  const userLogin = useSelector((state) => state.userLogin);
+  const userLogin = useSelector(state => state.userLogin);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [clientErr, setClientErr] = useState('');
   const [googleErr, setGoogleErr] = useState('');
-  // const formik = useFormik();
 
-  const userRegister = useSelector((state) => state.userRegister);
+  const userRegister = useSelector(state => state.userRegister);
   const [userData, setUserData] = useState(false);
   const {message, status} = userRegister;
-  const artistRegister = useSelector((state) => state.artistRegister);
-  const {error: artistError, message: artistMessage} = artistRegister;
+  const storeUserLocation = useSelector(state => state.storeUserLocation);
+  const {
+    city: userCity,
+    state,
+    countryCode: userCountryCode,
+    country: userCountry,
+    callingCode,
+  } = storeUserLocation;
 
   const {error, loading} = userLogin;
-  // console.log(navigation);
-  // console.log(route);
-  // ACCESS TOKEN
-  const getAccessToken = useSelector((state) => state.getAccessToken);
-  // console.log(getAccessToken);
-  const {error: accessTokenError, accessToken} = getAccessToken;
 
-  //CUSTOMER TYPE
-  const customerType = useSelector((state) => state.customerType);
-  const {isArtist} = customerType;
-
-  const setGoggleDetails = (email) => {
-    initialValues.username = email;
-  };
-  const chooseUserInfo = (user) => {
+  const chooseUserInfo = user => {
     setEmail(user.email);
   };
 
+  useEffect(() => {
+    dispatch({
+      type: CLEAR_USER_LOGIN_ERROR,
+    });
+  }, []);
+
   const onSubmitValues = () => {
     if (email || password) {
-      Keyboard.dismiss;
       setClientErr('');
       dispatch(clearData());
-      dispatch(clearRegisterError());
+      // dispatch(clearRegisterError());
       dispatch(login(email, password));
-      setUserData(false);
+      // setUserData(false);
       setEmail('');
       setPassword('');
       // actions.resetForm();
     } else {
       setClientErr('Please provide your login details');
     }
-    setUserData(true);
+    // setUserData(true);
   };
 
   const [showPassword, setShowPassword] = useState(false);
   const [visible, setVisible] = useState(true);
 
   const changePage = () => {
-    // if (isArtist) {
     navigation.push('Artist_SignIn');
-    // } else {
-    //   navigation.push('SignIn');
-    // }
   };
 
   const togglePassword = () => {
@@ -112,18 +100,52 @@ const LoginScreen = ({navigation, route}) => {
   if (message) {
     userSuccessView = <Message color="success">{message}</Message>;
   }
-  let artistSuccessView = null;
-  if (artistMessage) {
-    artistSuccessView = <Message color="success">{artistMessage}</Message>;
-  }
+  const getUserLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        console.log('USER REAL POSITION', position);
+        if (position) {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const userPosition = {
+            lat,
+            lng,
+          };
+          dispatch(storeUserCoordinates(userPosition));
+          Geocoder.geocodePosition(userPosition)
+            .then(res => {
+              console.log('USER REAL LOCATION', res[0]);
+              const callingCode = getUserCallingCode(res[0].countryCode);
+              const data = {
+                city: res[0].subAdminArea,
+                state: res[0].adminArea,
+                country: res[0].country,
+                countryCode: res[0].countryCode,
+                callingCode,
+              };
+              dispatch(store_User_Location(data));
+            })
+            .catch(err => console.log(err));
+        }
+      },
+      error => {
+        console.log(error.code, error.message, 'ERROR');
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+  useEffect(() => {
+    if (storeUserLocation.city === '' || storeUserLocation.country === '')
+      getUserLocation();
+  }, []);
+
   return (
-    <KeyboardAwareScrollView>
-      <View style={styles.container}>
-        <View style={styles.content}>
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
           <ErrorPopUp
             errorState={error}
             clearError={() => dispatch({type: CLEAR_USER_LOGIN_ERROR})}
-            // clearClientsErr={() => dispatch({type: CLEAR_USER_LOGIN_ERROR})}
             clearTime={5000}>
             {error}
           </ErrorPopUp>
@@ -133,30 +155,11 @@ const LoginScreen = ({navigation, route}) => {
             clearError={() => setClientErr('')}>
             {clientErr}
           </ErrorPopUp>
-          {/* <ErrorPopUp
-            errorstate={googleErr}
-            clearTime={2000}
-            clearError={() => setGoogleErr('')}>
-            {googleErr}
-          </ErrorPopUp> */}
           <StatusBar backgroundColor="#000" barStyle="light-content" />
-          {/* <ScrollView
-            bounces={true}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: 30,
-              alignItems: 'center',
-              marginTop: '30%',
-              // justifyContent: 'center',
-              flex: 1,
-            }}> */}
           <Image
             source={require('../../assests/images/Logo2.png')}
-            style={{width: 120, height: 120}}
+            style={{width: 120, height: 120, alignSelf: 'center'}}
           />
-          {/* {userSuccessView} */}
-          {/* {artistSuccessView} */}
-          {/* {error && <Message color="danger">{error}</Message>} */}
 
           {loading && <LoadingAnime width={70} height={70} />}
           <>
@@ -167,11 +170,8 @@ const LoginScreen = ({navigation, route}) => {
                   placeholder="Email"
                   placeholderTextColor="#484848"
                   value={email}
-                  onChangeText={(val) => setEmail(val)}
+                  onChangeText={val => setEmail(val)}
                   onFocus={() => setClientErr('')}
-                  // value={formik.values.username}
-                  // onChangeText={formik.handleChange('username')}
-                  // onBlur={formik.handleBlur('username')}
                   style={{color: '#fff', width: '100%'}}
                 />
               </View>
@@ -186,7 +186,7 @@ const LoginScreen = ({navigation, route}) => {
                   placeholderTextColor="#484848"
                   onFocus={() => setClientErr('')}
                   value={password}
-                  onChangeText={(val) => setPassword(val)}
+                  onChangeText={val => setPassword(val)}
                   textContentType={!showPassword ? 'name' : 'password'}
                   style={{color: '#fff', width: '100%'}}
                 />
@@ -212,19 +212,6 @@ const LoginScreen = ({navigation, route}) => {
               <LoginBtn title="Login" onPress={() => onSubmitValues()} />
             </View>
           </>
-
-          {/* <Formik
-            initialValues={initialValues}
-            onSubmit={(values, actions) => onSubmitValues(values, actions)}
-            
-          >
-            {(formik) => {
-              console.log(formik, 'FORMIK');
-              return (
-               
-              );
-            }}
-          </Formik> */}
           <View style={styles.otherContent}>
             <TouchableOpacity activeOpacity={0.7}>
               <Text style={styles.forgetText}>Forget Password ?</Text>
@@ -240,50 +227,47 @@ const LoginScreen = ({navigation, route}) => {
             {/* SOCIAL ICONS */}
             <View style={styles.icons}>
               <Icons
-                chooseUserInfo={(val) => chooseUserInfo(val)}
-                chooseGoogleErr={(val) => setGoogleErr(val)}
+                chooseUserInfo={val => chooseUserInfo(val)}
+                chooseGoogleErr={val => setGoogleErr(val)}
               />
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                // marginTop: hp('100%') - hp('10%'),
-                justifyContent: 'center',
-                // position: 'absolute',
-                // top: hp('95%'),
-                // alignSelf: 'center',
-                marginTop: '10%',
-              }}>
-              <Text
-                style={{
-                  color: '#fff',
-                  fontFamily: 'Helvetica-Regular',
-                  textAlign: 'center',
-                  fontSize: 13,
-                  letterSpacing: 0.5,
-                  marginRight: 5,
-                }}>
-                Don't have an account ?
-              </Text>
-              <TouchableOpacity
-                activeOpacity={0.6}
-                onPress={() => changePage()}>
-                <Text
-                  style={{
-                    color: '#f68128',
-                    fontFamily: 'Helvetica-Bold',
-                    fontSize: 13,
-                    letterSpacing: 0.5,
-                  }}>
-                  Register
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
-          {/* </ScrollView> */}
+        </KeyboardAwareScrollView>
+        <View
+          style={{
+            flexDirection: 'row',
+            // marginTop: hp('100%') - hp('10%'),
+            justifyContent: 'center',
+            // position: 'absolute',
+            // top: hp('95%'),
+            // alignSelf: 'center',
+            marginBottom: '5%',
+          }}>
+          <Text
+            style={{
+              color: '#fff',
+              fontFamily: 'Helvetica-Regular',
+              textAlign: 'center',
+              fontSize: 13,
+              letterSpacing: 0.5,
+              marginRight: 5,
+            }}>
+            Don't have an account ?
+          </Text>
+          <TouchableOpacity activeOpacity={0.6} onPress={() => changePage()}>
+            <Text
+              style={{
+                color: '#f68128',
+                fontFamily: 'Helvetica-Bold',
+                fontSize: 13,
+                letterSpacing: 0.5,
+              }}>
+              Register
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
-    </KeyboardAwareScrollView>
+    </View>
   );
 };
 
@@ -299,10 +283,10 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 20,
     // paddingTop: 70,
-    width: wp('100%'),
-    height: hp('100%'),
-    paddingBottom: 30,
-    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    paddingBottom: 20,
+    // alignItems: 'center',
     marginTop: '15%',
     // justifyContent: 'center',
     flex: 1,

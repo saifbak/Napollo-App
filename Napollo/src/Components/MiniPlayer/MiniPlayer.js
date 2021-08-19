@@ -54,7 +54,7 @@ class MiniPlayer extends Component {
   render() {
     if (
       this.context.isMusicEmpty ||
-      !this.context.currentMusicTrack
+      this.context.currentMusicTrack === null
     )
       return null;
     const {title, url, image, id, artists, featuredArtists,ownerAccountUser} =
@@ -276,7 +276,7 @@ const styles = ScaledSheet.create({
     borderColor: '#f68128',
   },
   featuredArtists: {
-    fontSize: '8@s',
+    fontSize: '10@s',
   },
 });
 

@@ -49,7 +49,7 @@ const Share_Song_Screen = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.container}>
-        <CustomHeader title="Share Song" />
+        <CustomHeader title="Share Song" func={() => navigation.navigate('Upload')}/>
         <View style={styles.content}>
           <ScrollView
             style={{flex: 1, width: '100%'}}

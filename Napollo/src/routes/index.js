@@ -99,16 +99,16 @@ const RootRoute = () => {
                 name="Now_Playing"
                 component={NowPlayingStack}
               />
-              <RootDrawer.Screen name="Expansion" component={ExpansionStack} />
+              {/* <RootDrawer.Screen name="Expansion" component={ExpansionStack} /> */}
               <RootDrawer.Screen name="Comment" component={Comment_Stack} />
               <RootDrawer.Screen name="Referrals" component={ReferralStack} />
               <RootDrawer.Screen
                 name="Support Napollo"
                 component={Support_Napollo_Stack}
               />
-              <RootDrawer.Screen name="Premium" component={PremiumStack} />
+              {/* <RootDrawer.Screen name="Premium" component={PremiumStack} /> */}
               <RootDrawer.Screen name="Payment" component={PaymentStack} />
-              <RootDrawer.Screen name="Upload" component={UploadStack} />
+              {/* <RootDrawer.Screen name="Upload" component={UploadStack} /> */}
               {/* <RootDrawer.Screen
                 name="SongBottomModal"
                 component={SongBottomModal}

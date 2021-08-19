@@ -54,14 +54,10 @@ const ArtsitStep1 = (props) => {
           <View style={{width: '48%'}}>
             <Text style={styles.label}>
               Username
-              {/* {isArtist === false ? 'Username ' : 'Stage name:'} */}
             </Text>
             <View style={styles.textInput}>
               <TextInput
                 placeholder="Username"
-                // placeholder={
-                //   isArtist === false ? 'Username' : 'Stage name '
-                // }
                 placeholderTextColor="#484848"
                 value={props.stageName}
                 onChangeText={props.onChangeStageName}
@@ -82,26 +78,8 @@ const ArtsitStep1 = (props) => {
               dob={props.dob}
               openModal={props.openModal}
             />
-            {/* <View style={styles.textInput}>
-              <Text
-                style={{
-                  fontFamily: 'Helvetica-Reglar',
-                  color: '#eee',
-                  fontSize: 13,
-                }}>
-                {props.dob}
-              </Text>
-
-              <Icon
-                name="chevron-down"
-                size={18}
-                onPress={() => props.closeModal()}
-                style={[styles.inputIcon, {color: '#999'}]}
-              />
-            </View> */}
           </TouchableOpacity>
         </View>
-        {/* EMAIL */}
         <View style={{width: '100%'}}>
           <Text style={styles.label}>Email:</Text>
           <View style={styles.textInput}>
@@ -126,16 +104,9 @@ const ArtsitStep1 = (props) => {
             title="Next"
             height={42}
             width="30%"
-            onPress={props.changePage}
+            onPress={() => props.changePage()}
           />
         </View>
-        {/* <View style={styles.otherContent}>
-          <Text style={styles.or}>OR</Text>
-         
-          <View style={styles.icons}>
-            <Icons />
-          </View>
-        </View> */}
       </View>
     </KeyboardAwareScrollView>
   );

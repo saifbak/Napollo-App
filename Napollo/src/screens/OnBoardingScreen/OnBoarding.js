@@ -123,14 +123,14 @@ const OnBoarding = ({navigation}) => {
     );
   };
   const onDone = () => {
-    navigation.navigate('Login');
+    navigation.navigate('Artist_SignIn');
   };
   const onDone1 = () => {
     dispatch(setCustomerType())
-    navigation.navigate('Login');
+    navigation.navigate('Artist_SignIn');
   };
   const onSkip = () => {
-    navigation.navigate('Login');
+    navigation.navigate('Artist_SignIn');
   };
   return (
     <AppIntroSlider

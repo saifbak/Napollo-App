@@ -17,8 +17,8 @@ const Sliders = ({color, showTime}) => {
   
   const {position, duration} = useMusicProgress(1000);
   //   console.log({duration, position});
-  const handleChange = (val) => {
-    TrackPlayer.seekTo(val);
+  const handleChange = async(val) => {
+   await TrackPlayer.seekTo(val);
   };
   // const positions = formatTime(position)
   // const durations = formatTime(duration)

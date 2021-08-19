@@ -8,6 +8,10 @@ import ArtistAllSongView from '../../screens/Profile/SingleSongsViews/ArtistAllS
 import ListenerAllSongView from '../../screens/Profile/SingleSongsViews/ListenerAllSongsView';
 import SingleListenerAllSongView from '../../screens/Profile/SingleSongsViews/SingleListenerAllSongsView';
 import SingleArtistAllSongView from '../../screens/Profile/SingleSongsViews/SingleArtistAllSongsView';
+import Upload_Basic_Info_Screen from '../../screens/Upload/SubScreen/Upload_Basic_Info_Screen';
+import Share_Song_Screen from '../../screens/Upload/SubScreen/Share_Song_Screen';
+import UploadScreen from '../../screens/Upload/UploadScreen';
+import Trim_Upload from '../../screens/Upload/SubScreen/Trim_Upload';
 
 const Stack = createStackNavigator();
 
@@ -39,7 +43,10 @@ const ProfileStack = () => {
           };
         }}
       />
-      <Stack.Screen name="Upload" component={UploadStack} />
+      <Stack.Screen name="Upload" component={UploadScreen} />
+      <Stack.Screen name="Upload_Info" component={Upload_Basic_Info_Screen} />
+      <Stack.Screen name="Share_Song_Screen" component={Share_Song_Screen} />
+      <Stack.Screen name="Trim_Upload_Screen" component={Trim_Upload} />
       <Stack.Screen name="Edit_Profile" component={EditProfileStack} />
       <Stack.Screen name="ArtistAllSongScreen" component={ArtistAllSongView} />
       <Stack.Screen

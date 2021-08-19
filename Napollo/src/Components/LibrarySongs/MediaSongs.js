@@ -66,7 +66,6 @@ const MedialSong = props => {
     //   (x) => x.mediaIdentity !== currentTrack?.id,
     // ),
   };
- 
 
   const featuringArtist = props.featuredArtists.join('&');
 
@@ -79,7 +78,7 @@ const MedialSong = props => {
     // const check = [...allSongs.mediaSongs];
     const check = [allSongs.currentTrack, ...allSongs.mediaSongs];
     // console.log(check, 'CHECHHHHHHKKK');
-
+    // console.log(props.index,'Song Index')
     playerContext.playMusic(check, props?.index);
 
     // playerContext.playMusic(check, props?.index);

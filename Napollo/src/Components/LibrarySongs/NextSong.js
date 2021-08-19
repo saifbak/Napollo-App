@@ -34,9 +34,9 @@ const NextSong = ({
 
   const playSong = async () => {
     // await TrackPlayer.play(song);
-    playerContext.playMusic(data);
+    // playerContext.playMusic(data);
     dispatch(play_Media(city, state, country, id));
-    // playerContext.playMusic(index, songs);
+    playerContext.playMusic( songs);
   };
 
   return (

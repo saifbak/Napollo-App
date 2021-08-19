@@ -11,7 +11,7 @@ import {
 const Icons = ({insta, iconSize, chooseUserInfo, chooseGoogleErr}) => {
   const [userInfo, setUserInfo] = useState({});
   const [isInProgress, setIsInProgress] = useState(false);
-  console.log(userInfo, 'GOOGLE USERINFO');
+  // console.log(userInfo, 'GOOGLE USERINFO');
 
   const signIn = async () => {
     try {
@@ -19,22 +19,22 @@ const Icons = ({insta, iconSize, chooseUserInfo, chooseGoogleErr}) => {
       const userInfo = await GoogleSignin.signIn();
       setUserInfo(userInfo);
       chooseUserInfo(userInfo.user);
-      console.log(userInfo, 'GOOGLE USERINFO FROM DATA');
+      // console.log(userInfo, 'GOOGLE USERINFO FROM DATA');
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
-        console.log('GOOGLE SIGNIN CANCELLED');
+        // console.log('GOOGLE SIGNIN CANCELLED');
       } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('GOOGLE SIGNIN IN PROGRESS');
+        // console.log('GOOGLE SIGNIN IN PROGRESS');
         setIsInProgress(true);
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
         // play services not available or outdated
         chooseGoogleErr('GOOGLE SIGNIN NOT SUPPORTED');
-        console.log('GOOGLE SIGNIN NOT SUPPORTED');
+        // console.log('GOOGLE SIGNIN NOT SUPPORTED');
       } else {
         // some other error happened
         chooseGoogleErr('Unable to login with google.Login manually');
-        console.log('GOOGLE SIGNIN OTHER ERRORS', error);
+        // console.log('GOOGLE SIGNIN OTHER ERRORS', error);
       }
     }
   };

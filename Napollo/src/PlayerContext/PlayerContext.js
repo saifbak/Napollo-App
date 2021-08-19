@@ -2,15 +2,15 @@ import React, {useContext, useCallback, useRef} from 'react';
 import {useState, useEffect} from 'react';
 import {Platform} from 'react-native';
 import TrackPlayer, {
-  STATE_BUFFERING,
-  STATE_NONE,
-  STATE_PAUSED,
-  STATE_PLAYING,
-  STATE_READY,
-  STATE_STOPPED,
   Track,
   useTrackPlayerProgress,
   usePlaybackState,
+  useProgress,
+  useTrackPlayerEvents,
+  State,
+  RepeatMode,
+  Capability,
+  Event,
 } from 'react-native-track-player';
 import {useDispatch, useSelector} from 'react-redux';
 import {shuffleSongs} from '../redux/actions/musicPlayerActions';
@@ -41,6 +41,7 @@ const PlayerContext = React.createContext({
   pause: () => null,
   setPlayerStateReady: () => null,
   skip: () => null,
+  toggleMusicPlay: () => null,
   isPlayerReady: false,
   trimPlay: () => null,
   playMusic: () => null,
@@ -48,18 +49,21 @@ const PlayerContext = React.createContext({
   skipToPreviousMusic: () => null,
   musicPause: () => null,
   musicPlay: () => null,
-  bottomRef: null,
+  // bottomRef: null,
   getSongs: () => null,
   currentTrackId: '',
   currentTrackDetails: {},
   currentDiscoveryTrack: [],
   resetTrack: () => null,
-  changeToShuffle: () => null,
+  toggleShuffle: () => null,
   changeToOrder: () => null,
   shuffleState: false,
   changeToRepeatOff: () => null,
   changeToRepeatOn: () => null,
-  repeatState: false,
+  repeatState: 'off',
+  repeatIcon: () => null,
+  changeRepeatMode: () => null,
+  repeatQueue: () => null,
 });
 
 export const PlayerContextProvider = ({children}) => {
@@ -75,31 +79,33 @@ export const PlayerContextProvider = ({children}) => {
   const [isPlayerReady, setPlayerReady] = useState(false);
   const [currentTrackId, setCurrentTrackId] = useState('');
   const [currentTrackDetails, setCurrentTrackDetails] = useState({});
-  const [shuffleState, setShuffleState] = useState('Order mode');
-  const [repeatState, setRepeatState] = useState('Repeat Off');
+  const [shuffleState, setShuffleState] = useState(false);
+  const [repeatState, setRepeatState] = useState('off');
 
-  const bottomRef = useRef(null);
   const dispatch = useDispatch();
   const openMusicPlayer = useSelector(state => state.openMusicPlayer);
   const {data} = openMusicPlayer;
   const storeUserLocation = useSelector(state => state.storeUserLocation);
   const {city, state, country} = storeUserLocation;
+  const mainPlayerState = usePlaybackState();
+
+  // console.log(mainPlayerState, 'PLAYER STATE');
 
   useEffect(() => {
-    console.log('adding listener');
-    const Listener1 = TrackPlayer.addEventListener(
-      'playback-state',
-      ({state}) => {
-        // console.log('state changed', state);
-        setPlayerState(state),
-          setMusicPlayerState(state),
-          setTrimTrackState(state);
-      },
-    );
-
-    return () => {
-      Listener1.remove();
-    };
+    // setPlayerState(mainPlayerState);
+    // setMusicPlayerState(mainPlayerState);
+    // setTrimTrackState(mainPlayerState);
+    // const Listener1 = TrackPlayer.addEventListener(
+    //   'playback-state',
+    //   ({state}) => {
+    //     setPlayerState(state),
+    //       setMusicPlayerState(state),
+    //       setTrimTrackState(state);
+    //   },
+    // );
+    // return () => {
+    //   Listener1.remove();
+    // };
   }, []);
   // useEffect(() => {
   //   const Listener2 = TrackPlayer.addEventListener(
@@ -124,43 +130,69 @@ export const PlayerContextProvider = ({children}) => {
   //   };
   // }, []);
 
-  useEffect(() => {
-    const Listener = TrackPlayer.addEventListener(
-      'playback-track-changed',
-      async ({track, position, nextTrack}) => {
-        // console.log(nextTrack, 'NEXT mUSIC TRACK not playing CHANGED');
-        const trackObject = await TrackPlayer.getTrack(nextTrack);
-        // const trackQueue = await TrackPlayer.getQueue(nextTrack);
-        const trackQueue = await TrackPlayer.getQueue();
-        if (trackObject) {
-          if (trackObject.ownerAccountUser) {
-            const newObject = {
-              ...trackObject,
-              artist: trackObject.ownerAccountUser.username,
-            };
-            console.log('trackObject', newObject);
-            dispatch(play_Media(city, state, country, trackObject.id));
-            setCurrentMusicTrack(newObject);
-            setCurrentTrackDetails(newObject);
-          } else {
-            console.log('trackObject', trackObject);
-            dispatch(play_Media(city, state, country, trackObject.id));
-            setCurrentMusicTrack(trackObject);
-            setCurrentTrackDetails(trackObject);
-          }
+  useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
+    if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
+      const trackObject = await TrackPlayer.getTrack(event.nextTrack);
+      const trackQueue = await TrackPlayer.getQueue();
+      console.log(event, 'PAYBACK eVENT');
+      // const trackObject = await TrackPlayer.getTrack(event.nextTrack);
 
-          // setCurrentTrackId(nextTrack);
+      if (trackObject) {
+        if (trackObject.ownerAccountUser) {
+          const newObject = {
+            ...trackObject,
+            artist: trackObject.ownerAccountUser.username,
+          };
+          // console.log('trackObject', newObject);
+          dispatch(play_Media(city, state, country, trackObject.id));
+          setCurrentMusicTrack(event.nextTrack);
+          setCurrentTrackDetails(newObject);
+        } else {
+          // console.log('trackObject', trackObject);
+          dispatch(play_Media(city, state, country, trackObject.id));
+          setCurrentMusicTrack(event.nextTrack);
+          setCurrentTrackDetails(trackObject);
         }
-        if (trackQueue) {
-          // console.log(trackQueue, 'TRACK QUEUE WHEN SONG CHANGE');
-          setCurrentQueue(trackQueue);
-          await TrackPlayer.play();
-        }
-      },
-    );
-    return () => {
-      Listener.remove();
-    };
+      }
+      if (trackQueue) {
+        setCurrentQueue(trackQueue);
+        await TrackPlayer.play();
+      }
+    }
+  });
+
+  useEffect(() => {
+    // const Listener = TrackPlayer.addEventListener(
+    //   'playback-track-changed',
+    //   async ({track, position, nextTrack}) => {
+    //     const trackObject = await TrackPlayer.getTrack(nextTrack);
+    //     const trackQueue = await TrackPlayer.getQueue();
+    //     if (trackObject) {
+    //       if (trackObject.ownerAccountUser) {
+    //         const newObject = {
+    //           ...trackObject,
+    //           artist: trackObject.ownerAccountUser.username,
+    //         };
+    //         console.log('trackObject', newObject);
+    //         dispatch(play_Media(city, state, country, trackObject.id));
+    //         setCurrentMusicTrack(newObject);
+    //         setCurrentTrackDetails(newObject);
+    //       } else {
+    //         console.log('trackObject', trackObject);
+    //         dispatch(play_Media(city, state, country, trackObject.id));
+    //         setCurrentMusicTrack(trackObject);
+    //         setCurrentTrackDetails(trackObject);
+    //       }
+    //     }
+    //     if (trackQueue) {
+    //       setCurrentQueue(trackQueue);
+    //       await TrackPlayer.play();
+    //     }
+    //   },
+    // );
+    // return () => {
+    //   Listener.remove();
+    // };
   }, []);
   // const shuffleTrack = async () => {
   //   // const getQueue = await TrackPlayer.getQueue();
@@ -201,36 +233,36 @@ export const PlayerContextProvider = ({children}) => {
     async track => {
       await TrackPlayer.reset();
       setCurrentMusicTrack(null);
-      if (!track) {
-        if (currentTrack) {
+      const currentTrackId = await TrackPlayer.getCurrentTrack();
+      if (track) {
+        await TrackPlayer.add([...track]);
+        if (currentTrackId !== null) {
+          // setCurrentMusicTrack(currentTrackId);
+          const trackObject = await TrackPlayer.getTrack(currentTrackId);
+          setCurrentTrackDetails(trackObject);
+          setCurrentTrackId(currentTrackId);
           await TrackPlayer.play();
         }
-        return;
       }
-      if (track.id && currentTrack) {
-        if (track.id && currentTrack !== currentTrack.id) {
-          await TrackPlayer.reset();
-        }
-      }
-      // if (Platform.OS === 'ios') {
-
-      //   const data = [...track];
-      //   data.forEach((i) => {
-      //     i.artist = i.artists;
-      //     i.url = `${i.url}.mp3`;
-      //   });
-
-      //   await TrackPlayer.add([...data]);
-      // } else {
-      //   await TrackPlayer.add([...track]);
+      // await TrackPlayer.reset();
+      // setCurrentMusicTrack(null);
+      // if (!track) {
+      //   if (currentTrack) {
+      //     await TrackPlayer.play();
+      //   }
+      //   return;
       // }
-      setCurrentTrack(track);
-      await TrackPlayer.add([...track]);
-      if (currentTrack) {
-        await TrackPlayer.play();
-      }
-      setCurrentDiscoveryTrack(track);
-      // console.log(currentDiscoveryTrack, 'DISCOVERY TRACK');
+      // if (track.id && currentTrack) {
+      //   if (track.id && currentTrack !== currentTrack.id) {
+      //     await TrackPlayer.reset();
+      //   }
+      // }
+      // setCurrentTrack(track);
+      // await TrackPlayer.add([...track]);
+      // if (currentTrack) {
+      //   await TrackPlayer.play();
+      // }
+      // setCurrentDiscoveryTrack(track);
     },
     [currentTrack],
   );
@@ -238,7 +270,20 @@ export const PlayerContextProvider = ({children}) => {
   const playMusic = useCallback(
     async (track, index) => {
       await TrackPlayer.reset();
-      // console.log(track, 'tracktrack')
+      // const currentTrackId = await TrackPlayer.getCurrentTrack();
+      // if (track) {
+      //   await TrackPlayer.add(track);
+      //   // await TrackPlayer.add(track, index);
+
+      //   if (currentTrackId != null) {
+      //     setCurrentMusicTrack(...track);
+      //     // setCurrentMusicTrack(index);
+      //     const trackObject = await TrackPlayer.getTrack(currentTrackId);
+      //     setCurrentTrackDetails(trackObject);
+      //     // setCurrentTrackId(currentTrackId);
+      //     await TrackPlayer.play();
+      //   }
+      // }
       if (!track) {
         if (currentMusicTrack) {
           await TrackPlayer.play();
@@ -251,10 +296,8 @@ export const PlayerContextProvider = ({children}) => {
         }
       }
       await TrackPlayer.add([...track]);
-      // await TrackPlayer.skip(index)
       setCurrentMusicTrack(...track);
       if (currentMusicTrack) {
-        // await TrackPlayer.play(song);
         await TrackPlayer.play();
       }
       const trackId = await TrackPlayer.getCurrentTrack();
@@ -262,29 +305,46 @@ export const PlayerContextProvider = ({children}) => {
         const trackObject = await TrackPlayer.getTrack(trackId);
         setCurrentTrackDetails(trackObject);
         setCurrentTrackId(trackId);
-        // console.log(trackId, 'CurrentTrackId FROM PLAY ');
-        // console.log(trackObject, 'CurrentTrackDetails FROM PLAY ');
       }
-
-      // console.log(currentMusicTrack, 'CURRENTSTRACKS');
     },
     [currentMusicTrack],
   );
 
+  const toggleMusicPlay = async () => {
+    const currentTrackId = await TrackPlayer.getCurrentTrack();
+    if (currentTrackId !== null) {
+      if (mainPlayerState === State.Paused) {
+        await TrackPlayer.play();
+      } else {
+        await TrackPlayer.pause();
+      }
+    }
+  };
+
   const trimPlay = useCallback(async track => {
     await TrackPlayer.reset();
-
-    if (!track) {
-      if (currentTrimTrack) {
+    const currentTrackId = await TrackPlayer.getCurrentTrack();
+    if (track) {
+      await TrackPlayer.add([track]);
+      if (currentTrackId) {
+        setCurrentTrimTrack(currentTrackId);
+        const trackObject = await TrackPlayer.getTrack(currentTrackId);
+        setCurrentTrimTrackDetails(trackObject);
         await TrackPlayer.play();
       }
-      return;
     }
-    if (track.id && currentTrimTrack) {
-      if (track.id && currentTrimTrack !== currentTrimTrack.id) {
-        await TrackPlayer.reset();
-      }
-    }
+
+    // if (!track) {
+    //   if (currentTrimTrack) {
+    //     await TrackPlayer.play();
+    //   }
+    //   return;
+    // }
+    // if (track.id && currentTrimTrack) {
+    //   if (track.id && currentTrimTrack !== currentTrimTrack.id) {
+    //     await TrackPlayer.reset();
+    //   }
+    // }
     // if (Platform.OS === 'ios') {
 
     //   const data = [track];
@@ -297,12 +357,12 @@ export const PlayerContextProvider = ({children}) => {
     // } else {
     //   await TrackPlayer.add([track]);
     // }
-    await TrackPlayer.add([track]);
-    setCurrentTrimTrack(track);
-    if (currentTrack) {
-      await TrackPlayer.play();
-    }
-    setCurrentTrimTrackDetails(track);
+    // await TrackPlayer.add([track]);
+    // setCurrentTrimTrack(track);
+    // if (currentTrack) {
+    //   await TrackPlayer.play();
+    // }
+    // setCurrentTrimTrackDetails(track);
   }, []);
   const pause = async () => {
     await TrackPlayer.pause();
@@ -315,6 +375,7 @@ export const PlayerContextProvider = ({children}) => {
   };
   const skip = async id => {
     await TrackPlayer.skip(id);
+    // setCurrentMusicTrack(id);
   };
   const skipToNextMusic = async () => {
     await TrackPlayer.skipToNext();
@@ -322,23 +383,50 @@ export const PlayerContextProvider = ({children}) => {
     const trackObject = await TrackPlayer.getTrack(trackId);
     setCurrentTrackDetails(trackObject);
     setCurrentTrackId(trackId);
-    // console.log(trackId, 'CurrentTrackId');
-    // console.log(currentTrackDetails, 'CurrentTrackId');
   };
   const skipToPreviousMusic = async () => {
     await TrackPlayer.skipToPrevious();
     const trackId = await TrackPlayer.getCurrentTrack();
     const trackObject = await TrackPlayer.getTrack(trackId);
     setCurrentTrackDetails(trackObject);
-    setCurrentTrackId(trackId);
-    // console.log(trackId, 'CurrentTrackId');
-    // console.log(currentTrackDetails, 'CurrentTrackId');
+    // setCurrentTrackId(trackId);
   };
+  const repeatIcon = () => {
+    if (repeatState === 'off') {
+      return 'repeat-off';
+    }
+    if (repeatState === 'track') {
+      return 'repeat-once';
+    }
+    if (repeatState === 'repeat') {
+      return 'repeat';
+    }
+  };
+
+  const changeRepeatMode = () => {
+    if (repeatState === 'off') {
+      TrackPlayer.setRepeatMode(RepeatMode.Track);
+      setRepeatState('track');
+    }
+    if (repeatState === 'track') {
+      TrackPlayer.setRepeatMode(RepeatMode.Queue);
+      setRepeatState('repeat');
+    }
+    if (repeatState === 'repeat') {
+      TrackPlayer.setRepeatMode(RepeatMode.Off);
+      setRepeatState('off');
+    }
+  };
+  const repeatQueue = () => {
+     TrackPlayer.setRepeatMode(RepeatMode.Queue);
+    // setRepeatState(RepeatMode.Queue);
+  };
+
   const setPlayerStateReady = () => {
     setPlayerReady(true);
   };
-  const changeToShuffle = () => {
-    setShuffleState('Shuffle mode');
+  const toggleShuffle = () => {
+    setShuffleState(!shuffleState);
   };
   const changeToOrder = () => {
     setShuffleState('Order mode');
@@ -359,24 +447,24 @@ export const PlayerContextProvider = ({children}) => {
   };
 
   const value = {
-    isPlaying: playerState == STATE_PLAYING,
-    isPaused: playerState === STATE_PAUSED,
-    isEmpty: playerState === STATE_NONE,
-    isStopped: playerState === STATE_STOPPED,
-    isBuffering: playerState === STATE_BUFFERING,
+    isPlaying: mainPlayerState === State.Playing,
+    isPaused: mainPlayerState === State.Paused,
+    isEmpty: mainPlayerState === State.None,
+    isStopped: mainPlayerState === State.Stopped,
+    isBuffering: mainPlayerState === State.Buffering,
     currentTrack,
     isPlayerReady,
     currentMusicTrack,
-    isMusicPlaying: musicPlayerState == STATE_PLAYING,
-    isMusicPaused: musicPlayerState === STATE_PAUSED,
-    isMusicEmpty: musicPlayerState === STATE_NONE,
-    isMusicStopped: musicPlayerState === STATE_STOPPED,
-    isMusicBuffering: musicPlayerState === STATE_BUFFERING,
-    isTrimTrackPlaying: trimTrackState == STATE_PLAYING,
-    isTrimTrackPaused: trimTrackState === STATE_PAUSED,
-    isTrimTrackEmpty: trimTrackState === STATE_NONE,
-    isTrimTrackStopped: trimTrackState === STATE_STOPPED,
-    isTrimTrackBuffering: trimTrackState === STATE_BUFFERING,
+    isMusicPlaying: mainPlayerState === State.Playing,
+    isMusicPaused: mainPlayerState === State.Paused,
+    isMusicEmpty: mainPlayerState === State.None,
+    isMusicStopped: mainPlayerState === State.Stopped,
+    isMusicBuffering: mainPlayerState === State.Buffering,
+    isTrimTrackPlaying: mainPlayerState === State.Playing,
+    isTrimTrackPaused: mainPlayerState === State.Paused,
+    isTrimTrackEmpty: mainPlayerState === State.None,
+    isTrimTrackStopped: mainPlayerState === State.Stopped,
+    isTrimTrackBuffering: mainPlayerState === State.Buffering,
     play,
     pause,
     musicPause,
@@ -386,7 +474,7 @@ export const PlayerContextProvider = ({children}) => {
     playMusic,
     skipToPreviousMusic,
     skipToNextMusic,
-    bottomRef,
+    // bottomRef,
     getSongs,
     currentTrackId,
     currentTrackDetails,
@@ -396,10 +484,14 @@ export const PlayerContextProvider = ({children}) => {
     resetTrack,
     changeToOrder,
     shuffleState,
-    changeToShuffle,
+    toggleShuffle,
     changeToRepeatOn,
     changeToRepeatOff,
     repeatState,
+    toggleMusicPlay,
+    changeRepeatMode,
+    repeatIcon,
+    repeatQueue,
   };
 
   return (
@@ -450,8 +542,8 @@ export function useMusicProgress(updateInterval) {
 
   useEffect(() => {
     if (
-      musicPlayerState !== STATE_PLAYING &&
-      musicPlayerState !== STATE_BUFFERING
+      musicPlayerState !== State.Playing &&
+      musicPlayerState !== State.Buffering
     ) {
       return;
     }

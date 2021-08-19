@@ -60,49 +60,49 @@ const Home = props => {
   };
 
 
-const getUserLocation = () => {
-  Geolocation.getCurrentPosition(
-    position => {
-      if (position) {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        const userPosition = {
-          lat,
-          lng,
-        };
-        dispatch(storeUserCoordinates(userPosition));
-        Geocoder.geocodePosition(userPosition)
-          .then(res => {
-            console.log('USER REAL LOCATION', res[0]);
-            const data = {
-              city: res[0].subAdminArea,
-              state: res[0].adminArea,
-              country: res[0].country,
-              countryCode: res[0].countryCode,
-            };
-            dispatch(storeUserLocation(data));
-          })
-          .catch(err => console.log(err));
-      }
-    },
-    error => {
-      console.log(error.code, error.message, 'ERROR');
-    },
-    {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-  );
-};
-useEffect(() => {
-  getUserLocation();
-}, []);
+// const getUserLocation = () => {
+//   Geolocation.getCurrentPosition(
+//     position => {
+//       if (position) {
+//         const lat = position.coords.latitude;
+//         const lng = position.coords.longitude;
+//         const userPosition = {
+//           lat,
+//           lng,
+//         };
+//         dispatch(storeUserCoordinates(userPosition));
+//         Geocoder.geocodePosition(userPosition)
+//           .then(res => {
+//             console.log('USER REAL LOCATION', res[0]);
+//             const data = {
+//               city: res[0].subAdminArea,
+//               state: res[0].adminArea,
+//               country: res[0].country,
+//               countryCode: res[0].countryCode,
+//             };
+//             dispatch(storeUserLocation(data));
+//           })
+//           .catch(err => console.log(err));
+//       }
+//     },
+//     error => {
+//       console.log(error.code, error.message, 'ERROR');
+//     },
+//     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+//   );
+// };
+// useEffect(() => {
+//   getUserLocation();
+// }, []);
 
 
 
 
 
 
-  useEffect(() => {
-    getUserLocation();
-  }, []);
+  // useEffect(() => {
+  //   getUserLocation();
+  // }, []);
 
   // const getUserProfile = useSelector((state) => state.getUserProfile);
   // const customerType = useSelector((state) => state.customerType);

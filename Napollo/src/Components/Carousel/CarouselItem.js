@@ -49,15 +49,15 @@ const CarouselItem = ({
   const featuringArtist = featuredArtists.join('&');
   const navigate = () => {
     dispatch(openModalPlayer(allSong));
-    console.log(playerContext.currentTrackDetails, 'when PLAY IS CLICCKED');
+    // console.log(playerContext.currentTrackDetails, 'when PLAY IS CLICCKED');
 
-    // const check = [...allSongs.mediaSongs];
+    // const check = [...allSongs];
     const check = [allSong.currentTrack, ...allSong.mediaSongs];
-    console.log(check, 'CHECHHHHHHKKK');
+    
 
     // playerContext.playMusic(allSongs.currentTrack, check);
-    console.log(index, 'INDEX');
-    playerContext.playMusic(check);
+    // console.log(index, 'INDEX');
+    playerContext.playMusic(check, index);
   };
 
   return (

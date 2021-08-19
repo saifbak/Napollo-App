@@ -25,8 +25,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   artistRegister,
   clearRegisterError,
+  
 } from '../../redux/actions/artistActions';
-import {register} from '../../redux/actions/userActions';
+import {register,storeUserCoordinates,store_User_Location} from '../../redux/actions/userActions';
+import {getUserCallingCode} from '../../utils/loggedInUserType'
 import {getGenres} from '../../redux/actions/getGenreActions';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {
@@ -49,6 +51,11 @@ import ErrorPopup from '../../Components/Modal/MainErrorPopUp';
 import SuccessPopUp from '../../Components/Modal/MainSuccessPopUp';
 import moment from 'moment';
 import CustomDatePicker from './component/DatePickerModal';
+import CountrySelectorModal from '../../Components/Modal/CountrySelectorModal';
+import ProgressCircle from './component/ProgressCircle';
+
+import Geolocation from 'react-native-geolocation-service';
+import Geocoder from 'react-native-geocoder';
 
 const SignInScreen = () => {
   const [position, setPosition] = useState(0);
@@ -57,11 +64,11 @@ const SignInScreen = () => {
   const [emailAddress, setEmailAddress] = useState('');
   const [bookingNumber, setBookingNumber] = useState('');
   const [password, setPassword] = useState('');
-  const [address, setAddress] = useState('United States');
+  const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [genres, setGenres] = useState([]);
   const [stageName, setStageName] = useState('');
-  const [countryCode, setCountryCode] = useState('+1');
+  const [countryCode, setCountryCode] = useState('');
   const [countryShortCode, setCountryShortCode] = useState('');
   const [genreModal, setGenreModal] = useState(false);
   const [clientErr, setClientErr] = useState('');
@@ -71,26 +78,83 @@ const SignInScreen = () => {
   const [dob, setDOB] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [googleErr, setGoogleErr] = useState('');
+  const [countryModal, setCountryModal] = useState(false);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  console.log(countryShortCode, 'USER SHORT CODE');
   const onPageChange = () => {
-    // console.log(countryShortCode,'USER SHORT CODE')
     setPosition(position + 1);
   };
+
+  const storeUserLocation = useSelector(state => state.storeUserLocation);
+  const {
+    city: userCity,
+    state,
+    countryCode: userCountryCode,
+    country: userCountry,
+    callingCode,
+  } = storeUserLocation;
   const previousPage = () => {
     setPosition(position - 1);
   };
-  const changeCountryCode = (val) => {
-    const plus = '+';
-    const result = plus.concat(val);
-    setCountryCode(result);
+  const changeCountryCode = val => {
+    if (callingCode !== val) {
+      const plus = '+';
+      const result = plus.concat(val);
+      setCountryCode(result);
+    }
+    setCountryCode(val);
   };
   // SELECT DATE OF BIRTH
-  const chooseDOB = (date) => {
+  const chooseDOB = date => {
     setDOB(date);
   };
+
+  useEffect(() => {
+    setCountryShortCode(userCountryCode);
+    setAddress(userCountry);
+    setCountryCode(callingCode);
+    setCity(state);
+  }, []);
+
+  //GET user location
+  const getUserLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        console.log('USER REAL POSITION', position);
+        if (position) {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const userPosition = {
+            lat,
+            lng,
+          };
+          dispatch(storeUserCoordinates(userPosition));
+          Geocoder.geocodePosition(userPosition)
+            .then(res => {
+              console.log('USER REAL LOCATION', res[0]);
+              const callingCode = getUserCallingCode(res[0].countryCode);
+              const data = {
+                city: res[0].subAdminArea,
+                state: res[0].adminArea,
+                country: res[0].country,
+                countryCode: res[0].countryCode,
+                callingCode,
+              };
+              dispatch(store_User_Location(data));
+            })
+            .catch(err => console.log(err));
+        }
+      },
+      error => {
+        console.log(error.code, error.message, 'ERROR');
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+  useEffect(() => {
+    if(storeUserLocation.city === '' || storeUserLocation.country === '' ) getUserLocation();
+  }, []);
 
   //MODALS
   const openGenreModal = () => {
@@ -99,7 +163,7 @@ const SignInScreen = () => {
   const closeGenreModal = () => {
     setGenreModal(false);
   };
-  console.log('DATE PICKED', dob);
+
   const openDatePicker = () => {
     setShowDatePicker(!showDatePicker);
   };
@@ -107,34 +171,8 @@ const SignInScreen = () => {
     setShowDatePicker(false);
   };
 
-  //ADD TO GENRE
-  console.log('GENRES', genres);
-  const addToGenre = (val, index) => {
-    if (!genres.includes(genres[index])) {
-      setGenres((previousArr) => [...previousArr, {genreIdentity: val}]);
-    } else {
-      setGenres((previousArr) => [...previousArr.filter((x) => x !== val)]);
-    }
-  };
-  const userRegister = useSelector((state) => state.userRegister);
-  // const {error, status, loading, message} = artistRegisters;
+  const userRegister = useSelector(state => state.userRegister);
   const {error, status, loading, message} = userRegister;
-
-  console.log(
-    firstName,
-    'FIRSTName',
-    lastName,
-    'lastName',
-    emailAddress,
-    'emailAddress',
-    password,
-    stageName,
-    website,
-    city,
-    countryShortCode,
-    // address,
-    dob,
-  );
 
   const submitForm = () => {
     const phoneNumber = countryCode.concat(bookingNumber);
@@ -178,7 +216,7 @@ const SignInScreen = () => {
     }
   };
 
-  const chooseUserInfo = (user) => {
+  const chooseUserInfo = user => {
     setFirstName(user.givenName);
     setLastName(user.familyName);
     setEmailAddress(user.email);
@@ -193,20 +231,21 @@ const SignInScreen = () => {
   }, [status]);
 
   useEffect(() => {
-    if (countryShortCode != '') {
-      const data = State.getStatesOfCountry(countryShortCode);
+    if (address != '') {
+      // const data = State.getStatesOfCountry(countryShortCode);
+      const data = Data.getAllStatesFromCountry(address);
+      console.log(data, 'STATE');
       if (data) {
         setStatesData(data);
       }
     }
-  }, [countryShortCode]);
+  }, [address]);
 
-  let errorView = null;
-  let loadingView = null;
-  let clientErrView = null;
-  let messageView = null;
+  let mainView = null;
+  let mainPosition = null;
+  let stepView = null;
   if (error) {
-    errorView = (
+    mainView = (
       <ErrorPopup
         errorstate={error}
         clearTime={4000}
@@ -214,12 +253,10 @@ const SignInScreen = () => {
         {error}
       </ErrorPopup>
     );
-  }
-  if (loading) {
-    loadingView = <LoadingAnime width={70} height={70} />;
-  }
-  if (clientErr) {
-    clientErrView = (
+  } else if (loading) {
+    mainView = <LoadingAnime width={70} height={70} />;
+  } else if (clientErr) {
+    mainView = (
       <ErrorPopup
         errorstate={clientErr}
         clearTime={4000}
@@ -227,10 +264,8 @@ const SignInScreen = () => {
         {clientErr}
       </ErrorPopup>
     );
-  }
-
-  if (message) {
-    messageView = (
+  } else if (message) {
+    mainView = (
       <SuccessPopUp
         successState={message}
         clearTime={2000}
@@ -238,157 +273,164 @@ const SignInScreen = () => {
         {message}
       </SuccessPopUp>
     );
+  } else if (googleErr) {
+    mainView = (
+      <ErrorPopup
+        errorstate={googleErr}
+        clearTime={4000}
+        clearError={() => setGoogleErr('')}>
+        {googleErr}
+      </ErrorPopup>
+    );
+  } else {
+    mainView = null;
+  }
+
+  if (position === 0) {
+    mainPosition = (
+      <ArtsitStep1
+        firstName={firstName}
+        lastName={lastName}
+        emailAddress={emailAddress}
+        onChangeFirstName={val => setFirstName(val)}
+        onChangeLastName={val => setLastName(val)}
+        onChangeEmailAddress={val => setEmailAddress(val)}
+        changePage={onPageChange}
+        onChangeStageName={val => setStageName(val)}
+        stageName={stageName}
+        visible={showDatePicker}
+        closeModal={closeDatePicker}
+        openModal={openDatePicker}
+        chooseDateOfBirth={val => chooseDOB(val)}
+        dob={dob}
+      />
+    );
+  } else {
+    mainPosition = (
+      <ArtsitFinalStep
+        bookingNumber={bookingNumber}
+        password={password}
+        address={address}
+        city={city}
+        genres={genres}
+        stageName={stageName}
+        countryShortCode={countryShortCode}
+        countryCode={countryCode}
+        changeCountryShortCode={val => setCountryShortCode(val)}
+        onChangeStageName={val => setStageName(val)}
+        onChangeGeneres={val => setGenres(val)}
+        onChangeBookingNumber={val => setBookingNumber(val)}
+        onChangePassword={val => setPassword(val)}
+        onChangeAddress={val => setAddress(val)}
+        onChangeCity={val => setCity(val)}
+        changePage={previousPage}
+        submitForm={submitForm}
+        changeCountryCode={val => changeCountryCode(val)}
+        openGenreModal={openGenreModal}
+        openCountryModal={() => setCountryModal(true)}
+      />
+    );
+  }
+
+  if (position === 0) {
+    stepView = (
+      <ProgressCircle percent={50} step="Step 1" text="Basic Information" />
+    );
+  } else {
+    stepView = (
+      <ProgressCircle
+        percent={100}
+        step="Final step"
+        text="Other Information"
+      />
+    );
   }
 
   return (
-    <KeyboardAwareScrollView
-      // behavior={Platform.OS == 'ios' ? 'height' : 'height'}
-      style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          {errorView}
-          {messageView}
-          {clientErrView}
-          {/* <ErrorPopup
-            errorstate={googleErr}
-            clearTime={2000}
-            clearError={() => setGoogleErr('')}>
-            {googleErr}
-          </ErrorPopup> */}
-          <GenreModal
-            genreModal={genreModal}
-            closeGenreModal={closeGenreModal}
-            genreType={genreType}
-            chooseGenre={(val, index) => addToGenre(val, index)}
-            genres={genres}
-            data={statesData}
-            artistState={city}
-            chooseState={(val) => setCity(val)}
-          />
+    <View style={styles.container}>
+      <KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+        {mainView}
+        <GenreModal
+          genreModal={genreModal}
+          closeGenreModal={closeGenreModal}
+          genres={genres}
+          data={statesData}
+          artistState={city}
+          chooseState={val => setCity(val)}
+        />
+        <CountrySelectorModal
+          chooseCountryShortCode={val => setCountryShortCode(val)}
+          chooseCountry={val => setAddress(val)}
+          chooseCallingCode={val => changeCountryCode(val)}
+          countryModal={countryModal}
+          closeCountryModal={() => setCountryModal(false)}
+        />
 
-          {/* <CustomDatePicker
-            visible={showDatePicker}
-            closeModal={closeDatePicker}
-            chooseDateOfBirth={(val) => chooseDOB(val)}
-            dob={dob}
-          /> */}
+        <View style={styles.content}>
+          <View
+            style={{
+              justifyContent: 'center',
+              position: 'absolute',
+              top: hp('75%'),
+              alignSelf: 'center',
+              flex: 1,
+            }}>
+            <View style={styles.otherContent}>
+              <Text style={styles.or}>OR</Text>
 
-          <View style={styles.content}>
+              <View style={styles.icons}>
+                <Icons
+                  chooseUserInfo={val => chooseUserInfo(val)}
+                  chooseGoogleErr={val => setGoogleErr(val)}
+                />
+              </View>
+            </View>
             <View
               style={{
+                flexDirection: 'row',
                 justifyContent: 'center',
-                position: 'absolute',
-                top: hp('75%'),
-                alignSelf: 'center',
-                flex: 1,
+                marginTop: '3%',
               }}>
-              <View style={styles.otherContent}>
-                <Text style={styles.or}>OR</Text>
-
-                <View style={styles.icons}>
-                  <Icons
-                    chooseUserInfo={(val) => chooseUserInfo(val)}
-                    chooseGoogleErr={(val) => setGoogleErr(val)}
-                  />
-                </View>
-              </View>
-              <View
+              <Text
                 style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  marginTop: '3%',
+                  color: '#fff',
+                  fontFamily: 'Helvetica-Regular',
+                  textAlign: 'center',
+                  fontSize: 13,
+                  letterSpacing: 0.5,
+                  marginRight: 5,
                 }}>
+                Already have an account ?
+              </Text>
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={() => navigation.navigate('Login')}>
                 <Text
                   style={{
-                    color: '#fff',
-                    fontFamily: 'Helvetica-Regular',
-                    textAlign: 'center',
+                    color: '#f68128',
+                    fontFamily: 'Helvetica-Medium',
                     fontSize: 13,
                     letterSpacing: 0.5,
-                    marginRight: 5,
                   }}>
-                  Already have an account ?
+                  Login
                 </Text>
-                <TouchableOpacity
-                  activeOpacity={0.6}
-                  onPress={() => navigation.push('Login')}>
-                  <Text
-                    style={{
-                      color: '#f68128',
-                      fontFamily: 'Helvetica-Medium',
-                      fontSize: 13,
-                      letterSpacing: 0.5,
-                    }}>
-                    Login
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <StatusBar backgroundColor="#000" barStyle="light-content" />
-            <View
-              style={{width: '100%', marginBottom: 10, alignItems: 'center'}}>
-              <Image
-                source={require('../../assests/images/Logo2.png')}
-                style={{width: 110, height: 110}}
-              />
-            </View>
-            {/* STEP INDICATOR */}
-            <View style={styles.indicator}>
-              <StepIndicator
-                position={position}
-                changePosition={onPageChange}
-              />
-            </View>
-
-            {loadingView}
-            <View style={styles.formView}>
-              {position === 0 && (
-                <ArtsitStep1
-                  firstName={firstName}
-                  lastName={lastName}
-                  emailAddress={emailAddress}
-                  onChangeFirstName={(val) => setFirstName(val)}
-                  onChangeLastName={(val) => setLastName(val)}
-                  onChangeEmailAddress={(val) => setEmailAddress(val)}
-                  changePage={onPageChange}
-                  onChangeStageName={(val) => setStageName(val)}
-                  stageName={stageName}
-                  visible={showDatePicker}
-                  closeModal={closeDatePicker}
-                  openModal={openDatePicker}
-                  chooseDateOfBirth={(val) => chooseDOB(val)}
-                  dob={dob}
-                />
-              )}
-
-              {position > 0 && (
-                <ArtsitFinalStep
-                  bookingNumber={bookingNumber}
-                  password={password}
-                  address={address}
-                  city={city}
-                  genres={genres}
-                  stageName={stageName}
-                  countryShortCode
-                  changeCountryShortCode={(val) => setCountryShortCode(val)}
-                  onChangeStageName={(val) => setStageName(val)}
-                  onChangeGeneres={(val) => setGenres(val)}
-                  onChangeBookingNumber={(val) => setBookingNumber(val)}
-                  onChangePassword={(val) => setPassword(val)}
-                  onChangeAddress={(val) => setAddress(val)}
-                  onChangeCity={(val) => setCity(val)}
-                  changePage={previousPage}
-                  submitForm={submitForm}
-                  changeCountryCode={changeCountryCode}
-                  openGenreModal={openGenreModal}
-                />
-              )}
+              </TouchableOpacity>
             </View>
           </View>
+
+          <StatusBar backgroundColor="#000" barStyle="light-content" />
+          <View style={{width: '100%', marginBottom: 10, alignItems: 'center'}}>
+            <Image
+              source={require('../../assests/images/Logo2.png')}
+              style={{width: 110, height: 110}}
+            />
+          </View>
+          {/* STEP INDICATOR */}
+          <View style={styles.indicator}>{stepView}</View>
+          <View style={styles.formView}>{mainPosition}</View>
         </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
+    </View>
   );
 };
 
@@ -403,14 +445,11 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
-    // paddingTop: 70,
     width: wp('100%'),
     height: hp('100%'),
     paddingBottom: 30,
     alignItems: 'center',
-    marginTop: '10%',
-    // marginTop: hp('5%'),
-    // justifyContent: 'center',
+    marginTop: '5%',
     flex: 1,
   },
   inputContainer: {
@@ -432,7 +471,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 5,
     paddingLeft: 5,
-    fontFamily: 'Gilroy-light',
+    fontFamily: 'Helvetica-Regular',
     backgroundColor: '#161616',
     textTransform: 'uppercase',
     position: 'relative',
@@ -443,7 +482,7 @@ const styles = StyleSheet.create({
     color: '#D3D3D3',
     paddingHorizontal: 5,
     marginVertical: 5,
-    fontFamily: 'Gilroy-light',
+    fontFamily: 'Helvetica-Regular',
     alignSelf: 'flex-start',
     fontSize: 12,
     letterSpacing: 0.5,
@@ -451,7 +490,7 @@ const styles = StyleSheet.create({
   forgetText: {
     color: '#484848',
     textAlign: 'center',
-    fontFamily: 'Gilroy-light',
+    fontFamily: 'Helvetica-Regular',
     fontSize: 15,
   },
   errorText: {
@@ -483,7 +522,7 @@ const styles = StyleSheet.create({
   },
   indicator: {
     width: '100%',
-    marginBottom: '5%',
+    marginBottom: '10%',
     // height: '20%',
   },
   formView: {

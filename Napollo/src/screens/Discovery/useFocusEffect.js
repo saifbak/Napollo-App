@@ -16,21 +16,21 @@ const FocusEffect = ({page, size, unLike, chooseState, countryCode}) => {
   const getTrailerMedia = useSelector((state) => state.getTrailerMedia);
   const {data} = getTrailerMedia;
 
-  React.useEffect(() => {
-    const Listener = TrackPlayer.addEventListener(
-      'playback-track-changed',
-      async ({track, position, nextTrack}) => {
-        setCurrentTrack(nextTrack);
-        if (currentTrack !== '') {
-          if (currentTrack !== nextTrack) {
-          }
-        }
-      },
-    );
-    return () => {
-      Listener.remove();
-    };
-  }, []);
+  // React.useEffect(() => {
+  //   const Listener = TrackPlayer.addEventListener(
+  //     'playback-track-changed',
+  //     async ({track, position, nextTrack}) => {
+  //       setCurrentTrack(nextTrack);
+  //       if (currentTrack !== '') {
+  //         if (currentTrack !== nextTrack) {
+  //         }
+  //       }
+  //     },
+  //   );
+  //   return () => {
+  //     Listener.remove();
+  //   };
+  // }, []);
  
   useFocusEffect(
     React.useCallback(() => {

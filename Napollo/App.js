@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState, useRef, forwardRef} from 'react';
 
 import SplashScreen from 'react-native-splash-screen';
@@ -10,7 +9,7 @@ import {Provider} from 'react-redux';
 
 import {persistor, store} from './src/redux/store';
 
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer, {Capability} from 'react-native-track-player';
 import {NavigationContainer} from '@react-navigation/native';
 
 import {Container} from 'native-base';
@@ -19,19 +18,17 @@ import RootRoute from './src/routes/index';
 
 import Login from './src/screens/Login/Login';
 import AuthStacks from './src/routes/authRoute/index';
-import MusicPlayer from './src/Components/Modal/MusicPlayer';
+// import MusicPlayer from './src/Components/Modal/MusicPlayer';
 import SongBottomModal from './src/Components/Modal/SongBottomModal';
 import ModalOverlay from './src/Components/Modal/ModalOverlay';
 import GoogleModal from './src/Components/Modal/GoogleSearchModal';
+import {closeModalPlayer} from './src/redux/actions/musicPlayerActions';
 import {
   Permission,
   PERMISSION_TYPE,
   requestLocation,
 } from './src/utils/AppPermissions';
 import MainErrorPopUp from './src/Components/Modal/MainErrorPopUp';
-import {BASE_URL2} from '@env';
-import {ReduxNetworkProvider} from 'react-native-offline';
-import {PersistGate} from 'redux-persist/integration/react';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -39,7 +36,7 @@ import {
   get_Access_Token,
   get_User_Profile,
   logout,
-  storeUserLocation,
+  store_User_Location,
   storeUserCoordinates,
 } from './src/redux/actions/userActions';
 import {get_Artist_Profile} from './src/redux/actions/artistActions';
@@ -53,6 +50,8 @@ import {loadDataFromStorage} from './src/utils/asyncStorage';
 import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoder';
 import {CLEAR_LOGOUT_TOKEN_MESSAGE} from './src/redux/constants/index';
+import {getUserCallingCode} from './src/utils/loggedInUserType';
+import MainMusicPlayer from './src/Components/Modal/MainMusicPlayer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -84,7 +83,7 @@ const App = () => {
   useEffect(() => {
     SplashScreen.hide();
     // if (accessTokenLoading === false) {
-      
+
     // }
   }, []);
   //GETTING USERS PROFILE
@@ -94,7 +93,7 @@ const App = () => {
       if (userProfile === null || !userProfile) {
         dispatch(get_User_Profile());
       }
-      console.log('USER INFO ON LOAD', userProfile);
+      // console.log('USER INFO ON LOAD', userProfile);
     };
     getUserProfile();
     // if (userProfile && userProfile === {}) {
@@ -129,44 +128,50 @@ const App = () => {
   }, []);
 
   //GET user location
-  // const getUserLocation = () => {
-  //   Geolocation.getCurrentPosition(
-  //     position => {
-  //       if (position) {
-  //         const lat = position.coords.latitude;
-  //         const lng = position.coords.longitude;
-  //         const userPosition = {
-  //           lat,
-  //           lng,
-  //         };
-  //         dispatch(storeUserCoordinates(userPosition));
-  //         Geocoder.geocodePosition(userPosition)
-  //           .then(res => {
-  //             console.log('USER REAL LOCATION', res[0]);
-  //             const data = {
-  //               city: res[0].subAdminArea,
-  //               state: res[0].adminArea,
-  //               country: res[0].country,
-  //               countryCode: res[0].countryCode,
-  //             };
-  //             dispatch(storeUserLocation(data));
-  //           })
-  //           .catch(err => console.log(err));
-  //       }
-  //     },
-  //     error => {
-  //       console.log(error.code, error.message,'ERROR');
-  //     },
-  //     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-  //   );
-  // };
-  // useEffect(() => {
-  //   getUserLocation();
-  // }, []);
+  const getUserLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        console.log('USER REAL POSITION', position);
+        if (position) {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const userPosition = {
+            lat,
+            lng,
+          };
+          dispatch(storeUserCoordinates(userPosition));
+          Geocoder.geocodePosition(userPosition)
+            .then(res => {
+              console.log('USER REAL LOCATION', res[0]);
+              const callingCode = getUserCallingCode(res[0].countryCode);
+              const data = {
+                city: res[0].subAdminArea,
+                state: res[0].adminArea,
+                country: res[0].country,
+                countryCode: res[0].countryCode,
+                callingCode,
+              };
+              dispatch(store_User_Location(data));
+            })
+            .catch(err => console.log(err));
+        }
+      },
+      error => {
+        console.log(error.code, error.message, 'ERROR');
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+  useEffect(() => {
+    getUserLocation();
+  }, []);
 
   // PERMISSION
   useEffect(() => {
     requestLocation();
+  }, []);
+  useEffect(() => {
+    dispatch(closeModalPlayer());
   }, []);
   // TrackPlayer
   useEffect(() => {
@@ -177,18 +182,16 @@ const App = () => {
         TrackPlayer.updateOptions({
           stopWithApp: false,
           capabilities: [
-            TrackPlayer.CAPABILITY_PLAY,
-            TrackPlayer.CAPABILITY_PAUSE,
-            // TrackPlayer.CAPABILITY_STOP,
-            TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-            TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+            Capability.Pause,
+            Capability.Play,
+            Capability.SkipToNext,
+            Capability.SkipToPrevious,
           ],
           compactCapabilities: [
-            TrackPlayer.CAPABILITY_PLAY,
-            TrackPlayer.CAPABILITY_PAUSE,
-            // TrackPlayer.CAPABILITY_STOP,
-            TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-            TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+            Capability.Pause,
+            Capability.Play,
+            Capability.SkipToNext,
+            Capability.SkipToPrevious,
           ],
         });
         playerContext.setPlayerStateReady();
@@ -197,18 +200,13 @@ const App = () => {
         console.log('errrrr', err);
       });
   });
-  // const per = persistStore(store);
 
   return (
-    // <NavigationContainer>
     <>
-      {/* <Provider store={store}> */}
       <PlayerContextProvider>
-        {/* <PersistGate persistor={persistor} loading={null}>
-            <ReduxNetworkProvider> */}
         <RootRoute />
-        <MusicPlayer />
-        {/* <MusicPlayers/> */}
+        {/* <MusicPlayer /> */}
+        <MainMusicPlayer />
         <SongBottomModal />
         <ModalOverlay />
         <GoogleModal />
@@ -222,16 +220,9 @@ const App = () => {
           clearError={() => dispatch({type: CLEAR_LOGOUT_TOKEN_MESSAGE})}>
           {message}
         </MainErrorPopUp>
-        {/* <TestingPlayer /> */}
-        {/* </ReduxNetworkProvider> */}
-        {/* </PersistGate> */}
       </PlayerContextProvider>
-      {/* <AuthStacks /> */}
-      {/* // </Provider> */}
     </>
-    // {/* </NavigationContainer> */}
   );
 };
 
 export default App;
-

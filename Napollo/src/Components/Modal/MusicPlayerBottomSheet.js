@@ -19,7 +19,7 @@ const MusicPlayerBottomSheet = ({onPress, image, toggleBottomSheet, icon}) => {
   return (
     <ImageBackground
       source={{uri: image}}
-      blurRadius={100}
+      blurRadius={90}
       style={[
         {
           // height,

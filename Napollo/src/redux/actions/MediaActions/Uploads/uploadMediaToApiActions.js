@@ -116,7 +116,6 @@ export const upload_Media =
         });
       }
     } else {
-      
       try {
         dispatch({
           type: MEDIA_UPLOAD_TO_API_LOADING,
@@ -174,22 +173,32 @@ export const upload_Media =
           //   type: CLEAR_UPLOAD_DATA,
           // });
         } else {
-          dispatch({
-            type: MEDIA_UPLOAD_TO_API_FAIL,
-            payload: responseJson.responseDescription,
-          });
+          logoutUserWhenTokenExpires(
+            dispatch,
+            responseJson.responseDescription,
+            MEDIA_UPLOAD_TO_API_FAIL,
+          );
+          // dispatch({
+          //   type: MEDIA_UPLOAD_TO_API_FAIL,
+          //   payload: responseJson.responseDescription,
+          // });
           dispatch({
             type: CLEAR_UPLOAD_PROGRESS,
           });
         }
       } catch (error) {
-        dispatch({
-          type: MEDIA_UPLOAD_TO_API_FAIL,
-          payload:
-            error.response && error.response.data.responseDescription
-              ? error.response.data.responseDescription
-              : error.message,
-        });
+        logoutUserWhenTokenExpires(
+          dispatch,
+          responseJson.responseDescription,
+          MEDIA_UPLOAD_TO_API_FAIL,
+        );
+        // dispatch({
+        //   type: MEDIA_UPLOAD_TO_API_FAIL,
+        //   payload:
+        //     error.response && error.response.data.responseDescription
+        //       ? error.response.data.responseDescription
+        //       : error.message,
+        // });
         dispatch({
           type: CLEAR_UPLOAD_PROGRESS,
         });

@@ -3,8 +3,9 @@ import {Text, View, TouchableOpacity} from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import CountryPicker, {DARK_THEME} from 'react-native-country-picker-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {set} from 'react-native-reanimated';
 
-const MyDarkView = (props) => {
+const MyDarkView = props => {
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [countryCode, setCountryCode] = useState('US');
   const [country, setCountry] = useState(null);
@@ -14,25 +15,30 @@ const MyDarkView = (props) => {
   const [withFilter, setWithFilter] = useState(true);
   const [withAlphaFilter, setWithAlphaFilter] = useState(false);
   const [withCallingCode, setWithCallingCode] = useState(true);
-  const [myCallingCode, setMyCallingCode] = useState('1');
+  const [myCallingCode, setMyCallingCode] = useState(props.userCallingCode);
 
-  const selectCallingCode = (val) => {
+  const selectCallingCode = val => {
     setMyCallingCode(val);
   };
-  const onSelect = (country) => {
-    console.log(country.callingCode[0], 'Calling code');
+  const onSelect = country => {
     props.changeCountryCode(country.callingCode[0]);
     props.changeCountryShortCode(country.cca2);
     selectCallingCode(country.callingCode[0]);
     setCountryCode(country.cca2);
     setCountry(country);
     props.changeCountry(country.name);
-    console.log(country.cca2, 'COUNTRY');
+    setShowCountryModal(false);
   };
 
   const phoneRef = useRef('phone');
-  //   const countryRef = useRef('countryPicker');
-  //   console.log(countryRef);
+  let callingView = null;
+  if (props.userCallingCode) {
+    callingView = (
+      <Text style={{color: '#f68128', fontSize: 13}}>
+        {props.userCallingCode}
+      </Text>
+    );
+  }
   return (
     <TouchableOpacity
       activeOpacity={0.6}
@@ -42,19 +48,10 @@ const MyDarkView = (props) => {
         justifyContent: 'center',
         alignItems: 'center',
       }}>
-      {/* <View style={{width: '20%'}}> */}
-      {/* <PhoneInput
-          ref={(ref) => {
-            phoneRef = ref;
-          }}
-        /> */}
       <CountryPicker
-        //   ref={(ref) => {
-        //     countryRef = ref;   
-        //   }}
         theme={DARK_THEME}
         {...{
-          countryCode,
+          countryCode: props.countryShortCode,
           withFilter,
           withFlag,
           withCountryNameButton,
@@ -65,13 +62,7 @@ const MyDarkView = (props) => {
         }}
         visible={showCountryModal}
       />
-      {countryCode && (
-        <Text style={{color: '#f68128', fontSize: 15}}>
-          {' '}
-          +{myCallingCode || countryCode}
-        </Text>
-      )}
-      {/* </View> */}
+      {callingView}
     </TouchableOpacity>
   );
 };

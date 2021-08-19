@@ -17,12 +17,13 @@ export default Loading;
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    width,
-    height,
+    width:'100%',
+    height:'100%',
     zIndex: 200,
     backgroundColor: '#000',
     opacity: 0.7,
     justifyContent: 'center',
     alignItems: 'center',
+    flex:1
   },
 });

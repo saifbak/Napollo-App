@@ -98,6 +98,7 @@ export const userLoginReducer = (state = initialState, {type, payload}) => {
       return {
         ...state,
         error: null,
+        loading: false,
       };
 
     default:
@@ -483,7 +484,7 @@ export const followArtistReducer = (
 };
 
 export const storeUserLocationReducer = (
-  state = {city: '', state: '', country: '', countryCode: ''},
+  state = {city: '', state: '', country: '', countryCode: '',callingCode:''},
   {type, payload},
 ) => {
   switch (type) {
@@ -493,6 +494,7 @@ export const storeUserLocationReducer = (
         state: payload.state,
         country: payload.country,
         countryCode: payload.countryCode,
+        callingCode: payload.callingCode
       };
 
     default:

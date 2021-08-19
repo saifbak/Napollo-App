@@ -52,6 +52,13 @@ export const get_Media_Search =
       });
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, MEDIA_SEARCH_FAIL);
+      // dispatch({
+      //   type:MEDIA_SEARCH_FAIL,
+      //   payload:
+      //     error.response && error.response.data.responseDescription
+      //         ? error.response.data.responseDescription
+      //         : error.message,
+      // })
     }
   };
 export const get_New_Releases =
@@ -79,5 +86,12 @@ export const get_New_Releases =
       });
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, SEARCH_SCREEN_MEDIA_FAIL);
+      //   dispatch({
+      //   type:SEARCH_SCREEN_MEDIA_FAIL,
+      //   payload:
+      //     error.response && error.response.data.responseDescription
+      //         ? error.response.data.responseDescription
+      //         : error.message,
+      // })
     }
   };

@@ -35,11 +35,6 @@ const StepIndicators = (props) => {
       direction="horizontal"
       stepCount={2}
       labels={['Step 1', 'Final Step']}
-      // renderLabel={({position}) => (
-      //   <Text style={{color: '#900', fontSize: 12}}>
-      //     {labels[position].steps}
-      //   </Text>
-      // )}
     />
   );
 };

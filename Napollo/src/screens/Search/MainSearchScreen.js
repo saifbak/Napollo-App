@@ -75,11 +75,10 @@ const MainSearchScreen = () => {
         />
       </View>
       <View style={styles.content}>
-        <ScrollableTabView ref={myRef}>
+        {/* <ScrollableTabView ref={myRef}>
           <AllSongsTab tabLabel="React" />
           <ArtistTab tabLabel="Flow" />
-          {/* <JestPage tabLabel="Jest" /> */}
-        </ScrollableTabView>
+        </ScrollableTabView> */}
       </View>
     </View>
   );

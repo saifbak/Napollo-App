@@ -22,7 +22,7 @@ function RootStacks() {
       <RootStack.Screen name="Profile" component={Profile} />
       <RootStack.Screen name="Expansion" component={Expansion} />
       <RootStack.Screen name="Setting" component={Setting }/>
-      <RootStack.Screen name="Discovery" component={Discovery} />
+      {/* <RootStack.Screen name="Discovery" component={Discovery} /> */}
     </RootStack.Navigator>
   );
 }

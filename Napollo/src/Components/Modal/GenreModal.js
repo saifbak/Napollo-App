@@ -1,5 +1,12 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, Text, View, Modal, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Modal,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LoginBtn from '../Button/LoginBtn';
 import CustomCheckBox from '../Checkbox/CustomCheckBox';
@@ -8,9 +15,7 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import LoadingAnime from '../Animations/Small_LoadingAnime';
 
-const GenreModal = (props) => {
-  console.log(props.data, 'modal');
-
+const GenreModal = props => {
   return (
     <Modal
       animationType="slide"
@@ -19,14 +24,13 @@ const GenreModal = (props) => {
       onRequestClose={() => props.closeGenreModal()}>
       <View style={styles.modalView}>
         <View style={styles.header}>
-          {/* <View></View> */}
+          <View></View>
           <Text style={styles.text}>Select your State</Text>
-          {/* <LoginBtn
-            title="Done"
-            height={35}
-            width="20%"
+          <TouchableOpacity
             onPress={() => props.closeGenreModal()}
-          /> */}
+            activeOpacity={0.8}>
+            <Icon name="close" color="#f68128" size={24} />
+          </TouchableOpacity>
         </View>
         <View style={styles.divider}>
           <Divider />
@@ -36,13 +40,13 @@ const GenreModal = (props) => {
             <FlatList
               showsVerticalScrollIndicator={false}
               data={props.data}
-              keyExtractor={(item) => item.name}
+              keyExtractor={item => item.name}
               renderItem={({item, index}) => (
                 <CustomCheckBox
                   {...item}
                   key={item.name}
                   artistState={props.artistState}
-                  chooseState={(val) => props.chooseState(val)}
+                  chooseState={val => props.chooseState(val)}
                   closeModal={props.closeGenreModal}
                 />
               )}
@@ -70,7 +74,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     paddingTop: 20,
     paddingHorizontal: 25,
   },

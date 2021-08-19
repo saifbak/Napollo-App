@@ -16,14 +16,12 @@ import {useNavigation, useFocusEffect} from '@react-navigation/native';
 const ArtsitFinalStep = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [visible, setVisible] = useState(true);
-  const [countryCode, setCountryCode] = useState('+1');
   const navigation = useNavigation();
 
   const togglePassword = () => {
     setVisible(!visible);
     setShowPassword(!showPassword);
   };
-  console.log(props.bookingNumber, 'PHONEnumber');
 
   const otp = () => {
     navigation.navigate('EmailVerification');
@@ -32,14 +30,78 @@ const ArtsitFinalStep = (props) => {
   return (
     <KeyboardAwareScrollView style={styles.container}>
       <View style={styles.container}>
-        {/* BOOKING NUMBER */}
-
+       
+        <View style={styles.inputFlex}>
+          {/* ADDRESS */}
+          <TouchableOpacity
+            onPress={() => props.openCountryModal()}
+            activeOpacity={0.8}
+            style={{width: '48%'}}>
+            <Text style={styles.label}>Country:</Text>
+            <View style={styles.textInput}>
+              <Text
+                style={{
+                  alignSelf: 'center',
+                  color: '#fff',
+                  fontSize: 12,
+                  paddingLeft: 4,
+                }}>
+                {props.address}
+              </Text>
+              <Icon
+                name="chevron-down"
+                size={18}
+                style={[styles.inputIcon, {color: '#999'}]}
+              />
+            </View>
+          </TouchableOpacity>
+          {/* <View
+            style={{width: '48%'}}
+          >
+            <Text style={styles.label}>Country:</Text>
+            <View style={styles.textInput}>
+              <TextInput
+                placeholder="country"
+                placeholderTextColor="#484848"
+                value={props.address}
+                onChangeText={props.onChangeAddress}
+                style={{width: '100%', color: '#fff'}}
+              />
+            </View>
+          </View> */}
+          {/* CITY */}
+          {/* {props.address === 'United States' && ( */}
+          <TouchableOpacity
+            onPress={()=> props.openGenreModal()}
+            activeOpacity={0.8}
+            style={{width: '48%'}}>
+            <Text style={styles.label}>State:</Text>
+            <View style={styles.textInput}>
+              <Text
+                style={{
+                  alignSelf: 'center',
+                  color: '#fff',
+                  fontSize: 12,
+                  paddingLeft: 4,
+                }}>
+                {props.city}
+              </Text>
+              <Icon
+                name="chevron-down"
+                size={18}
+                style={[styles.inputIcon, {color: '#999'}]}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
         <View style={{width: '100%'}}>
           <Text style={styles.label}>Phone Number:</Text>
           <View style={styles.textInput}>
             <View style={styles.countryStyle}>
               <MyDarkView
                 changeCountryCode={(val) => props.changeCountryCode(val)}
+                countryShortCode={props.countryShortCode}
+                userCallingCode={props.countryCode}
                 changeCountryShortCode={(val) =>
                   props.changeCountryShortCode(val)
                 }
@@ -55,85 +117,6 @@ const ArtsitFinalStep = (props) => {
               keyboardType="phone-pad"
             />
           </View>
-        </View>
-
-        <View style={styles.inputFlex}>
-          {/* STAGE NAME */}
-          {/* <View style={{width: '100%'}}>
-            <Text style={styles.label}>Stage Name:</Text>
-            <View style={styles.textInput}>
-              <TextInput
-                placeholder="stagename"
-                placeholderTextColor="#484848"
-                value={props.stageName}
-                onChangeText={props.onChangeStageName}
-                style={{width: '100%', color: '#fff'}}
-              />
-            </View>
-          </View> */}
-          {/* GENRE SELECTION */}
-          {/* <TouchableOpacity
-            onPress={props.openGenreModal}
-            activeOpacity={0.8}
-            style={{width: '48%'}}>
-            <Text style={styles.label}>Genres:</Text>
-            <View style={styles.textInput}>
-             
-
-              <Icon
-                name="chevron-down"
-                size={18}
-                style={[styles.inputIcon, {color: '#999'}]}
-              />
-            </View>
-          </TouchableOpacity> */}
-        </View>
-        <View style={styles.inputFlex}>
-          {/* ADDRESS */}
-          <View
-            style={{width: '48%'}}
-            // style={
-            //   props.address === 'United States'
-            //     ? {width: '48%'}
-            //     : {width: '100%'}
-            // }
-          >
-            <Text style={styles.label}>Country:</Text>
-            <View style={styles.textInput}>
-              <TextInput
-                placeholder="country"
-                placeholderTextColor="#484848"
-                value={props.address}
-                onChangeText={props.onChangeAddress}
-                style={{width: '100%', color: '#fff'}}
-              />
-            </View>
-          </View>
-          {/* CITY */}
-          {/* {props.address === 'United States' && ( */}
-          <TouchableOpacity
-            onPress={props.openGenreModal}
-            activeOpacity={0.8}
-            style={{width: '48%'}}>
-            <Text style={styles.label}>State:</Text>
-            <View style={styles.textInput}>
-              <Text
-                style={{
-                  alignSelf: 'center',
-                  color: '#fff',
-                  fontSize: 13,
-                  paddingLeft: 4,
-                }}>
-                {props.city}
-              </Text>
-              <Icon
-                name="chevron-down"
-                size={18}
-                style={[styles.inputIcon, {color: '#999'}]}
-              />
-            </View>
-          </TouchableOpacity>
-          {/* )} */}
         </View>
 
         {/* PASSWORD INPUT */}
@@ -178,12 +161,14 @@ const ArtsitFinalStep = (props) => {
             title="Back"
             height={40}
             width="30%"
+            textSize={12}
             onPress={props.changePage}
           />
           <LoginBtn
             title="Sign Up"
             height={42}
             width="30%"
+            textSize={12}
             // onPress={() => otp()}
             onPress={props.submitForm}
           />

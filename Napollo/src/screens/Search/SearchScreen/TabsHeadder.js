@@ -60,7 +60,7 @@ const TabsScrollableExample = () => {
           Search for any Artiste, Song, Playlist, Tracks, Albums with ease
         </Text>
       </View> */}
-        <Tabs
+        {/* <Tabs
           style={{
             backgroundColor: '#000',
             borderBottomWidth: 0,
@@ -70,9 +70,6 @@ const TabsScrollableExample = () => {
             <ScrollableTab
               style={{borderWidth: 0}}
               underlineStyle={{backgroundColor: '#f68128'}}
-              // backgroundColor="#000"
-
-              // style={{height: '100%'}}
             />
           )}
           tabContainerStyle={{
@@ -143,7 +140,7 @@ const TabsScrollableExample = () => {
             activeTextStyle={{color: '#f68128'}}>
             <GenreScreen />
           </Tab>
-        </Tabs>
+        </Tabs> */}
       </SafeAreaView>
     </Container>
   );

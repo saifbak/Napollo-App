@@ -85,8 +85,8 @@ export const unLikeMedia = (id) => async (dispatch, getState) => {
     // dispatch({
     //   type: UNLIKE_MEDIA_FAIL,
     //   payload:
-    //     error.response && error.response.data.description
-    //       ? error.response.data.description
+    //     error.response && error.response.data.responseDescription
+    //       ? error.response.data.responseDescription
     //       : error.message,
     // });
   }

@@ -57,8 +57,6 @@ const HomeContent = () => {
   //   }),
   // ];
 
-  
-
   // ARTIST FROM LOADED SONGS
   const artists = mediaData.map((item, index) => item.ownerAccountUser);
 
@@ -130,7 +128,12 @@ const HomeContent = () => {
     mainReleasesView = mediaData
       .slice(0, 10)
       .map((song, index) => (
-        <CarouselItem allSongs={mediaData} {...song} key={index} />
+        <CarouselItem
+          allSongs={mediaData}
+          {...song}
+          key={index}
+          index={index}
+        />
       ));
   }
 
@@ -184,7 +187,7 @@ const HomeContent = () => {
         // data={song}
         {...artists}
         {...song}
-        allSongs={mediaData}
+        allSongs={trendingData}
         key={index}
         showLikeBtn={true}
         indexes

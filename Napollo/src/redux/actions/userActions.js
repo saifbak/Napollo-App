@@ -54,33 +54,31 @@ import base64 from 'react-native-base64';
 import RNFetchBlob from 'rn-fetch-blob';
 import {logoutUserWhenTokenExpires} from '../../utils/loggedInUserType';
 
-export const login = (emailAddress, password) => async (dispatch, getState) => {
+export const login = (emailAddress, password) => async (dispatch) => {
   try {
     dispatch({
       type: USER_LOGIN_REQUEST,
     });
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
     const token = base64.encode(`${emailAddress}:${password}`);
+    // console.log(emailAddress,password,'userLogin');
 
-    const data = await axios.post(`${BASE_URL2}/login`, null, {
+    const config = {
+      method: 'post',
+      url: `${BASE_URL2}/login`,
       headers: {
         Authorization: `Basic ${token}`,
         'Content-Type': 'application/json',
       },
-    });
+      data:null
+    }
+
+    const data = await axios(config);
     console.log(data.responseBody);
     dispatch({
       type: USER_LOGIN_SUCCESS,
       payload: data.data.responseBody,
     });
-    // console.log(data.data.accessToken, 'LOGIN TOKEN');
     saveDataToStorage('user_token', data.data.responseBody.accessToken);
-    // logoutUserWhenTokenExpires(dispatch, data.data.responseBody.expires);
-    // saveDataToStorage('token', data.data.token);
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,
@@ -552,7 +550,7 @@ export const unFollow_Artist = (id) => async (dispatch, getState) => {
   }
 };
 
-export const storeUserLocation = (data) => {
+export const store_User_Location = (data) => {
   return {
     type: STORE_USER_LOCATION,
     payload: data,

@@ -18,7 +18,7 @@ const ArtistTabView = () => {
   let renderViews;
 
   if (activeIndex == 0) {
-    renderViews = <OverviewSc2een />;
+    renderViews = <OverviewScreen />;
   }
   if (activeIndex == 1) {
     renderViews = <SongsScreen />;

@@ -61,16 +61,16 @@ const GoogleFilterModal = props => {
     setActiveTab(false);
   };
   useEffect(() => {
-    if (props.userCountryCode != '') {
-      // const data = Data.getAllStatesFromCountry(props.userCountryCode);
+    if (props.countryFilter != '') {
+      const data = Data.getAllStatesFromCountry(props.countryFilter);
       // const data = Country.getStatesOfCountry(props.userCountryCode);
-      const data2 = State.getStatesOfCountry(props.userCountryCode);
+      // const data2 = State.getStatesOfCountry(props.userCountryCode);
 
-      if (data2) {
-        setStatesData(data2);
+      if (data) {
+        setStatesData(data);
       }
     }
-  }, [props.userCountryCode]);
+  }, [props.countryFilter]);
   // console.log(csc.getAllStates('NG'));
   console.log(statesData, 'Country Code');
   console.log(countryCode, 'Country Code');

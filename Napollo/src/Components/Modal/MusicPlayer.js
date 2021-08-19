@@ -44,7 +44,6 @@ class MusicPlayer extends PureComponent {
       currentTrackDetails: {},
       sheetRef: React.createRef(null),
       icon: false,
-      // currentTrackId: this.context.currentTrackDetails?.id,
     };
   }
 
@@ -120,11 +119,6 @@ class MusicPlayer extends PureComponent {
       </View>
     );
 
-    // const tracks = async () => {
-    //  return await this.context.getSongs();
-    // };
-    // console.log(tracks, 'TRACKSSS');
-
     let playBtn = null;
     let pauseBtn = null;
     let loadingAnimes = null;
@@ -142,12 +136,6 @@ class MusicPlayer extends PureComponent {
         </TouchableOpacity>
       );
     }
-    // console.log(
-    //   this.context.isMusicPaused,
-    //   this.context.isMusicStopped,
-    //   this.context.isMusicEmpty,
-    //   this.context.isMusicBuffering,
-    // );
 
     if (this.context.isMusicBuffering) {
       bufferingBtn = (
@@ -192,8 +180,6 @@ class MusicPlayer extends PureComponent {
             left: '40%',
           }}
           activeOpacity={0.8}>
-          {/* <LoadingAmin width={50} height={50} /> */}
-          {/* <Loader /> */}
           <ActivityIndicator size={65} color="#eee" />
         </TouchableOpacity>
       );
@@ -203,7 +189,6 @@ class MusicPlayer extends PureComponent {
       <>
         <Modal
           animationType="slide"
-          // animationType={!this.state.icon ? 'slide' : 'none'}
           swipeDirection="down"
           isVisible={this.props.openMusicPlayer.isMusicPlayerOpen}
           onSwipeComplete={() => this.props.closeModalPlayer()}
@@ -233,9 +218,6 @@ class MusicPlayer extends PureComponent {
               renderContent={renderContent}
               enabledInnerScrolling={true}
             />
-            {/* <PopUp shuffleState={this.context.shuffleState}>
-              {this.context.shuffleState}
-            </PopUp> */}
             <View
               style={[
                 {
@@ -301,17 +283,11 @@ class MusicPlayer extends PureComponent {
                     width: '85%',
                     height: height / 2.2,
                     borderRadius: 10,
-                    // transform: [{scaleY: animatedImageHeight}],
-                    // marginRight: 10,
                     marginTop: '2%',
-                    // marginLeft: animatedMarginLeft,
-                    // backgroundColor:"#900"
                   },
                 ]}>
                 {loadingAnimes}
                 <Image
-                  // source={require('../../assests/images/Background.jpg')}
-                  // source={{uri: image}}
                   source={image !== '' ? {uri: image} : ImagePlaceholder}
                   style={{width: null, height: '100%', borderRadius: 10}}
                 />
@@ -320,7 +296,6 @@ class MusicPlayer extends PureComponent {
                 <Text
                   style={{
                     color: '#eee',
-                    // textTransform: 'capitalize',
                     fontSize: scale(15),
                     textAlign: 'center',
                     fontFamily: 'Helvetica-ExtraBold',
@@ -337,7 +312,6 @@ class MusicPlayer extends PureComponent {
                 <Text
                   style={{
                     color: '#f68128',
-                    // textTransform: 'capitalize',
                     fontSize: scale(14),
                     textAlign: 'center',
                     fontFamily: 'Helvetica-Bold',
@@ -353,17 +327,12 @@ class MusicPlayer extends PureComponent {
 
               <View
                 style={{
-                  // flex: 1,
                   width,
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   paddingHorizontal: 25,
                   alignItems: 'center',
-                  // position: "absolute",
-                  // bottom:50
                   marginTop: '5%',
-
-                  // backgroundColor: '#900',
                 }}>
                 {this.context.repeatState === 'Repeat Off' ? (
                   <TouchableOpacity
@@ -455,53 +424,31 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     width: 80,
     height: 80,
-    // borderColor: '#f68128',
-    // backgroundColor: '#f68128',
     backgroundColor: 'rgba(255,255,255,0.061)',
-    // shadowColor: '#fff',
-    // shadowOffset: {
-    //   width: 6,
-    //   height: 6,
-    // },
-    // shadowOpacity: 0.9,
-    // shadowRadius: 5,
-
-    // elevation: 16,
   },
   iconCount2: {
-    // marginRight: 15,
     borderRadius: 50 / 2,
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
     width: 50,
     height: 50,
-    // borderColor: '#f68128',
     backgroundColor: '#f68128',
   },
   icons: {
     borderRadius: 40 / 2,
-    // borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
     width: 40,
     height: 40,
-    // backgroundColor: '#111',
   },
   icon: {
     borderRadius: 40 / 2,
-    // borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
     width: 40,
     height: 40,
     backgroundColor: 'transparent',
-    // borderWidth: 1,
-    // borderColor: '#666',
-    // backgroundColor: '#666',
-  },
-  artistDetail: {
-    // flex: 1,
   },
   header: {
     backgroundColor: 'rgba(255,255,255,0.061)',
@@ -523,6 +470,6 @@ const styles = ScaledSheet.create({
     zIndex: 300,
   },
   featuredArtists: {
-    fontSize: '10@s',
+    fontSize: '15@s',
   },
 });

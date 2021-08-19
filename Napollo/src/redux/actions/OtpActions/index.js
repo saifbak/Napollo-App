@@ -128,18 +128,18 @@ export const verify_Phone_Number =
         payload: data,
       });
     } catch (error) {
-      logoutUserWhenTokenExpires(
-        dispatch,
-        error,
-        VERIFY_USER_PHONE_NUMBER_FAIL,
-      );
-      // dispatch({
-      //   type: VERIFY_USER_PHONE_NUMBER_FAIL,
-      //   payload:
-      //     error.response && error.response.data.responseDescription
-      //       ? error.response.data.responseDescription
-      //       : error.message,
-      // });
+      // logoutUserWhenTokenExpires(
+      //   dispatch,
+      //   error,
+      //   VERIFY_USER_PHONE_NUMBER_FAIL,
+      // );
+      dispatch({
+        type: VERIFY_USER_PHONE_NUMBER_FAIL,
+        payload:
+          error.response && error.response.data.responseDescription
+            ? error.response.data.responseDescription
+            : error.message,
+      });
     }
   };
 export const resend_Phone_Number_Otp =
@@ -170,17 +170,17 @@ export const resend_Phone_Number_Otp =
         payload: data,
       });
     } catch (error) {
-        logoutUserWhenTokenExpires(
-          dispatch,
-          error,
-          RESEND_PHONE_NUMBER_OTP_CODE_FAIL,
-        );
-      // dispatch({
-      //   type: RESEND_PHONE_NUMBER_OTP_CODE_FAIL,
-      //   payload:
-      //     error.response && error.response.data.responseDescription
-      //       ? error.response.data.responseDescription
-      //       : error.message,
-      // });
+        // logoutUserWhenTokenExpires(
+        //   dispatch,
+        //   error,
+        //   RESEND_PHONE_NUMBER_OTP_CODE_FAIL,
+        // );
+      dispatch({
+        type: RESEND_PHONE_NUMBER_OTP_CODE_FAIL,
+        payload:
+          error.response && error.response.data.responseDescription
+            ? error.response.data.responseDescription
+            : error.message,
+      });
     }
   };

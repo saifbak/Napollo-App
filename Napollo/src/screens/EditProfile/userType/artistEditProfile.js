@@ -135,15 +135,15 @@ const ArtistEditProfile = (props) => {
   // } = userDetails;
 
   useEffect(() => {
-    if (countryCode != '') {
-      // const data = Data.getAllStatesFromCountry(countryCode);
-      const data = State.getStatesOfCountry(countryCode);
+    if (country != '') {
+      const data = Data.getAllStatesFromCountry(country);
+      // const data = State.getStatesOfCountry(country);
 
       if (data) {
         setStatesData(data);
       }
     }
-  }, [countryCode]);
+  }, [country]);
   const changeScreen = () => {
     navigation.navigate('Profile');
   };

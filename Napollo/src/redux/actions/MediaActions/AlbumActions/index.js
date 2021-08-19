@@ -70,6 +70,13 @@ export const create_Album =
         });
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, CREATE_ALBUM_FAIL);
+    //   dispatch({
+    //     type: CREATE_ALBUM_FAIL,
+    //     payload:
+    //     error.response && error.response.data.responseDescription
+    //       ? error.response.data.responseDescription
+    //       : error.message,
+    // });
     }
   };
 
@@ -92,6 +99,13 @@ export const get_Album_Detail = (id) => async (dispatch, getState) => {
     });
   } catch (error) {
     logoutUserWhenTokenExpires(dispatch, error, GET_ALBUM_DETAILS_FAIL);
+    //     dispatch({
+    //     type: GET_ALBUM_DETAILS_FAIL,
+    //     payload:
+    //     error.response && error.response.data.responseDescription
+    //       ? error.response.data.responseDescription
+    //       : error.message,
+    // });
   }
 };
 
@@ -121,6 +135,14 @@ export const get_All_User_Album =
       saveDataToStorage('userAlbums', data.responseBody.content);
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, GET_ALL_USER_ALBUM_FAIL);
+    //    dispatch({
+    //     type: GET_ALL_USER_ALBUM_FAIL,
+    //     payload:
+    //     error.response && error.response.data.responseDescription
+    //       ? error.response.data.responseDescription
+    //       : error.message,
+    // });
+      
     }
   };
 

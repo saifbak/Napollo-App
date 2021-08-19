@@ -1,7 +1,9 @@
 package com.napollo;
 
 import android.os.Bundle;
+import android.content.Intent;
 import com.facebook.react.ReactActivity;
+import org.devio.rn.splashscreen.SplashScreen;
 
 public class MainActivity extends ReactActivity {
 
@@ -10,11 +12,18 @@ public class MainActivity extends ReactActivity {
    * rendering of the component.
    */
 
+  //SPALSH SCREEN
+  @Override
+  protected void onCreate(Bundle savedInstanceState){
+    SplashScreen.show(this,R.style.SplashScreenTheme);
+    super.onCreate(savedInstanceState);
+  }
+
 // REACTnAVIGATION
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-  super.onCreate(null);
-}
+  // @Override
+  // protected void onCreate(Bundle savedInstanceState) {
+  // super.onCreate(null);
+  // }
 
 
   @Override

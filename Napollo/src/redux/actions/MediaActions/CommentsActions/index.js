@@ -153,8 +153,8 @@ export const delete_Media_Comment = (id) => async (dispatch, getState) => {
     // dispatch({
     //   type: DELETE_MEDIA_COMMENT_FAIL,
     //   payload:
-    //     error.response && error.response.data.description
-    //       ? error.response.data.description
+    //     error.response && error.response.data.responseDescription
+    //       ? error.response.data.responseDescription
     //       : error.message,
     // });
   }
