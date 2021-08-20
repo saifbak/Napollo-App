@@ -5,6 +5,7 @@ import {
   View,
   Dimensions,
   TouchableWithoutFeedback,
+  Platform,
   TextInput,
   TouchableOpacity,
 } from 'react-native';
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
   container: {
     width,
     position: 'absolute',
-    top: 20,
+    top: Platform.OS === 'ios' ? 35 : 20,
     zIndex: 100,
     // elevation: 10,
     paddingHorizontal: 10,

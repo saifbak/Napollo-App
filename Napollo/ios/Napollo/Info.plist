@@ -83,15 +83,15 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
-		<string>HelveticaNowText-Black.ttf</string>
-		<string>HelveticaNowText-BlackItalic.ttf</string>
-		<string>HelveticaNowText-Bold.ttf</string>
-		<string>HelveticaNowText-ExtraBold.ttf</string>
-		<string>HelveticaNowText-ExtraLight.ttf</string>
-		<string>HelveticaNowText-Light.ttf</string>
-		<string>HelveticaNowText-Medium.ttf</string>
-		<string>HelveticaNowText-Regular.ttf</string>
-		<string>HelveticaNowText-Thin.ttf</string>
+		<string>Helvetica-Black.ttf</string>
+		<string>Helvetica-BlackItalic.ttf</string>
+		<string>Helvetica-Bold.ttf</string>
+		<string>Helvetica-ExtraBold.ttf</string>
+		<string>Helvetica-ExtraLight.ttf</string>
+		<string>Helvetica-Light.ttf</string>
+		<string>Helvetica-Medium.ttf</string>
+		<string>Helvetica-Regular.ttf</string>
+		<string>Helvetica-Thin.ttf</string>
 		<string>Helvetica-black.ttf</string>
 		<string>Helvetica-Bold.ttf</string>
 		<string>Helvetica-ExtraBold.ttf</string>
@@ -100,6 +100,11 @@
 		<string>Helvetica-Medium.ttf</string>
 		<string>Helvetica-Regular.ttf</string>
 		<string>Helvetica-Thin.ttf</string>
+		<string>Gilroy-Bold.woff</string>
+		<string>Gilroy-Heavy.woff</string>
+		<string>Gilroy-Light.woff</string>
+		<string>Gilroy-Medium.woff</string>
+		<string>Gilroy-Regular.woff</string>
 	</array>
 </dict>
 </plist>

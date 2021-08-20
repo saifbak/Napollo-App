@@ -51,8 +51,22 @@ const NextSong = ({
   const playSong = async () => {
     // await TrackPlayer.play(song);
     // playerContext.playMusic(data);
+    const songsData = [];
+    data.forEach(item =>
+      songsData.push({
+        ...item,
+        artist: item.ownerAccountUser.username
+          ? `${item.ownerAccountUser.username}`
+          : item.title,
+      }),
+    );
+    // console.log(songsData);
+    playerContext.playMusic(songsData);
     dispatch(play_Media(city, state, country, id));
-    playerContext.playMusic(songs);
+
+    // playerContext.playMusic(songs);
+
+
   };
 
   return (

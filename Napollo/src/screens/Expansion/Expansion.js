@@ -5,6 +5,7 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
+  Platform,
   TouchableWithoutFeedback,
   Keyboard,
   SafeAreaView,
@@ -23,7 +24,7 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import Animated from 'react-native-reanimated';
 import {useSelector, useDispatch} from 'react-redux';
 import {openGoogleSearchModal} from '../../redux/actions/googleSearchActions';
-import {get_Artist_Trending} from '../../redux/actions/MediaActions/getMediaActions'
+import {get_Artist_Trending} from '../../redux/actions/MediaActions/getMediaActions';
 import BottomSheetContent from './component/BottomSheetContent';
 import GoogleSearchModal from '../../Components/Modal/GoogleSearchModal';
 import GoogleFilterModal from './component/FilterModal/GoogleFilterModal';
@@ -43,10 +44,8 @@ const Expansion = () => {
     userProfile: {profileUrl},
   } = userData;
 
-  const storeUserCoordinates = useSelector(
-    (state) => state.storeUserCoordinates,
-  );
-  const storeUserLocation = useSelector((state) => state.storeUserLocation);
+  const storeUserCoordinates = useSelector(state => state.storeUserCoordinates);
+  const storeUserLocation = useSelector(state => state.storeUserLocation);
 
   const {city, state, country, countryCode} = storeUserLocation;
 
@@ -74,7 +73,7 @@ const Expansion = () => {
     setOpenGoogleSearch(false);
   };
 
-  const ShowValue = (value) => {
+  const ShowValue = value => {
     // console.log(value);
     setShow(false);
   };
@@ -94,17 +93,17 @@ const Expansion = () => {
   //     })
   //     .catch((err) => console.log(err));
   // };
-  const changeUserLocations = (data) => {
+  const changeUserLocations = data => {
     setUserLocation({latitude: data.lat, longitude: data.lng});
   };
-  const changeUserArea = (value) => {
+  const changeUserArea = value => {
     setUserArea(value);
   };
   const geocoder = async () => {
     const loc = await Geocoder.geocodeAddress(
       `${stateFilter},${countryFilter}`,
     );
-    console.log(loc[0].position.lat)
+    console.log(loc[0].position.lat);
     if (loc) {
       setUserLocation({
         latitude: loc[0].position.lat,
@@ -182,53 +181,87 @@ const Expansion = () => {
           resultNum={resultNum}
           userArea={userArea}
           userCountryCode={countryCodeFilter}
-          chooseCountryCode={(val) => setCountryCodeFilter(val)}
-          chooseStateFilter={(val) => setStateFilter(val)}
-          chooseCountryFilter={(val) => setCountryFilter(val)}
-          chooseResultNum={(val) => setResultNum(val)}
+          chooseCountryCode={val => setCountryCodeFilter(val)}
+          chooseStateFilter={val => setStateFilter(val)}
+          chooseCountryFilter={val => setCountryFilter(val)}
+          chooseResultNum={val => setResultNum(val)}
         />
         <GoogleSearchModal
           value={userSearchValue}
-          onChangeText={(text) => onChangeText(text)}
+          onChangeText={text => onChangeText(text)}
           changeUserArea={() => changeUserArea(area)}
           // changeUserArea={changeUserArea}
-          changeUserLocation={(data) => changeUserLocations(data)}
+          changeUserLocation={data => changeUserLocations(data)}
           visible={openGoogleSearch}
           closeModal={() => closeGoogleModal()}
           // changeUserLocation={changeUserLocations}
         />
         {/* MAPVIEW */}
-        <MapView
-          provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-          style={styles.map}
-          mapType="standard"
-          region={{
-            // latitude: 24.8317098,
-            // longitude: 67.00210948,
-            latitude: userLocation.latitude,
-            longitude: userLocation.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}>
-          <Marker
-            coordinate={{
+        {Platform.OS === 'ios' ? (
+          <MapView
+            // provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+            style={styles.map}
+            mapType="standard"
+            region={{
+              // latitude: 24.8317098,
+              // longitude: 67.00210948,
               latitude: userLocation.latitude,
               longitude: userLocation.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
             }}>
-            <Markers item={userLocation.markerImage} />
-          </Marker>
-          {/* {locations.map((marker, index) => (
             <Marker
               coordinate={{
                 latitude: userLocation.latitude,
                 longitude: userLocation.longitude,
-              }}
-              key={index}>
-              <Markers item={marker} />
+              }}>
+              <Markers item={userLocation.markerImage} />
             </Marker>
-          ))} */}
-          {/* <Heatmap points={locations1} radius={50} /> */}
-        </MapView>
+            {/* {locations.map((marker, index) => (
+          <Marker
+            coordinate={{
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude,
+            }}
+            key={index}>
+            <Markers item={marker} />
+          </Marker>
+        ))} */}
+            {/* <Heatmap points={locations1} radius={50} /> */}
+          </MapView>
+        ) : (
+          <MapView
+            provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+            style={styles.map}
+            mapType="standard"
+            region={{
+              // latitude: 24.8317098,
+              // longitude: 67.00210948,
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}>
+            <Marker
+              coordinate={{
+                latitude: userLocation.latitude,
+                longitude: userLocation.longitude,
+              }}>
+              <Markers item={userLocation.markerImage} />
+            </Marker>
+            {/* {locations.map((marker, index) => (
+        <Marker
+          coordinate={{
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+          }}
+          key={index}>
+          <Markers item={marker} />
+        </Marker>
+      ))} */}
+            {/* <Heatmap points={locations1} radius={50} /> */}
+          </MapView>
+        )}
         <BottomSheet
           ref={Bs}
           snapPoints={['95%', '18%']}
