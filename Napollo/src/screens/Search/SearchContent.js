@@ -159,7 +159,8 @@ const HomeContent = () => {
     mainTrendingView = (
       <TouchableOpacity
         activeOpacity={0.7}
-        onPress={() => dispatch(get_Trending_Media(page, size))}>
+        // onPress={() => dispatch(get_Trending_Media(page, size))}
+        >
         <Text
           style={{
             color: '#999',
