@@ -7,7 +7,7 @@ const Stack = createStackNavigator();
 const DiscoveredSongsStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false}}>
-      <Stack.Screen name="DiscoveredSongs" component={DiscoveredSongs} />
+      <Stack.Screen name="MainDiscoveredSongs" component={DiscoveredSongs} />
     </Stack.Navigator>
   );
 };

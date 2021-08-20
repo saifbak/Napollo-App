@@ -49,7 +49,7 @@ const PlayerContext = React.createContext({
   skipToPreviousMusic: () => null,
   musicPause: () => null,
   musicPlay: () => null,
-  // bottomRef: null,
+  bottomRef: null,
   getSongs: () => null,
   currentTrackId: '',
   currentTrackDetails: {},
@@ -82,6 +82,8 @@ export const PlayerContextProvider = ({children}) => {
   const [shuffleState, setShuffleState] = useState(false);
   const [repeatState, setRepeatState] = useState('off');
 
+  
+  const bottomRef = useRef(null);
   const dispatch = useDispatch();
   const openMusicPlayer = useSelector(state => state.openMusicPlayer);
   const {data} = openMusicPlayer;
@@ -474,7 +476,7 @@ export const PlayerContextProvider = ({children}) => {
     playMusic,
     skipToPreviousMusic,
     skipToNextMusic,
-    // bottomRef,
+    bottomRef,
     getSongs,
     currentTrackId,
     currentTrackDetails,

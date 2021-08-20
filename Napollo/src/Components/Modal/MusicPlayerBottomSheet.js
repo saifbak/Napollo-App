@@ -24,7 +24,7 @@ const MusicPlayerBottomSheet = ({onPress, image, toggleBottomSheet, icon}) => {
         {
           // height,
           // backgroundColor: '#1A1A1A',
-          zIndex: 500,
+          zIndex: 200,
           paddingBottom: 20,
         },
       ]}

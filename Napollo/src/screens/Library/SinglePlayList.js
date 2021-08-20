@@ -28,10 +28,16 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {scale, ScaledSheet} from 'react-native-size-matters';
+import MediaSongs from '../../Components/LibrarySongs/MediaSongs';
+import PlayerContext from '../../PlayerContext/PlayerContext';
+import {play_Media} from '../../redux/actions/MediaActions/getMediaActions';
+import {openModalPlayer} from '../../redux/actions/musicPlayerActions';
 
 const {width, height} = Dimensions.get('window');
 
 class SinglePlaylistScreen extends Component {
+  static contextType = PlayerContext;
   constructor(props) {
     super(props);
 
@@ -67,6 +73,49 @@ class SinglePlaylistScreen extends Component {
         key={song.title}
       />
     ));
+
+    // console.log(this.context.playMusic);
+    const artists = media.map((item, index) => item.ownerAccountUser);
+    let mainView = null;
+    if (media.length <= 0) {
+      mainView = (
+        <View
+          style={{width: '100%', alignItems: 'center', marginTop: scale(10)}}>
+          <Text
+            style={{
+              textAlign: 'çenter',
+              fontSize: scale(11),
+              color: '#fff',
+              fontFamily: 'Helvetica-Bold',
+            }}>
+            You haven't added any song, Please do.
+          </Text>
+        </View>
+      );
+    } else {
+      mainView = media.map((song, index) => (
+        <MediaSongs
+          {...song}
+          {...artists}
+          allSongs={media}
+          key={song.hits + Math.random()}
+          showLikeBtn={true}
+          indexes
+          index={index}
+        />
+      ));
+    }
+    const {city, state, country} = this.props.storeUserLocation;
+    const allSongs = {
+      currentTrack: media[0],
+      mediaSongs: media,
+    };
+
+    const playSongs = () => {
+      this.props.play_Media(city, state, country, media[0]?.id);
+      this.props.openModalPlayer(allSongs);
+      this.context.playMusic([...media]);
+    };
     // REF FRO BOTTOM SHEET
     const Bs = React.createRef(null);
 
@@ -111,10 +160,10 @@ class SinglePlaylistScreen extends Component {
             </View>
           </Animated.View>
           <Animated.ScrollView
-            contentContainerStyle={{width}}
+            contentContainerStyle={{width, paddingBottom: 10}}
             showsVerticalScrollIndicator={false}
             scrollEventThrottle={16}
-            onScroll={(e) => {
+            onScroll={e => {
               this.scrollY.setValue(e.nativeEvent.contentOffset.y);
             }}>
             {/* HEADER */}
@@ -159,9 +208,9 @@ class SinglePlaylistScreen extends Component {
                         url && url !== '' ? {uri: url} : PlaylistImagePlacHolder
                       }
                       style={{
-                        width: '100%',
+                        width: '90%',
                         height: '70%',
-                        borderRadius: 20,
+                        borderRadius: 10,
                         marginTop: 10,
                         zIndex: 200,
                       }}
@@ -185,14 +234,19 @@ class SinglePlaylistScreen extends Component {
                           ? `${media.length} song`
                           : `${media.length} songs`}
                       </Text>
-                      <Animated.View style={[styles.iconCont]}>
-                        <AlbumIconDetails />
-                      </Animated.View>
                     </View>
+                    {/* <Animated.View style={[styles.iconCont]}>
+                      <AlbumIconDetails />
+                    </Animated.View> */}
                     {/* BUTTONS */}
                     <View style={styles.btn}>
                       <View style={{width: '100%', marginBottom: 10}}>
-                        <LoginBtn title="Play All" icon="play" height={40} />
+                        <LoginBtn
+                          title="Play All"
+                          icon="play"
+                          height={45}
+                          onPress={() => playSongs()}
+                        />
                       </View>
                       {/* <View style={{width: '100%'}}>
                         <LoginBtn
@@ -215,7 +269,12 @@ class SinglePlaylistScreen extends Component {
                 </Animated.Text> */}
               </ImageBackground>
               <Animated.View style={styles.songs}>
-                <ScrollView>{songs}</ScrollView>
+                <Text style={[styles.Album_artist, {marginBottom: scale(20)}]}>
+                  {media.length <= 0
+                    ? `Song (${media.length})`
+                    : `Songs (${media.length})`}
+                </Text>
+                <ScrollView>{mainView}</ScrollView>
               </Animated.View>
             </Animateds.View>
           </Animated.ScrollView>
@@ -225,13 +284,16 @@ class SinglePlaylistScreen extends Component {
   }
 }
 
-const mapStateToProps = ({storeActivePlaylistDetails}) => ({
+const mapStateToProps = ({storeActivePlaylistDetails, storeUserLocation}) => ({
   storeActivePlaylistDetails,
+  storeUserLocation,
 });
 
-export default connect(mapStateToProps)(SinglePlaylistScreen);
+export default connect(mapStateToProps, {play_Media, openModalPlayer})(
+  SinglePlaylistScreen,
+);
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
@@ -243,6 +305,8 @@ const styles = StyleSheet.create({
     width,
     position: 'absolute',
     top: 0,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
     // paddingBottom: 10,
 
     // opacity: 0.5,
@@ -257,7 +321,7 @@ const styles = StyleSheet.create({
   Album_artist: {
     marginTop: 5,
     color: '#fff',
-    fontSize: hp('3.3%'),
+    fontSize: '15@s',
     fontFamily: 'Helvetica-ExtraBold',
     width: '100%',
     flexWrap: 'wrap',
@@ -284,7 +348,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     width: '100%',
-    marginTop: '35%',
+    marginTop: '5%',
     // flexDirection: 'row',
     // justifyContent: 'space-around',
   },
@@ -294,14 +358,15 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   rightContent: {
-    width: '40%',
-    marginLeft: 10,
+    width: '50%',
+    // marginLeft: 5,
     height: '60%',
-    paddingTop: 20,
+    paddingTop: '10@s',
+    // backgroundColor: '#900',
   },
   songs: {
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 20,
     marginTop: height / 1.8,
     borderTopRightRadius: 20,
   },

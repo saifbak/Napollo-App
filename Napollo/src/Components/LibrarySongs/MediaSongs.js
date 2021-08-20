@@ -58,6 +58,7 @@ const MedialSong = props => {
     album: props.album,
     featuredArtists: props.featuredArtists,
     ownerAccountUser: props.ownerAccountUser,
+    hitCount: props.hits,
   };
   const allSongs = {
     currentTrack,

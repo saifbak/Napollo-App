@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 11,
     color: '#eee',
-    fontFamily: 'Gilroy-Bold',
+    fontFamily: 'Helvetica-Bold',
     letterSpacing: 0.5,
   },
 });

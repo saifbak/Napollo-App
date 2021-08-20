@@ -51,6 +51,7 @@ const MainMusicPlayerHeader = props => {
         </Text>
       </View>
       <TouchableOpacity
+        onPress={() => props.openBottomModal()}
         activeOpacity={0.8}
         hitSlop={{top: 20, left: 20, right: 20, bottom: 20}}>
         <Icon name="ellipsis-vertical" size={scale(24)} color="#F68128" />

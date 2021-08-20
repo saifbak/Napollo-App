@@ -8,7 +8,7 @@ const SinglePlayListStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false}}>
       <Stack.Screen
-        name="SinglePlayList"
+        name="MainSinglePlayList"
         component={SinglePlayList}
       />
     </Stack.Navigator>

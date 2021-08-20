@@ -52,6 +52,7 @@ import Geocoder from 'react-native-geocoder';
 import {CLEAR_LOGOUT_TOKEN_MESSAGE} from './src/redux/constants/index';
 import {getUserCallingCode} from './src/utils/loggedInUserType';
 import MainMusicPlayer from './src/Components/Modal/MainMusicPlayer';
+import ListenElsewhereModal from './src/Components/Modal/ListenElsewhereModal';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -206,14 +207,15 @@ const App = () => {
       <PlayerContextProvider>
         <RootRoute />
         {/* <MusicPlayer /> */}
-        <MainMusicPlayer />
         <SongBottomModal />
+        <MainMusicPlayer />
         <ModalOverlay />
         <GoogleModal />
         <Comment_Modal />
         <Media_Comment_Modal />
         <CreatePlaylistModal />
         <MediaPlaylistModalForm />
+        <ListenElsewhereModal />
         <MainErrorPopUp
           clearTime={5000}
           errorState={message}

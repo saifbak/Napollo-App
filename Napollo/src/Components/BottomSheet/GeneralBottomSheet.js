@@ -9,13 +9,13 @@ const GeneralBottomSheet = React.forwardRef((props, ref) => {
       openDuration={0}
       closeDuration={0}
       animationType="slide"
-      
       closeOnDragDown
       customStyles={{
         container: {
           borderTopRightRadius: props.radius ? props.radius : null,
           borderTopLeftRadius: props.radius ? props.radius : null,
           backgroundColor: props.bg ? props.bg : '#222',
+          zIndex: 1000,
         },
         draggableIcon: {
           backgroundColor: '#F68128',

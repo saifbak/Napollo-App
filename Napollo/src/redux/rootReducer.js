@@ -1,6 +1,11 @@
 import {combineReducers} from 'redux';
 import {openMusicPlayerReducer} from './reducers/musicPlayerReducer';
-import {openSongBottomSheetReducer} from './reducers/songBottomSheetReducer';
+import {
+  openSongBottomSheetReducer,
+  listenElsewhereModalReducer,
+  singleArtistModalReducer,
+  singleListenerModalReducer,
+} from './reducers/songBottomSheetReducer';
 import {openGoogleSearchReducer} from './reducers/googleSearchModalReducer';
 import {openNotificationFilterReducer} from './reducers/notificationFilterReducer';
 import {
@@ -17,7 +22,7 @@ import {
   getAllUsersReducer,
   storeUserLocationReducer,
   logoutUserWhenTokenExpiresReducer,
-  storeUserCoordinatesReducer
+  storeUserCoordinatesReducer,
 } from './reducers/userReducer';
 
 import {
@@ -100,7 +105,7 @@ import {
   deleteAlbumReducer,
   getAlbumDetailsReducer,
   getAllUserAlbumReducer,
-  storeActiveAlbumDetailsReducer
+  storeActiveAlbumDetailsReducer,
 } from './reducers/MediaReducers/AlbumReducers/index';
 
 import {
@@ -118,6 +123,9 @@ const rootReducer = combineReducers({
   openNotificationFilter: openNotificationFilterReducer,
   openMediaPlaylistModalForm: openMediaPlaylistModalFormReducer,
   openMediaPlaylistModal: openMediaPlaylistModalReducer,
+  listenElsewhereModal: listenElsewhereModalReducer,
+  singleArtistModal: singleArtistModalReducer,
+  singleListenerModal: singleListenerModalReducer,
   getAlbumSearch: getAlbumSearchReducer,
   getArtistSearch: getArtistSearchReducer,
   getGenreSearch: getGenreSearchReducer,

@@ -17,17 +17,33 @@ const NextSong = ({
   id,
   ownerAccountUser,
   featuredArtists,
+  hits,
+  album,
+  genre
 }) => {
   const playerContext = usePlayerContext();
   const dispatch = useDispatch();
   const {id: trackId} = playerContext.currentTrackDetails;
-  const openMusicPlayer = useSelector((state) => state.openMusicPlayer);
-  const storeUserLocation = useSelector((state) => state.storeUserLocation);
+  const openMusicPlayer = useSelector(state => state.openMusicPlayer);
+  const storeUserLocation = useSelector(state => state.storeUserLocation);
   const {city, state, country} = storeUserLocation;
   // const {id: trackId} = openMusicPlayer.currentPlayerTrack;
   const {data} = openMusicPlayer;
   const {username} = ownerAccountUser;
-  const song = {title, url, image, id, username, featuredArtists,ownerAccountUser};
+  const song = {
+    title,
+    url,
+    image,
+    id,
+    username,
+    featuredArtists,
+    ownerAccountUser,
+    hitCount: hits,
+    album,
+    artist: ownerAccountUser?.username,
+    artwork: image,
+    genre:genre?.name
+  };
   const songs = [song, ...data];
 
   const featuringArtist = featuredArtists?.join('&');
@@ -36,7 +52,7 @@ const NextSong = ({
     // await TrackPlayer.play(song);
     // playerContext.playMusic(data);
     dispatch(play_Media(city, state, country, id));
-    playerContext.playMusic( songs);
+    playerContext.playMusic(songs);
   };
 
   return (

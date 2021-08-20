@@ -12,6 +12,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   openSongBottomSheetView,
   closeSongBottomSheetView,
+  openListenElsewhereModal,
 } from '../../redux/actions/songBottomSheetAction';
 import Divider from '../Divider/Divider';
 // ICONS
@@ -37,24 +38,24 @@ import {scale, ScaledSheet} from 'react-native-size-matters';
 
 // import {useNavigation} from '@react-navigation/native';
 
-const SongBottomModal = (props) => {
+const SongBottomModal = props => {
   // console.log(props, 'HOMEPROPS');
 
   //  const navigation = useNavigation();
   // const bottomRef = useRef(null);
   const playerContext = usePlayerContext();
 
-  const openSongBottomSheet = useSelector((state) => state.openSongBottomSheet);
+  const openSongBottomSheet = useSelector(state => state.openSongBottomSheet);
   const {
     isSongBottomSheetOpen,
     songDetails: {title: songTitle, artwork: songImage, artists, hitCount, id},
   } = openSongBottomSheet;
-  const getUserProfile = useSelector((state) => state.getUserProfile);
+  const getUserProfile = useSelector(state => state.getUserProfile);
   const {
     userProfile: {username},
   } = getUserProfile;
   const openMediaCommentModal = useSelector(
-    (state) => state.openMediaCommentModal,
+    state => state.openMediaCommentModal,
   );
   const {isMediaCommentModalOpen, mediaCommentDetails} = openMediaCommentModal;
   const closeBottomSheet = () => {
@@ -89,6 +90,11 @@ const SongBottomModal = (props) => {
     dispatch({type: OPEN_MEDIA_PLAYLIST_MODAL});
   };
 
+  const listenElsewhere = () => {
+    closeBottomSheet();
+    dispatch(openListenElsewhereModal());
+  };
+
   const arr2 = [
     {
       icon: <ShareIcon color="#999" />,
@@ -98,7 +104,7 @@ const SongBottomModal = (props) => {
     {
       icon: <Icon name="headset" size={28} color="#999" />,
       title: 'Listen Elsewhere',
-      onPress: () => closeBottomSheet(),
+      onPress: () => listenElsewhere(),
     },
     {
       icon: <LikeIcon color="#999" />,
@@ -166,6 +172,7 @@ const SongBottomModal = (props) => {
           paddingHorizontal: 20,
           paddingTop: 0,
           position: 'relative',
+          zIndex: 1000,
         }}>
         <View style={{marginTop: 10}}>
           <View style={styles.songDetailView}>
@@ -189,7 +196,7 @@ const SongBottomModal = (props) => {
           </View>
           <FlatList
             data={arr2}
-            keyExtractor={(item) => item.title}
+            keyExtractor={item => item.title}
             renderItem={({item}) => (
               <View
                 style={{
@@ -198,7 +205,9 @@ const SongBottomModal = (props) => {
                   alignItems: 'center',
                 }}>
                 {item.icon}
-                <TouchableOpacity onPress={() => item.onPress()}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => item.onPress()}>
                   <Text
                     style={{
                       color: '#eee',

@@ -28,6 +28,7 @@ import {
   closeModalPlayer,
   shuffleSongs,
 } from '../../redux/actions/musicPlayerActions';
+import {openSongBottomSheetView} from '../../redux/actions/songBottomSheetAction';
 import {CLOSE_MUSIC_PLAYER} from '../../redux/constants/index';
 import PlayerContext from '../../PlayerContext/PlayerContext';
 import {usePlayerContext} from '../../PlayerContext/PlayerContext';
@@ -81,9 +82,32 @@ const MainMusicPlayer = () => {
   } = usePlayerContext();
   // console.log(repeatState,'repeat State');
 
-  const {title, url, image, id, artist, featuredArtists, ownerAccountUser} =
-    currentTrackDetails;
+  const {
+    title,
+    url,
+    image,
+    id,
+    artist,
+    featuredArtists,
+    ownerAccountUser,
+    hitCount,
+  } = currentTrackDetails;
   const featuringArtist = featuredArtists?.join('&');
+
+  const openSongBottomSheetModal = () => {
+    dispatch(
+      openSongBottomSheetView({
+        title,
+        id,
+        image,
+        url,
+        artist,
+        featuredArtists,
+        ownerAccountUser,
+        hitCount,
+      }),
+    );
+  };
 
   // useEffect(() => {
   //   scrollX.addListener(({value}) => {
@@ -229,7 +253,7 @@ const MainMusicPlayer = () => {
         animationType="slide"
         swipeDirection="down"
         backdropColor="transparent"
-        backdropOpacity={1}
+        backdropOpacity={0}
         isVisible={isMusicPlayerOpen}
         onSwipeComplete={() => dispatch(closeModalPlayer())}
         onRequestClose={() => dispatch(closeModalPlayer())}
@@ -239,6 +263,7 @@ const MainMusicPlayer = () => {
         style={{
           flex: 1,
           margin: 0,
+          zIndex: 100,
         }}>
         <ImageBackground
           //   source={require('../../assests/images/caro1.jpg')}
@@ -266,6 +291,7 @@ const MainMusicPlayer = () => {
             artist={ownerAccountUser?.username}
             featured={featuringArtist}
             closeModalPlayer={() => dispatch(closeModalPlayer())}
+            openBottomModal={() => openSongBottomSheetModal()}
             // title={data[songIndex].title}
             // artist={data[songIndex].ownerAccountUser.username}
           />
@@ -440,11 +466,11 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     width: 80,
     height: 80,
-    backgroundColor: 'rgba(255,255,255,0.061)',
+    backgroundColor: 'rgba(255,255,255,0.065)',
   },
   header: {
-    backgroundColor: 'rgba(255,255,255,0.061)',
-    shadowColor: 'rgba(255,255,255,0.061)',
+    backgroundColor: 'rgba(255,255,255,0.085)',
+    shadowColor: 'rgba(255,255,255,0.085)',
     paddingTop: 0,
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,

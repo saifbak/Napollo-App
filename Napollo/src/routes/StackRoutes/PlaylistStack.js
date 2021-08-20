@@ -12,7 +12,7 @@ const Stack = createStackNavigator();
 const PlaylistStack = ({navigation}) => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Playlist" component={PlaylistScreen} />
+      <Stack.Screen name="MainPlaylist" component={PlaylistScreen} />
     </Stack.Navigator>
   );
 };
