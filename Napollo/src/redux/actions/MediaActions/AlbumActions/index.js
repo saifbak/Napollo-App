@@ -38,14 +38,20 @@ export const create_Album =
       const token = getState().userLogin.token;
       const authorization = `Bearer ${token}`;
       const data = new FormData();
-      data.append('albumArt', {
-        uri: Platform.OS === 'android' ? `file://${albumArt}` : albumArt,
-        type: fileType,
-        name: 'albumArt',
-      });
-      data.append('name', `${name}`);
-      data.append('description', `${description}`);
-      data.append('year', `${year}`);
+      if (albumArt === '') {
+        data.append('name', `${name}`);
+        data.append('description', `${description}`);
+        data.append('year', `${year}`);
+      } else {
+        data.append('albumArt', {
+          uri: Platform.OS === 'android' ? `file://${albumArt}` : albumArt,
+          type: fileType,
+          name: 'albumArt',
+        });
+        data.append('name', `${name}`);
+        data.append('description', `${description}`);
+        data.append('year', `${year}`);
+      }
 
       const config = {
         method: 'post',
@@ -57,7 +63,7 @@ export const create_Album =
         data: data,
       };
       await axios(config)
-        .then((res) => {
+        .then(res => {
           console.log(res, 'PICS RES');
           dispatch({
             type: CREATE_ALBUM_SUCCESS,
@@ -65,22 +71,22 @@ export const create_Album =
           });
           dispatch(get_All_User_Album(page, size));
         })
-        .catch((error) => {
+        .catch(error => {
           logoutUserWhenTokenExpires(dispatch, error, CREATE_ALBUM_FAIL);
         });
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, CREATE_ALBUM_FAIL);
-    //   dispatch({
-    //     type: CREATE_ALBUM_FAIL,
-    //     payload:
-    //     error.response && error.response.data.responseDescription
-    //       ? error.response.data.responseDescription
-    //       : error.message,
-    // });
+      //   dispatch({
+      //     type: CREATE_ALBUM_FAIL,
+      //     payload:
+      //     error.response && error.response.data.responseDescription
+      //       ? error.response.data.responseDescription
+      //       : error.message,
+      // });
     }
   };
 
-export const get_Album_Detail = (id) => async (dispatch, getState) => {
+export const get_Album_Detail = id => async (dispatch, getState) => {
   try {
     dispatch({
       type: GET_ALBUM_DETAILS_LOADING,
@@ -132,21 +138,20 @@ export const get_All_User_Album =
         type: GET_ALL_USER_ALBUM_SUCCESS,
         payload: data.responseBody.content,
       });
-      saveDataToStorage('userAlbums', data.responseBody.content);
+      saveDataToStorage('artistAlbums', data.responseBody.content);
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, GET_ALL_USER_ALBUM_FAIL);
-    //    dispatch({
-    //     type: GET_ALL_USER_ALBUM_FAIL,
-    //     payload:
-    //     error.response && error.response.data.responseDescription
-    //       ? error.response.data.responseDescription
-    //       : error.message,
-    // });
-      
+      //    dispatch({
+      //     type: GET_ALL_USER_ALBUM_FAIL,
+      //     payload:
+      //     error.response && error.response.data.responseDescription
+      //       ? error.response.data.responseDescription
+      //       : error.message,
+      // });
     }
   };
 
-export const delete_Album = (id) => async (dispatch, getState) => {
+export const delete_Album = id => async (dispatch, getState) => {
   try {
     dispatch({
       type: DELETE_ALBUM_LOADING,
@@ -206,13 +211,13 @@ export const update_Playlist_Details =
       };
 
       await axios(config)
-        .then((res) => {
+        .then(res => {
           dispatch({
             type: UPDATE_ALBUM_DETAILS_SUCCESS,
             payload: res.data,
           });
         })
-        .catch((error) => {
+        .catch(error => {
           logoutUserWhenTokenExpires(
             dispatch,
             error,
@@ -237,3 +242,10 @@ export const update_Playlist_Details =
       // });
     }
   };
+
+export const store_Active_Album_Details = data => {
+  return {
+    type: STORE_ACTIVE_ALBUM_DETAILS,
+    payload: data,
+  };
+};

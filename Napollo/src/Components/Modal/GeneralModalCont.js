@@ -9,7 +9,7 @@ const GeneralModalCont = (props) => {
         animationType="slide"
         swipeDirection="down"
         transparent={true}
-        visible={props.visible}
+        isVisible={props.visible}
         style={{
           flex: 1,
           marginLeft: 0,

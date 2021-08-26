@@ -38,6 +38,7 @@ import {
   STORE_ACTIVE_PLAYLIST_DETAILS,
   CLEAR_ALL_PLAYLIST_ON_LOGOUT,
   CLEAR_ALL_USER_PLAYLIST_ON_LOGOUT,
+  CLEAR_PLAYLIST_STATE,
 } from '../../../constants/index';
 
 export const createPlaylistReducer = (
@@ -73,6 +74,13 @@ export const createPlaylistReducer = (
         error: '',
         status: false,
         message: '',
+        loading: false,
+      };
+    case CLEAR_PLAYLIST_STATE:
+      return {
+        ...state,
+        error: '',
+        loading: false,
       };
 
     default:

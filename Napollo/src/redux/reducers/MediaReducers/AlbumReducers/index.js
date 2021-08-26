@@ -207,7 +207,14 @@ export const getAllUserAlbumReducer = (
 };
 
 export const storeActiveAlbumDetailsReducer = (
-  state = {name: '', description: '', year: '', id: '', owner: '', number: ''},
+  state = {
+    name: '',
+    description: '',
+    year: '',
+    id: '',
+    owner: '',
+    url: '',
+  },
   {type, payload},
 ) => {
   switch (type) {
@@ -219,7 +226,7 @@ export const storeActiveAlbumDetailsReducer = (
         year: payload.year,
         id: payload.id,
         owner: payload.owner,
-        number: payload.number,
+        url: payload.url,
       };
 
     default:

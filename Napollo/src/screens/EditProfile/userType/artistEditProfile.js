@@ -302,7 +302,7 @@ const ArtistEditProfile = (props) => {
               {updateMessagePics}
             </MainSuccessPopUp>
             <MainErrorPopUp
-              clearTime={2000}
+              clearTime={1500}
               errorState={updateError}
               clearError={() =>
                 dispatch({type: CLEAR_UPDATE_USER_PROFILE_STATE})
@@ -310,7 +310,7 @@ const ArtistEditProfile = (props) => {
               {updateError}
             </MainErrorPopUp>
             <MainErrorPopUp
-              clearTime={2000}
+              clearTime={1500}
               errorState={updateErrorPics}
               clearError={() =>
                 dispatch({type: CLEAR_UPDATE_USER_PROFILE_PICS_STATE})

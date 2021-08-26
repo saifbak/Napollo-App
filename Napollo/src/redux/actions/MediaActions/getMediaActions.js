@@ -24,10 +24,18 @@ import {
   ADD_MEDIA_TO_DISCOVER_PAGE_FAIL,
   ADD_MEDIA_TO_DISCOVER_PAGE_LOADING,
   ADD_MEDIA_TO_DISCOVER_PAGE_SUCCESS,
+  LIKE_A_DISCOVER_SONG_FAIL,
+  LIKE_A_DISCOVER_SONG_LOADING,
+  LIKE_A_DISCOVER_SONG_SUCCESS,
+  GET_ALL_USER_DISCOVERED_SONG_FAIL,
+  GET_ALL_USER_DISCOVERED_SONG_LOADING,
+  GET_ALL_USER_DISCOVERED_SONG_SUCCESS,
+  DISCOVER_SCREEN_CURRENT_PAGE,
+  DISCOVER_SCREEN_CURRENT_SIZE,
 } from '../../constants/index';
 import {BASE_URL2} from '@env';
 import axios from 'axios';
-import {logoutUserWhenTokenExpires} from '../../../utils/loggedInUserType'
+import {logoutUserWhenTokenExpires} from '../../../utils/loggedInUserType';
 
 export const get_Media = (page, size) => async (dispatch, getState) => {
   try {
@@ -96,43 +104,42 @@ export const get_Trailer_Media = (page, size) => async (dispatch, getState) => {
   }
 };
 
-export const add_Media_To_Discover_Page =
-  (id) => async (dispatch, getState) => {
-    try {
-      dispatch({
-        type: ADD_MEDIA_TO_DISCOVER_PAGE_LOADING,
-      });
-      const token = getState().userLogin.token;
-      const authorization = `Bearer ${token}`;
-      const config = {
-        headers: {
-          Authorization: authorization,
-        },
-        params: {
-          id,
-        },
-      };
+export const add_Media_To_Discover_Page = id => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: ADD_MEDIA_TO_DISCOVER_PAGE_LOADING,
+    });
+    const token = getState().userLogin.token;
+    const authorization = `Bearer ${token}`;
+    const config = {
+      headers: {
+        Authorization: authorization,
+      },
+      params: {
+        id,
+      },
+    };
 
-      const res = await axios.post(`${BASE_URL2}/media/discover`);
-      dispatch({
-        type: ADD_MEDIA_TO_DISCOVER_PAGE_SUCCESS,
-        payload: res.data,
-      });
-    } catch (error) {
-       logoutUserWhenTokenExpires(
-         dispatch,
-         error,
-         ADD_MEDIA_TO_DISCOVER_PAGE_FAIL,
-       );
-      // dispatch({
-      //   type: ADD_MEDIA_TO_DISCOVER_PAGE_FAIL,
-      //   payload:
-      //     error.response && error.response.data.responseDescription
-      //       ? error.response.data.responseDescription
-      //       : error.message,
-      // });
-    }
-  };
+    const res = await axios.post(`${BASE_URL2}/media/discover`, null, config);
+    dispatch({
+      type: ADD_MEDIA_TO_DISCOVER_PAGE_SUCCESS,
+      payload: res.data,
+    });
+  } catch (error) {
+    logoutUserWhenTokenExpires(
+      dispatch,
+      error,
+      ADD_MEDIA_TO_DISCOVER_PAGE_FAIL,
+    );
+    // dispatch({
+    //   type: ADD_MEDIA_TO_DISCOVER_PAGE_FAIL,
+    //   payload:
+    //     error.response && error.response.data.responseDescription
+    //       ? error.response.data.responseDescription
+    //       : error.message,
+    // });
+  }
+};
 
 export const get_Artist_Media = (page, size) => async (dispatch, getState) => {
   try {
@@ -157,7 +164,7 @@ export const get_Artist_Media = (page, size) => async (dispatch, getState) => {
       payload: data.responseBody.content,
     });
   } catch (error) {
-      logoutUserWhenTokenExpires(dispatch, error, GET_ALL_ARTIST_SONGS_FAIL);
+    logoutUserWhenTokenExpires(dispatch, error, GET_ALL_ARTIST_SONGS_FAIL);
     // dispatch({
     //   type: GET_ALL_ARTIST_SONGS_FAIL,
     //   payload:
@@ -195,7 +202,7 @@ export const play_Media =
         payload: res.data,
       });
     } catch (error) {
-       logoutUserWhenTokenExpires(dispatch, error, PLAY_MEDIA_FAIL);
+      logoutUserWhenTokenExpires(dispatch, error, PLAY_MEDIA_FAIL);
       // dispatch({
       //   type: PLAY_MEDIA_FAIL,
       //   payload:
@@ -333,9 +340,91 @@ export const get_User_Media_Listening_History =
     }
   };
 
-export const choose_Post_Song = (data) => {
+export const choose_Post_Song = data => {
   return {
     type: CHOOSE_POST_SONG,
     payload: data,
   };
+};
+
+export const get_All_User_Discovered_Media =
+  (page, size) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: GET_ALL_USER_DISCOVERED_SONG_LOADING,
+      });
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+        },
+        params: {
+          page,
+          size,
+        },
+      };
+      const res = await axios.get(`${BASE_URL2}/media/discover/likes`, config);
+      // console.log(res, 'HISTORY RES');
+
+      dispatch({
+        type: GET_ALL_USER_DISCOVERED_SONG_SUCCESS,
+        payload: res.data.responseBody.content,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(
+        dispatch,
+        error,
+        GET_ALL_USER_DISCOVERED_SONG_FAIL,
+      );
+      // dispatch({
+      //   type: GET_USER_MEDIA_LISTENING_HISTORY_FAIL,
+      //   payload:
+      //     error.response && error.response.data.responseDescription
+      //       ? error.response.data.responseDescription
+      //       : error.message,
+      // });
+    }
+  };
+
+export const like_A_Discover_Media =
+  (id, status = true) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: LIKE_A_DISCOVER_SONG_LOADING,
+      });
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+        },
+        params: {
+          status,
+        },
+      };
+
+      const res = await axios.get(
+        `${BASE_URL2}/media/discover/${id}/like`,
+        config,
+      );
+      dispatch({
+        type: LIKE_A_DISCOVER_SONG_SUCCESS,
+        payload: res.data,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, LIKE_A_DISCOVER_SONG_FAIL);
+    }
+  };
+
+export const increase_Discover_Media_Page = () => {
+  return{
+    type:DISCOVER_SCREEN_CURRENT_PAGE
+  }
+};
+export const increase_Discover_Media_Size = () => {
+  return{
+    type:DISCOVER_SCREEN_CURRENT_SIZE
+  }
 };

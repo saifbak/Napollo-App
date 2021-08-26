@@ -51,7 +51,6 @@ const MainArtistProfile = () => {
   const [size, setSize] = useState(50);
   const dispatch = useDispatch();
 
-
   useFocusEffect(
     useCallback(() => {
       dispatch(get_User_Media_Listening_History(page, size));
@@ -82,6 +81,8 @@ const MainArtistProfile = () => {
       </LinearGradient> */}
       <View style={styles.content}>
         <ScrollView
+          showsVerticalScrollIndicator={false}
+          bounces={false}
           contentContainerStyle={{paddingTop: 30, paddingBottom: 50}}
           style={{flex: 1}}>
           <ArtistDetails onPress={() => navigation.navigate('Edit_Profile')} />

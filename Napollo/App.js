@@ -53,9 +53,11 @@ import {CLEAR_LOGOUT_TOKEN_MESSAGE} from './src/redux/constants/index';
 import {getUserCallingCode} from './src/utils/loggedInUserType';
 import MainMusicPlayer from './src/Components/Modal/MainMusicPlayer';
 import ListenElsewhereModal from './src/Components/Modal/ListenElsewhereModal';
+import NoConnectionModal from './src/Components/Modal/NoConnectionModal';
 
 const App = () => {
   const dispatch = useDispatch();
+  const [networkState, setNetworkState] = useState(false);
   //APP GENRE LIST
   const getAccessToken = useSelector(state => state.getAccessToken);
   const {loading: accessTokenLoading, error: accessTokenError} = getAccessToken;
@@ -72,9 +74,19 @@ const App = () => {
     state => state.logoutUserWhenTokenExpires,
   );
   const {message} = logoutUserWhenTokenExpires;
+  const network = useSelector(state => state.network);
+  const {isConnected} = network;
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(20);
+
+  useEffect(() => {
+    if (isConnected === true) {
+      setNetworkState(false);
+    } else {
+      setNetworkState(true);
+    }
+  }, [isConnected]);
 
   // BOTTOM SHEET CONTENT
   const playerContext = usePlayerContext();
@@ -212,6 +224,10 @@ const App = () => {
         <ModalOverlay />
         <GoogleModal />
         <Comment_Modal />
+        {/* <NoConnectionModal
+          visible={networkState}
+          closeNetworkModal={() => setNetworkState(false)}
+        /> */}
         <Media_Comment_Modal />
         <CreatePlaylistModal />
         <MediaPlaylistModalForm />

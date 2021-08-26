@@ -4,6 +4,7 @@ import {
   BottomTabBar,
 } from '@react-navigation/bottom-tabs';
 import {Platform} from 'react-native';
+import {useSelector} from 'react-redux';
 
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -32,6 +33,8 @@ const MainTab = createBottomTabNavigator();
 // barStyle={{backgroundColor: '#000', height: 60}}
 
 function MyMainTabs() {
+  const userLogin = useSelector(state => state.userLogin);
+  const {type} = userLogin;
   return (
     <>
       {/* <MusicPlayers/> */}
@@ -46,8 +49,10 @@ function MyMainTabs() {
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: '#f68128',
-          tabBarStyle: {borderTopWidth: 0, backgroundColor: '#1A1A1A',  
-               ...Platform.select({
+          tabBarStyle: {
+            borderTopWidth: 0,
+            backgroundColor: '#1A1A1A',
+            ...Platform.select({
               ios: {
                 paddingTop: 8,
                 paddingBottom: 30,
@@ -58,10 +63,10 @@ function MyMainTabs() {
                 paddingBottom: 3,
                 height: 60,
               },
-            })},
-          
+            }),
+          },
         }}
-        initialRouteName="Home"
+        initialRouteName={type === 'ARTIST' ? 'Home' : 'MainDiscovery'}
         // tabBarOptions={{
         //   activeTintColor: '#f68128',
         //   borderWidth: 0,
@@ -90,7 +95,7 @@ function MyMainTabs() {
         //   },
         //   activeBackgroundColor: 'transparent',
         // }}
-        >
+      >
         <MainTab.Screen
           name="MainHome"
           component={HomeStack}
@@ -113,17 +118,19 @@ function MyMainTabs() {
             ),
           }}
         />
-        <MainTab.Screen
-          name="MainDiscovery"
-          component={DiscoveryStack}
-          options={{
-            tabBarLabel: 'Discover',
-            tabBarIcon: ({color}) => (
-              // <Icon name="podcast" color={color} size={26} />
-              <DiscoverIcon color={color} />
-            ),
-          }}
-        />
+        {type === 'ARTIST' ? null : (
+          <MainTab.Screen
+            name="MainDiscovery"
+            component={DiscoveryStack}
+            options={{
+              tabBarLabel: 'Discover',
+              tabBarIcon: ({color}) => (
+                // <Icon name="podcast" color={color} size={26} />
+                <DiscoverIcon color={color} />
+              ),
+            }}
+          />
+        )}
         <MainTab.Screen
           name="MainNotification"
           component={NotificationStack}

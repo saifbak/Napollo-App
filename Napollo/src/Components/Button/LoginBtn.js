@@ -10,8 +10,9 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Small_Loading_Anim from '../Animations/Small_LoadingAnime';
+import {scale, ScaledSheet} from 'react-native-size-matters';
 
-const LoginBtn = (props) => {
+const LoginBtn = props => {
   return (
     <View
       style={[styles.btnContainer, props.width ? {width: props.width} : null]}>
@@ -63,7 +64,7 @@ const LoginBtn = (props) => {
             props.height ? {height: props.height} : {},
           ]}>
           <TouchableOpacity
-            activeOpacity={0.6}
+            activeOpacity={0.8}
             hitSlop={{top: 20, left: 20, right: 20, bottom: 20}}
             {...props}
             onPress={props.onPress}
@@ -94,7 +95,7 @@ const LoginBtn = (props) => {
 
 export default LoginBtn;
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   btnContainer: {
     width: '100%',
     marginBottom: 5,
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 50,
     // borderWidth: 1,
-    padding: 12,
+    // padding: 12,
     alignSelf: 'center',
     backgroundColor: '#f68128',
     alignItems: 'center',
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
   btnText: {
     color: '#fff',
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: '12@s',
     fontFamily: 'Helvetica-Bold',
     textTransform: 'capitalize',
     letterSpacing: 2,

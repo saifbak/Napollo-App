@@ -64,6 +64,7 @@ const PlayerContext = React.createContext({
   repeatIcon: () => null,
   changeRepeatMode: () => null,
   repeatQueue: () => null,
+  resetCurrentTrack: () => null,
 });
 
 export const PlayerContextProvider = ({children}) => {
@@ -82,7 +83,6 @@ export const PlayerContextProvider = ({children}) => {
   const [shuffleState, setShuffleState] = useState(false);
   const [repeatState, setRepeatState] = useState('off');
 
-  
   const bottomRef = useRef(null);
   const dispatch = useDispatch();
   const openMusicPlayer = useSelector(state => state.openMusicPlayer);
@@ -375,8 +375,18 @@ export const PlayerContextProvider = ({children}) => {
   const musicPause = async () => {
     await TrackPlayer.pause();
   };
+  const resetCurrentTrack = () => {
+    setCurrentMusicTrack(null);
+  };
   const skip = async id => {
     await TrackPlayer.skip(id);
+    const currentTrackId = await TrackPlayer.getCurrentTrack();
+    if (currentTrackId !== null) {
+      // setCurrentMusicTrack(currentTrackId);
+      const trackObject = await TrackPlayer.getTrack(currentTrackId);
+      setCurrentTrackDetails(trackObject);
+      setCurrentTrackId(currentTrackId);
+    }
     // setCurrentMusicTrack(id);
   };
   const skipToNextMusic = async () => {
@@ -420,7 +430,7 @@ export const PlayerContextProvider = ({children}) => {
     }
   };
   const repeatQueue = () => {
-     TrackPlayer.setRepeatMode(RepeatMode.Queue);
+    TrackPlayer.setRepeatMode(RepeatMode.Queue);
     // setRepeatState(RepeatMode.Queue);
   };
 
@@ -494,6 +504,7 @@ export const PlayerContextProvider = ({children}) => {
     changeRepeatMode,
     repeatIcon,
     repeatQueue,
+    resetCurrentTrack,
   };
 
   return (

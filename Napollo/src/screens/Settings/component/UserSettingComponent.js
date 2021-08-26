@@ -48,7 +48,7 @@ const styles = ScaledSheet.create({
   },
   userType: {
     color: '#F68128',
-    fontFamily: 'Hevletica-Bold',
+    fontFamily: 'Helvetica-Bold',
     fontSize: '10@s',
     marginTop: 5,
     textAlign: 'center',

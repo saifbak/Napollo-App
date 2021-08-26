@@ -8,10 +8,8 @@ const Stack = createStackNavigator();
 
 const AlbumStack = ({navigation}) => {
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false}}
-      mode={'modal'}>
-      <Stack.Screen name="Album" component={AlbumScreen} />
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="MainAlbum" component={AlbumScreen} />
     </Stack.Navigator>
   );
 };

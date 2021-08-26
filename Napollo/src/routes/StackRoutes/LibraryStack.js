@@ -17,6 +17,7 @@ import MorePlaylist from '../StackRoutes/MorePlaylistStack';
 import Now_Playing from '../StackRoutes/NowPlayingStack';
 import DiscoveredSongs from '../StackRoutes/DiscoveredSongsStack';
 import SinglePlayList from '../StackRoutes/SinglePlayList';
+import SingleAlbum from '../../screens/AlbumScreen/SingleAlbum';
 
 const Stack = createStackNavigator();
 
@@ -34,7 +35,7 @@ const LibraryStack = () => {
       <Stack.Screen name="CreatePlaylistForm" component={CreatePlaylistForm} />
       <Stack.Screen name="DiscoveredSongs" component={DiscoveredSongs} />
       <Stack.Screen name="SinglePlayList" component={SinglePlayList} />
-
+      <Stack.Screen name="SingleAlbum" component={SingleAlbum} />
       <Stack.Screen name="MorePlaylist" component={MorePlaylist} />
     </Stack.Navigator>
   );

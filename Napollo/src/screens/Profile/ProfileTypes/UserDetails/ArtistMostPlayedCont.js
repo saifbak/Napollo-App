@@ -3,23 +3,15 @@ import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useEffect} from 'react-redux';
 
-const ArtistMostPlayedCont = (props) => {
-  const {
-    mediaTitle,
-    photoUrl,
-    hitCount,
-    likeCount,
-    mediaIdentity,
-    artist: {stageName},
-  } = props;
-  console.log(props.artist, 'ARTISTS');
+const ArtistMostPlayedCont = props => {
+  const {title, image, hits, likes, id, ownerAccountUser} = props;
   const songDetails = {
-    mediaTitle,
-    photoUrl,
-    hitCount,
-    likeCount,
-    mediaIdentity,
-    artist: stageName,
+    title,
+    image,
+    hits,
+    likes,
+    id,
+    artist: ownerAccountUser?.username,
   };
   return (
     <View style={styles.container}>
@@ -30,14 +22,14 @@ const ArtistMostPlayedCont = (props) => {
         <Image
           style={{width: 60, height: 60, borderRadius: 10, marginRight: 15}}
           source={
-            props.photoUrl
-              ? {uri: props.photoUrl}
-              : require('../../../../assests/images/image.jpg')
+            props.image
+              ? {uri: props.image}
+              : require('../../../../assests/images/music-placeholder.png')
           }
         />
         <View>
           <Text numberOfLines={1} style={styles.songName}>
-            {props.mediaTitle ? props.mediaTitle : 'Infinity ft Omah Lay'}
+            {props.title}
           </Text>
           <View style={styles.listner}>
             <Icon
@@ -54,7 +46,7 @@ const ArtistMostPlayedCont = (props) => {
                 textTransform: 'capitalize',
               }}>
               {/* {hitCount} */}
-              {props.hitCount}
+              {props.hits}
             </Text>
           </View>
         </View>
@@ -67,7 +59,7 @@ const ArtistMostPlayedCont = (props) => {
         }}>
         <Text style={styles.likesText}>
           {/* {props.likeCount ? `${props.likeCount} likes` : '12.4k Likes'} */}
-          {`${props.likeCount} likes`}
+          {`${props.likes} likes`}
         </Text>
       </View>
     </View>

@@ -45,8 +45,8 @@ const SuccessView = props => {
     <View style={styles.container}>
       <View style={styles.subContent}>
         <Text style={styles.text}>{uploadMessage}</Text>
-          <View style={{flexDirection: 'row'}}>
-           <Icon
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Icon
             name="md-information-circle"
             size={20}
             color="#ff3333"
@@ -139,7 +139,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width:'100%'
+    width: '100%',
   },
 });
 

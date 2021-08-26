@@ -19,10 +19,11 @@ const PlaylistContainer = ({
   name,
   url,
   media,
+  onPress,
 }) => {
   return (
     <TouchableOpacity
-      onPress={() => null}
+      onPress={() => onPress()}
       activeOpacity={0.7}
       style={[styles.container, {}]}>
       {/* <View style={styles.likes}>
@@ -33,7 +34,7 @@ const PlaylistContainer = ({
         <Text style={{color: '#eee', fontSize: 13}}>94k</Text>
       </View> */}
       <Image
-        source={url ? {uri: url} : PlaylistImagePlacHolder}
+        source={url && url !== null ? {uri: url} : PlaylistImagePlacHolder}
         style={styles.image}
       />
       {/* BLACK OVERLAY */}

@@ -15,35 +15,31 @@ import {getLoggedInUserProfile} from '../../../../utils/loggedInUserType';
 import {choose_Post_Song} from '../../../../redux/actions/MediaActions/getMediaActions';
 // import { FlatList } from 'react-native-gesture-handler';
 
-const SongPost = (props) => {
+const SongPost = props => {
   const dispatch = useDispatch();
   const artistData = getLoggedInUserProfile('ARTIST');
   const [searchValue, setSearchValue] = useState('');
 
-  const getMedia = useSelector((state) => state.getMedia);
+  const getMedia = useSelector(state => state.getMedia);
   const {data: mediaData} = getMedia;
-  const {
-    artistProfile: {stageName},
-  } = artistData;
-  const artistsSongs = mediaData.filter(
-    (x) => x.artist.stageName === stageName,
-  );
-  
+  // const {
+  //   artistProfile: {stageName},
+  // } = artistData;
+  // const artistsSongs = mediaData.filter(x => x.artist.stageName === stageName);
 
   const chooseSongDetails = (val = {}) => {
     dispatch(choose_Post_Song(val));
     props.closeModal();
   };
 
-  const fiterArtistData = (val) => {
+  const fiterArtistData = val => {
     if (val && val !== '') {
-      const filtered = artistsSongs.filter(
-        (item) =>
-          item.mediaTitle?.toLowerCase().indexOf(val.toLowerCase()) >= 0,
+      const filtered = mediaData.filter(
+        item => item.title?.toLowerCase().indexOf(val.toLowerCase()) >= 0,
       );
       return filtered;
     } else {
-      return artistsSongs;
+      return mediaData;
     }
     // console.log(filtered);
     //  setFilteredData(filtered);
@@ -65,7 +61,7 @@ const SongPost = (props) => {
               placeholder="Search song"
               placeholderTextColor="#999"
               value={searchValue}
-              onChangeText={(val) => setSearchValue(val)}
+              onChangeText={val => setSearchValue(val)}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -86,10 +82,10 @@ const SongPost = (props) => {
             fontFamily: 'Helvetica-ExtraBold',
             marginBottom: 10,
           }}>
-          Your Songs
+          Your Songs ({`${mediaData.length}`})
         </Text>
 
-        {artistsSongs.length <= 0 ? (
+        {mediaData.length <= 0 ? (
           <View style={styles.emptyCont}>
             <Text
               style={{
@@ -108,11 +104,11 @@ const SongPost = (props) => {
             showsVerticalScrollIndicator={false}
             // data={artistsSongs}
             data={fiterArtistData(searchValue)}
-            keyExtractor={(item) => item.mediaIdentity}
+            keyExtractor={item => item.id}
             renderItem={({item}) => (
               <ArtistSongs
                 {...item}
-                chooseSongDetails={(val) => chooseSongDetails(val)}
+                chooseSongDetails={val => chooseSongDetails(val)}
               />
             )}
           />

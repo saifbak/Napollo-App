@@ -21,7 +21,7 @@ const CommonHeader = (props) => {
       <Text
         style={{
           color: '#fff',
-          fontSize: scale(16),
+          fontSize: scale(15),
           width: '80%',
           textAlign: 'center',
           fontFamily: 'Helvetica-Medium',

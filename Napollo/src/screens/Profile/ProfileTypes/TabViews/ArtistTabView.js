@@ -151,7 +151,10 @@ const ArtistTabView = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <ScrollView style={{paddingTop: 10, paddingHorizontal: 5}}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        style={{paddingTop: 10, paddingHorizontal: 5}}>
         {renderViews}
       </ScrollView>
     </View>

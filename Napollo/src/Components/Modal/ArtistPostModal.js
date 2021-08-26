@@ -23,6 +23,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {scale, ScaledSheet} from 'react-native-size-matters';
 import ArtistIcon from '../../Components/Icons/ArtistIcon';
 import MusicIcon from '../../Components/Icons/MusicIcon';
 import GalleryIcon from '../../Components/Icons/GalleryIcon';
@@ -36,13 +37,13 @@ import {CLEAR_POST_SONG} from '../../redux/constants';
 import {getLoggedInUserProfile} from '../../utils/loggedInUserType';
 import {DEFAULT_IMAGE_URI} from '../../utils/ImagePicker';
 
-const ArtistPostModal = (props) => {
+const ArtistPostModal = props => {
   const dispatch = useDispatch();
 
   const [pics, setPics] = useState('');
   const [songsModal, setSongsModal] = useState(false);
-  const choosePostSong = useSelector((state) => state.choosePostSong);
-  const {title, id, likes, hits, url, artist} = choosePostSong;
+  const choosePostSong = useSelector(state => state.choosePostSong);
+  const {title, id, likeCount, hitCount, image, artist} = choosePostSong;
   const artistData = getLoggedInUserProfile('ARTIST');
   const listenerData = getLoggedInUserProfile('LISTENER');
 
@@ -105,12 +106,12 @@ const ArtistPostModal = (props) => {
     songView = (
       <View style={styles.songView}>
         <Image
-          source={{uri: url}}
+          source={{uri: image}}
           style={{
             height: '100%',
             borderTopLeftRadius: 5,
             borderBottomLeftRadius: 5,
-            marginRight: 20,
+            marginRight: 10,
             width: '30%',
           }}
         />
@@ -121,9 +122,29 @@ const ArtistPostModal = (props) => {
           <Text numberOfLines={1} style={styles.artist}>
             {artist}
           </Text>
-          <Text numberOfLines={1} style={styles.like}>
-            {likes} Likes
-          </Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={styles.listner}>
+              <Icon
+                name="headset"
+                color="#fff"
+                size={13}
+                style={{marginRight: 5}}
+              />
+              <Text
+                style={{
+                  color: '#fff',
+                  fontFamily: 'Helvetica-Medium',
+                  fontSize: 12,
+                  textTransform: 'capitalize',
+                }}>
+                {/* {hitCount} */}
+                {hitCount}
+              </Text>
+            </View>
+            <Text numberOfLines={1} style={styles.like}>
+              {likeCount} Likes
+            </Text>
+          </View>
         </View>
       </View>
     );
@@ -228,7 +249,7 @@ const ArtistPostModal = (props) => {
           <LoginBtn
             title="Post"
             width="25%"
-            height="38%"
+            height="40%"
             textSize={11}
             onPress={() => submitPost()}
           />
@@ -240,7 +261,7 @@ const ArtistPostModal = (props) => {
 
 export default ArtistPostModal;
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   modalView: {
     position: 'absolute',
     bottom: 0,
@@ -315,7 +336,7 @@ const styles = StyleSheet.create({
   songTitle: {
     color: '#eee',
     fontFamily: 'Helvetica-Medium',
-    fontSize: 18,
+    fontSize: 16,
   },
   artist: {
     color: '#F68128',
@@ -329,24 +350,30 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   thumbNail: {
-    width: wp('14%'),
-    height: hp('8.5%'),
+    width: '50@s',
+    height: '50@s',
     borderRadius: 100 / 2,
     backgroundColor: '#555',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: wp('3%'),
+    marginRight: '5@s',
   },
   thumbNailName: {
-    fontSize: hp('3%'),
+    fontSize: '15@s',
     color: '#eee',
     fontFamily: 'Helvetica-Bold',
   },
   profileImage: {
-    width: wp('14%'),
-    height: hp('8.5%'),
-    borderRadius: 100 / 2,
-    marginRight: wp('3%'),
+    width: '50@s',
+    height: '50@s',
+    borderRadius: '50@s',
+    marginRight: '5@s',
+  },
+  listner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 20,
+    marginTop: 5,
   },
 });

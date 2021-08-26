@@ -264,7 +264,7 @@ const Expansion = () => {
         )}
         <BottomSheet
           ref={Bs}
-          snapPoints={['95%', '18%']}
+          snapPoints={['95%', '35%']}
           initialSnap={1}
           callbackNode={fall}
           enabledGestureInteraction={true}

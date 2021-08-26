@@ -8,10 +8,8 @@ const Stack = createStackNavigator();
 
 const FavoriteStack = ({navigation}) => {
   return (
-    <Stack.Navigator
-      screenOptions={{headerShown: false}}
-      >
-      <Stack.Screen name="Favorite" component={FavoriteScreen} />
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="MainFavorite" component={FavoriteScreen} />
     </Stack.Navigator>
   );
 };

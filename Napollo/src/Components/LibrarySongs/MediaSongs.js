@@ -40,7 +40,8 @@ const MedialSong = props => {
   // const {mediaTitle, mediaUrl, photoUrl, likeCount} = data;
   // const {firstName, lastName, stageName} = artists;
   // console.log(props, 'DATA');
-  const currentTrackId = playerContext.currentMusicTrack?.id;
+  const currentTrackId = playerContext.currentTrackId?.id;
+  // const currentTrackId = playerContext.currentMusicTrack?.id;
   // console.log(playerContext.currentMusicTrack.id, 'CURRENT MUSIC');
 
   const dispatch = useDispatch();
@@ -74,10 +75,18 @@ const MedialSong = props => {
   const navigate = () => {
     dispatch(play_Media(city, state, country, props.id));
     dispatch(openModalPlayer(allSongs));
-    // console.log(playerContext.currentTrackDetails, 'when PLAY IS CLICCKED');
+    const songsData = [];
+    allSongs.mediaSongs.forEach(item =>
+      songsData.push({
+        ...item,
+        artist: item.ownerAccountUser
+          ? `${item.ownerAccountUser?.username}`
+          : `${item.firstName} ${item.lastName}`,
+      }),
+    );
 
     // const check = [...allSongs.mediaSongs];
-    const check = [allSongs.currentTrack, ...allSongs.mediaSongs];
+    const check = [allSongs.currentTrack, ...songsData];
     // console.log(check, 'CHECHHHHHHKKK');
     // console.log(props.index,'Song Index')
     playerContext.playMusic(check, props?.index);
@@ -191,7 +200,7 @@ const MedialSong = props => {
                 style={styles.songImage}
               />
             </View>
-            <View style={{marginLeft: scale(5), zIndex: 100, width: '60%'}}>
+            <View style={{marginLeft: scale(10), zIndex: 100, width: '60%'}}>
               <Text numberOfLines={1} style={styles.songName}>
                 {props.title}
                 &nbsp;
@@ -207,19 +216,19 @@ const MedialSong = props => {
               </Text>
               {/* <Text style={styles.songTime}>3:00pm</Text> */}
               {/* Song Details */}
-              {/* <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 7,
-                // justifyContent: 'space-between',
-              }}> */}
-              {/* SingleIcon */}
-              {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Icon name="play" color="#f68128" size={18} />
-                <Text style={styles.songPlay}>{props.hits}</Text>
-              </View> */}
-              {/* SingleIcon */}
-              {/* <View
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 7,
+                  // justifyContent: 'space-between',
+                }}>
+                {/* SingleIcon */}
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Icon name="play" color="#f68128" size={18} />
+                  <Text style={styles.songPlay}>{props.hits}</Text>
+                </View>
+                {/* SingleIcon */}
+                {/* <View
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -228,17 +237,17 @@ const MedialSong = props => {
                 <DownloadIcon color="#f68128" width={18} height={18} />
                 <Text style={styles.songPlay}>52K</Text>
               </View> */}
-              {/* SingleIcon */}
-              {/* <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginLeft: 20,
-                }}>
-                <Icon name="heart" color="#f68128" size={18} />
-                <Text style={styles.songPlay}>{props.likes}</Text>
-              </View> */}
-              {/* </View> */}
+                {/* SingleIcon */}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginLeft: 20,
+                  }}>
+                  <Icon name="heart" color="#f68128" size={18} />
+                  <Text style={styles.songPlay}>{props.likes}</Text>
+                </View>
+              </View>
             </View>
           </View>
         </TouchableOpacity>

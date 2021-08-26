@@ -48,14 +48,21 @@ export const create_Playlist =
       const token = getState().userLogin.token;
       const authorization = `Bearer ${token}`;
       const data = new FormData();
-      data.append('name', `${name}`);
-      data.append('description', `${description}`);
-      data.append('visible', `${visible}`);
-      data.append('artFile', {
-        uri: Platform.OS === 'android' ? `file://${artFile}` : artFile,
-        type: fileType,
-        name: 'artFile',
-      });
+      if (artFile !== '') {
+        data.append('artFile', {
+          uri: Platform.OS === 'android' ? `file://${artFile}` : artFile,
+          type: fileType,
+          name: 'artFile',
+        });
+        data.append('name', `${name}`);
+        data.append('description', `${description}`);
+        data.append('visible', `${visible}`);
+      } else {
+        data.append('name', `${name}`);
+        data.append('description', `${description}`);
+        data.append('visible', `${visible}`);
+        // data.append('artFile', null);
+      }
 
       const config = {
         method: 'post',
@@ -68,14 +75,14 @@ export const create_Playlist =
       };
 
       await axios(config)
-        .then((res) => {
+        .then(res => {
           console.log(res, 'PICS RES');
           dispatch({
             type: CREATE_PLAYLIST_SUCCESS,
             payload: res.data,
           });
         })
-        .catch((error) => {
+        .catch(error => {
           logoutUserWhenTokenExpires(dispatch, error, CREATE_PLAYLIST_FAIL);
           // dispatch({
           //   type: CREATE_PLAYLIST_FAIL,
@@ -126,14 +133,14 @@ export const create_Playlist_From_Modal =
       };
 
       await axios(config)
-        .then((res) => {
+        .then(res => {
           console.log(res, 'PICS RES');
           dispatch({
             type: CREATE_PLAYLIST_FROM_MODAL_SUCCESS,
             payload: res.data,
           });
         })
-        .catch((error) => {
+        .catch(error => {
           logoutUserWhenTokenExpires(
             dispatch,
             error,
@@ -162,7 +169,7 @@ export const create_Playlist_From_Modal =
       // });
     }
   };
-export const get_Playlist_Detail = (id) => async (dispatch, getState) => {
+export const get_Playlist_Detail = id => async (dispatch, getState) => {
   try {
     dispatch({
       type: GET_PLAYLIST_DETAILS_LOADING,
@@ -184,7 +191,7 @@ export const get_Playlist_Detail = (id) => async (dispatch, getState) => {
   } catch (error) {
     logoutUserWhenTokenExpires(dispatch, error, GET_PLAYLIST_DETAILS_FAIL);
     // dispatch({
-      
+
     //   type: GET_PLAYLIST_DETAILS_FAIL,
     //   payload:
     //     error.response && error.response.data.responseDescription
@@ -220,7 +227,7 @@ export const get_All_Playlists =
         payload: data.responseBody.content,
       });
     } catch (error) {
-       logoutUserWhenTokenExpires(dispatch, error, GET_ALL_PLAYLIST_FAIL);
+      logoutUserWhenTokenExpires(dispatch, error, GET_ALL_PLAYLIST_FAIL);
       // dispatch({
       //   type: GET_ALL_PLAYLIST_FAIL,
       //   payload:
@@ -256,7 +263,7 @@ export const get_All_User_Playlist =
       });
       saveDataToStorage('userPlaylists', data.responseBody.content);
     } catch (error) {
-       logoutUserWhenTokenExpires(dispatch, error, GET_ALL_USER_PLAYLIST_FAIL);
+      logoutUserWhenTokenExpires(dispatch, error, GET_ALL_USER_PLAYLIST_FAIL);
       // dispatch({
       //   type: GET_ALL_USER_PLAYLIST_FAIL,
       //   payload:
@@ -267,7 +274,7 @@ export const get_All_User_Playlist =
     }
   };
 
-export const delete_Playlist = (id) => async (dispatch, getState) => {
+export const delete_Playlist = id => async (dispatch, getState) => {
   try {
     dispatch({
       type: DELETE_PLAYLIST_LOADING,
@@ -327,18 +334,18 @@ export const update_Playlist_Details =
       };
 
       await axios(config)
-        .then((res) => {
+        .then(res => {
           dispatch({
             type: UPDATE_PLAYLIST_DETAILS_SUCCESS,
             payload: res.data,
           });
         })
-        .catch((error) => {
-           logoutUserWhenTokenExpires(
-             dispatch,
-             error,
-             UPDATE_PLAYLIST_DETAILS_FAIL,
-           );
+        .catch(error => {
+          logoutUserWhenTokenExpires(
+            dispatch,
+            error,
+            UPDATE_PLAYLIST_DETAILS_FAIL,
+          );
           // dispatch({
           //   type: UPDATE_PLAYLIST_DETAILS_FAIL,
           //   payload:
@@ -348,11 +355,7 @@ export const update_Playlist_Details =
           // });
         });
     } catch (error) {
-       logoutUserWhenTokenExpires(
-         dispatch,
-         error,
-         UPDATE_PLAYLIST_DETAILS_FAIL,
-       );
+      logoutUserWhenTokenExpires(dispatch, error, UPDATE_PLAYLIST_DETAILS_FAIL);
       // dispatch({
       //   type: UPDATE_PLAYLIST_DETAILS_FAIL,
       //   payload:
@@ -392,7 +395,7 @@ export const add_Media_To_Playlist =
       });
       dispatch(get_All_User_Playlist(page, size));
     } catch (error) {
-       logoutUserWhenTokenExpires(dispatch, error, ADD_MEDIA_TO_PLAYLIST_FAIL);
+      logoutUserWhenTokenExpires(dispatch, error, ADD_MEDIA_TO_PLAYLIST_FAIL);
       // dispatch({
       //   type: ADD_MEDIA_TO_PLAYLIST_FAIL,
       //   payload:
@@ -431,11 +434,11 @@ export const delete_Media_From_Playlist =
         payload: data,
       });
     } catch (error) {
-        logoutUserWhenTokenExpires(
-          dispatch,
-          error,
-          DELETE_MEDIA_FROM_PLAYLIST_FAIL,
-        );
+      logoutUserWhenTokenExpires(
+        dispatch,
+        error,
+        DELETE_MEDIA_FROM_PLAYLIST_FAIL,
+      );
       // dispatch({
       //   type: DELETE_MEDIA_FROM_PLAYLIST_FAIL,
       //   payload:
@@ -446,7 +449,7 @@ export const delete_Media_From_Playlist =
     }
   };
 
-export const store_Active_Playlist_Details = (data) => {
+export const store_Active_Playlist_Details = data => {
   return {
     type: STORE_ACTIVE_PLAYLIST_DETAILS,
     payload: data,

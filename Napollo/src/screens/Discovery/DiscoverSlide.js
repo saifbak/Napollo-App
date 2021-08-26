@@ -11,14 +11,48 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {usePlayerContext} from '../../PlayerContext/PlayerContext';
+import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-const DiscoverSlide = ({photoUrl, mediaTitle, artist: realArtist}) => {
+const DiscoverSlide = (
+  {
+    // image,
+    // title,
+    // ownerAccountUser: {username},
+    // featuredArtists,
+  },
+) => {
   const {firstName, lastName} = realArtist;
-  const {isBuffering, isEmpty, isPaused, isPlaying, isStopped, play, pause} =
-    usePlayerContext();
+  const {
+    isBuffering,
+    isEmpty,
+    isPaused,
+    isPlaying,
+    isStopped,
+    play,
+    pause,
+    currentTrackDetails,
+  } = usePlayerContext();
+
+  const {
+    image,
+    title,
+    ownerAccountUser: {username},
+    featuredArtists,
+  } = currentTrackDetails;
+
+  const featuringArtist = featuredArtists?.join('&');
+
+  let btnView = null;
+  if (isBuffering) {
+    btnView = (
+      <View style={{position: 'absolute', top: '40%', left: '40%'}}>
+        <ActivityIndicator color="#fff" size={55} />;
+      </View>
+    );
+  }
 
   // let playBtn = null;
   // let pauseBtn = null;
@@ -79,15 +113,20 @@ const DiscoverSlide = ({photoUrl, mediaTitle, artist: realArtist}) => {
 
   return (
     <ImageBackground
-      source={{uri: photoUrl}}
-      style={{
-        width: SCREEN_WIDTH,
-        position: 'absolute',
-        top: 0,
-        height: SCREEN_HEIGHT,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-      }}
+      source={image !== null || image !== '' ? {uri: image} : {}}
+      style={[
+        {
+          width: SCREEN_WIDTH,
+          position: 'absolute',
+          top: 0,
+          height: SCREEN_HEIGHT,
+          borderTopLeftRadius: 10,
+          borderTopRightRadius: 10,
+        },
+        image === null || image === ''
+          ? {backgroundColor: 'rgba(255,255,255,0.061)'}
+          : null,
+      ]}
       blurRadius={100}
       resizeMode="cover">
       {/* <View
@@ -99,7 +138,11 @@ const DiscoverSlide = ({photoUrl, mediaTitle, artist: realArtist}) => {
         }}
       /> */}
       <Image
-        source={{uri: photoUrl}}
+        source={
+          image !== null || image !== ''
+            ? {uri: image}
+            : require('../../assests/images/music-placeholder.png')
+        }
         style={{
           width: SCREEN_WIDTH / 1.3,
           height: '52%',
@@ -113,6 +156,7 @@ const DiscoverSlide = ({photoUrl, mediaTitle, artist: realArtist}) => {
         }}
         resizeMode="cover"
       />
+      {btnView}
 
       <View
         style={{
@@ -129,20 +173,26 @@ const DiscoverSlide = ({photoUrl, mediaTitle, artist: realArtist}) => {
             style={{
               color: '#fff',
               textTransform: 'uppercase',
-              fontSize: 23,
+              fontSize: scale(20),
               fontFamily: 'Helvetica-ExtraBold',
             }}>
-            {mediaTitle}
+            {title}
+            {featuringArtist && (
+              <Text
+                style={
+                  styles.featuredArtists
+                }>{`ft (${featuringArtist})`}</Text>
+            )}
           </Text>
           <Text
             style={{
               color: '#f68128',
               textTransform: 'capitalize',
-              fontSize: 16,
+              fontSize: scale(15),
               fontFamily: 'Helvetica-ExtraBold',
               textAlign: 'center',
             }}>
-            {`${firstName} ${lastName}`}
+            {`${username}`}
           </Text>
         </View>
         {/* {isPlaying && (

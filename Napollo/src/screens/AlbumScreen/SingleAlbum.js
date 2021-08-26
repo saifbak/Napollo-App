@@ -13,6 +13,7 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {connect} from 'react-redux';
 import Animateds from 'react-native-reanimated';
 import AlbumBottomSheet from './component/AlbumBottomSheet/BottomSheet';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -22,9 +23,13 @@ import LoginBtn from '../../Components/Button/LoginBtn';
 import AlbumSongs from './component/AlbumSongs';
 import SongContainer from '../../Components/LibrarySongs/GeneralSong';
 import data from '../../data';
+import MediaSongs from '../../Components/LibrarySongs/MediaSongs';
+import PlayerContext from '../../PlayerContext/PlayerContext';
+import {play_Media} from '../../redux/actions/MediaActions/getMediaActions';
+import {openModalPlayer} from '../../redux/actions/musicPlayerActions';
+import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const {width, height} = Dimensions.get('window');
-
 
 class SingleAlbumScreen extends Component {
   constructor(props) {
@@ -51,8 +56,6 @@ class SingleAlbumScreen extends Component {
   }
 
   render() {
-    console.log(this.scrollY);
-
     const songs = data.map((song, index) => (
       <SongContainer
         {...song}
@@ -64,7 +67,8 @@ class SingleAlbumScreen extends Component {
     ));
     // REF FRO BOTTOM SHEET
     const Bs = React.createRef(null);
-
+    const {name, description, year, id, url, owner} =
+      this.props.storeActiveAlbumDetails;
     const fall = new Animateds.Value(1);
     const renderContent = () => <AlbumBottomSheet onPress={Bs} />;
     return (
@@ -97,15 +101,15 @@ class SingleAlbumScreen extends Component {
             </TouchableOpacity>
             {/* ANIMATED ALBUM NAME */}
             <View style={styles.animatedAlbumView}>
-              <Text style={styles.animatedAlbumName}>Alan Walker</Text>
-              <Text style={styles.animatedAlbumSubName}>Faded</Text>
+              <Text style={styles.animatedAlbumName}>{name}</Text>
+              <Text style={styles.animatedAlbumSubName}>{owner?.username}</Text>
             </View>
           </Animated.View>
           <Animated.ScrollView
             contentContainerStyle={{width}}
             showsVerticalScrollIndicator={false}
             scrollEventThrottle={16}
-            onScroll={(e) => {
+            onScroll={e => {
               this.scrollY.setValue(e.nativeEvent.contentOffset.y);
             }}>
             {/* HEADER */}
@@ -118,8 +122,12 @@ class SingleAlbumScreen extends Component {
               {/* BACKGROUND */}
               <ImageBackground
                 style={styles.backgroundImage}
-                source={require('../../assests/images/faded.jpg')}
-                blurRadius={5}>
+                source={
+                  url !== '' || url !== null
+                    ? {uri: url}
+                    : require('../../assests/images/albums-placeholder.jpg')
+                }
+                blurRadius={0}>
                 {/* BLACK OVERLAY */}
                 <Animated.View
                   style={{
@@ -144,7 +152,11 @@ class SingleAlbumScreen extends Component {
                       {opacity: this.animatedOpacity},
                     ]}>
                     <Image
-                      source={require('../../assests/images/faded.jpg')}
+                      source={
+                        url !== '' || url !== null
+                          ? {uri: url}
+                          : require('../../assests/images/albums-placeholder.jpg')
+                      }
                       style={{
                         width: '100%',
                         height: '70%',
@@ -153,9 +165,9 @@ class SingleAlbumScreen extends Component {
                         zIndex: 200,
                       }}
                     />
-                    <Animated.View style={[styles.iconCont]}>
+                    {/* <Animated.View style={[styles.iconCont]}>
                       <AlbumIconDetails />
-                    </Animated.View>
+                    </Animated.View> */}
                   </Animated.View>
                   {/* RIGHT CONTENT */}
                   <Animated.View
@@ -165,37 +177,37 @@ class SingleAlbumScreen extends Component {
                     ]}>
                     {/* ALBUM DETAILS */}
                     <View>
-                      <Text style={styles.Album_artist}>Alan Walker</Text>
-                      <Text style={styles.Album_title}>Faded</Text>
-                      <Text style={styles.Album_time}>28 songs, 2hr 28min</Text>
+                      <Text style={styles.Album_artist}>{name}</Text>
+                      <Text style={styles.Album_title}>{owner?.username}</Text>
+                      {/* <Text style={styles.Album_time}>28 songs, 2hr 28min</Text> */}
                     </View>
                     {/* BUTTONS */}
                     <View style={styles.btn}>
                       <View style={{width: '100%', marginBottom: 10}}>
                         <LoginBtn title="Play" icon="play" height={40} />
                       </View>
-                      {/* <View style={{width: '100%'}}>
-                        <LoginBtn
-                          title="Download Album"
-                          transparent
-                          height={40}
-                        />
-                      </View> */}
                     </View>
                   </Animated.View>
                 </View>
                 <Animated.Text
                   style={{
-                    color: '#eee',
+                    color: '#DDD',
                     textAlign: 'center',
                     height: '10%',
                     opacity: this.animatedOpacity,
+                    fontFamily: 'Helvetica-Bold',
                   }}>
-                  Released on: 01/02/2020
+                  Released year: {year}
                 </Animated.Text>
               </ImageBackground>
               <Animated.View style={styles.songs}>
-                <ScrollView>{songs}</ScrollView>
+                <Text style={[styles.Album_artist, {marginBottom: scale(20)}]}>
+                  Songs ()
+                  {/* {media.length <= 0
+                    ? `Song (${media.length})`
+                    : `Songs (${media.length})`} */}
+                </Text>
+                {/* <ScrollView>{songs}</ScrollView> */}
               </Animated.View>
             </Animateds.View>
           </Animated.ScrollView>
@@ -205,9 +217,15 @@ class SingleAlbumScreen extends Component {
   }
 }
 
-export default SingleAlbumScreen;
+const mapStateToProps = ({storeActiveAlbumDetails}) => ({
+  storeActiveAlbumDetails,
+});
 
-const styles = StyleSheet.create({
+export default connect(mapStateToProps, {play_Media, openModalPlayer})(
+  SingleAlbumScreen,
+);
+
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
@@ -233,23 +251,23 @@ const styles = StyleSheet.create({
   Album_artist: {
     marginTop: 5,
     color: '#fff',
-    fontSize: 25,
-    fontFamily: 'Gilroy-ExtraBold',
+    fontSize: '18@s',
+    fontFamily: 'Helvetica-ExtraBold',
     width: '100%',
     flexWrap: 'wrap',
   },
   Album_title: {
     color: '#f68128',
-    fontSize: 20,
-    fontFamily: 'Gilroy-Medium',
+    fontSize: '12@s',
+    fontFamily: 'Helvetica-Medium',
     // width: '50%',/
     flexWrap: 'wrap',
-    marginTop: 5,
+    marginTop: 2,
   },
   Album_time: {
     color: '#eee',
     fontSize: 13,
-    fontFamily: 'Gilroy-Medium',
+    fontFamily: 'Helvetica-Medium',
     flexWrap: 'wrap',
     marginTop: 5,
   },
@@ -299,12 +317,12 @@ const styles = StyleSheet.create({
   animatedAlbumName: {
     color: '#eee',
     fontSize: 20,
-    fontFamily: 'Gilroy-Medium',
+    fontFamily: 'Helvetica-Medium',
   },
   animatedAlbumSubName: {
     color: '#f68128',
     fontSize: 15,
-    fontFamily: 'Gilroy-Medium',
-    marginTop: 5,
+    fontFamily: 'Helvetica-Medium',
+    // marginTop: 2,
   },
 });

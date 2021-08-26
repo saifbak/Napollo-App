@@ -66,18 +66,21 @@ const HomeContent = () => {
       <CarouselItem allSongs={mediaData} {...song} key={index} />
     ));
 
-  const trendingView = trendingData.slice(0, 10).map((song, index) => (
-    <MediaSong
-      // data={song}
-      {...artists}
-      {...song}
-      allSongs={mediaData}
-      key={index}
-      showLikeBtn={true}
-      indexes
-      index={index}
-    />
-  ));
+  const trendingView = trendingData
+    .slice(0, 10)
+    .sort((a, b) => b.likes - a.likes)
+    .map((song, index) => (
+      <MediaSong
+        // data={song}
+        {...artists}
+        {...song}
+        allSongs={mediaData}
+        key={index}
+        showLikeBtn={true}
+        indexes
+        index={index}
+      />
+    ));
 
   let mainTrendingView = null;
   let mainReleasesView = null;
@@ -160,7 +163,7 @@ const HomeContent = () => {
       <TouchableOpacity
         activeOpacity={0.7}
         // onPress={() => dispatch(get_Trending_Media(page, size))}
-        >
+      >
         <Text
           style={{
             color: '#999',
@@ -183,18 +186,21 @@ const HomeContent = () => {
       </TouchableOpacity>
     );
   } else {
-    mainTrendingView = trendingData.slice(0, 30).map((song, index) => (
-      <MediaSong
-        // data={song}
-        {...artists}
-        {...song}
-        allSongs={trendingData}
-        key={index}
-        showLikeBtn={true}
-        indexes
-        index={index}
-      />
-    ));
+    mainTrendingView = trendingData
+      .slice(0, 30)
+      .sort((a, b) => b.hits - a.hits)
+      .map((song, index) => (
+        <MediaSong
+          // data={song}
+          {...artists}
+          {...song}
+          allSongs={trendingData}
+          key={index}
+          showLikeBtn={true}
+          indexes
+          index={index}
+        />
+      ));
   }
 
   return (

@@ -222,7 +222,7 @@ const SettingsMediaSong = (props) => {
             width: '15%',
           }}>
           <Checkbox
-            chooseSong={() => props.chooseSong(props.title)}
+            chooseSong={() => props.chooseSong(props.title,props.id)}
             songTitle={props.songTitle}
             title={props.title}
           />

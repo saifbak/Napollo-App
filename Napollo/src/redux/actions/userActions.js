@@ -40,6 +40,18 @@ import {
   CLEAR_ALL_USER_PLAYLIST_ON_LOGOUT,
   CLEAR_ALL_USER_ALBUM_ON_LOGOUT,
   STORE_USER_COORDINATES,
+  UPDATE_USER_PASSWORD_REQUEST,
+  UPDATE_USER_PASSWORD_FAIL,
+  UPDATE_USER_PASSWORD_SUCCESS,
+  CLEAR_UPDATE_USER_PASSWORD_STATE,
+  UPDATE_USER_USERNAME_FAIL,
+  UPDATE_USER_USERNAME_REQUEST,
+  UPDATE_USER_USERNAME_SUCCESS,
+  CLEAR_UPDATE_USER_USERNAME_STATE,
+  UPGRADE_USER_ACCOUNT_FAIL,
+  UPGRADE_USER_ACCOUNT_REQUEST,
+  UPGRADE_USER_ACCOUNT_SUCCESS,
+  CLEAR_UPGRADE_USER_ACCOUNT_STATE,
 } from '../constants/index';
 import axios from 'axios';
 import {Platform} from 'react-native';
@@ -54,7 +66,7 @@ import base64 from 'react-native-base64';
 import RNFetchBlob from 'rn-fetch-blob';
 import {logoutUserWhenTokenExpires} from '../../utils/loggedInUserType';
 
-export const login = (emailAddress, password) => async (dispatch) => {
+export const login = (emailAddress, password) => async dispatch => {
   try {
     dispatch({
       type: USER_LOGIN_REQUEST,
@@ -69,8 +81,8 @@ export const login = (emailAddress, password) => async (dispatch) => {
         Authorization: `Basic ${token}`,
         'Content-Type': 'application/json',
       },
-      data:null
-    }
+      data: null,
+    };
 
     const data = await axios(config);
     console.log(data.responseBody);
@@ -90,7 +102,7 @@ export const login = (emailAddress, password) => async (dispatch) => {
   }
 };
 
-export const logout = () => (dispatch) => {
+export const logout = () => dispatch => {
   removeDataFromStorage('user_token');
   removeDataFromStorage('user_Info');
   removeDataFromStorage('userPlaylists');
@@ -187,27 +199,27 @@ export const register =
     }
   };
 
-export const store_User_Register_Data = (data) => {
+export const store_User_Register_Data = data => {
   return {
     type: STORE_USER_REGISTER_DATA,
     payload: data,
   };
 };
 
-export const clearData = () => (dispatch) => {
+export const clearData = () => dispatch => {
   // console.log('DATA CLEARED', ADMIN_PASSWORD);
   dispatch({
     type: CLEAR_REGISTER_DATA,
   });
 };
-export const clearAccessToken = () => (dispatch) => {
+export const clearAccessToken = () => dispatch => {
   // console.log('ACCESS TOKEN  CLEARED', ADMIN_PASSWORD);
   dispatch({
     type: CLEAR_ACCESS_TOKEN,
   });
 };
 
-export const get_Access_Token = () => async (dispatch) => {
+export const get_Access_Token = () => async dispatch => {
   try {
     dispatch({
       type: GET_ACCESS_TOKEN_LOADING,
@@ -284,7 +296,7 @@ export const get_User_Profile = () => async (dispatch, getState) => {
     });
   }
 };
-export const get_User_Profile_With_Id = (id) => async (dispatch, getState) => {
+export const get_User_Profile_With_Id = id => async (dispatch, getState) => {
   try {
     dispatch({
       type: USER_PROFILE_WITH_ID_REQUEST,
@@ -363,6 +375,124 @@ export const update_User_Profile =
       // });
     }
   };
+
+export const update_User_Username_Profile =
+  username => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: UPDATE_USER_USERNAME_REQUEST,
+      });
+
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+
+      const config = {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'application/json',
+        },
+      };
+      const data = {
+        username,
+      };
+
+      const res = await axios.put(`${BASE_URL2}/accountuser`, data, config);
+      dispatch({
+        type: UPDATE_USER_USERNAME_SUCCESS,
+        payload: res.data,
+      });
+      dispatch(get_User_Profile());
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, UPDATE_USER_USERNAME_FAIL);
+      // dispatch({
+      //   type: UPDATE_USER_USERNAME_FAIL,
+      //   payload:
+      //     error.response && error.response.data.responseDescription
+      //       ? error.response.data.responseDescription
+      //       : error.message,
+      // });
+    }
+  };
+export const update_User_Password_Profile =
+  (credential, confirmCredential) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: UPDATE_USER_PASSWORD_REQUEST,
+      });
+
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+
+      const config = {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'application/json',
+        },
+      };
+      const data = {
+        credential,
+        confirmCredential,
+      };
+
+      const res = await axios.put(`${BASE_URL2}/password`, data, config);
+      console.log(res, 'PROFILE RES');
+      dispatch({
+        type: UPDATE_USER_PASSWORD_SUCCESS,
+        payload: res.data,
+      });
+      dispatch(get_User_Profile());
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, UPDATE_USER_PASSWORD_FAIL);
+      // dispatch({
+      //   type: UPDATE_USER_PASSWORD_FAIL,
+      //   payload:
+      //     error.response && error.response.data.responseDescription
+      //       ? error.response.data.responseDescription
+      //       : error.message,
+      // });
+    }
+  };
+export const upgrade_User_Account = userType => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: UPGRADE_USER_ACCOUNT_REQUEST,
+    });
+
+    const token = getState().userLogin.token;
+    const id = getState().getUserProfile.profile.id;
+    const authorization = `Bearer ${token}`;
+
+    const config = {
+      headers: {
+        Authorization: authorization,
+        'Content-Type': 'application/json',
+      },
+      params: {
+        userType,
+      },
+    };
+
+    const res = await axios.get(
+      `${BASE_URL2}/accountuser${id}/upgrade`,
+      config,
+    );
+    dispatch({
+      type: UPGRADE_USER_ACCOUNT_SUCCESS,
+      payload: res.data,
+    });
+    dispatch(logout());
+  } catch (error) {
+    logoutUserWhenTokenExpires(dispatch, error, UPGRADE_USER_ACCOUNT_FAIL);
+    // dispatch({
+    //   type: UPGRADE_USER_ACCOUNT_FAIL,
+    //   payload:
+    //     error.response && error.response.data.responseDescription
+    //       ? error.response.data.responseDescription
+    //       : error.message,
+    // });
+  }
+};
+
 export const update_User_Profile_Pics =
   (photo, profilePicType) => async (dispatch, getState) => {
     try {
@@ -397,14 +527,14 @@ export const update_User_Profile_Pics =
       // const {res} = await axios(config);
 
       await axios(config)
-        .then((res) => {
+        .then(res => {
           dispatch({
             type: UPDATE_USER_PROFILE_PICS_SUCCESS,
             payload: res.data,
           });
           dispatch(get_User_Profile());
         })
-        .catch((error) => {
+        .catch(error => {
           logoutUserWhenTokenExpires(
             dispatch,
             error,
@@ -477,43 +607,45 @@ export const get_All_Users = (page, size) => async (dispatch, getState) => {
   }
 };
 
-export const follow_Artist = (id) => async (dispatch, getState) => {
-  try {
-    dispatch({
-      type: FOLLOW_ARTIST_LOADING,
-    });
-    const token = getState().userLogin.token;
+export const follow_Artist =
+  (id, state = true) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: FOLLOW_ARTIST_LOADING,
+      });
+      const token = getState().userLogin.token;
 
-    const authorization = `Bearer ${token}`;
-    const config = {
-      headers: {
-        Authorization: authorization,
-        'Content-Type': 'application/json',
-      },
-      params: {
-        status: true,
-        id,
-      },
-    };
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'application/json',
+        },
+        params: {
+          state,
+          id,
+        },
+      };
 
-    const res = await axios.get(`${BASE_URL2}/accountuser/follow`, config);
-    console.log(res.data, 'FOLLOW SUCCESSFUL');
-    dispatch({
-      type: FOLLOW_ARTIST_SUCCESS,
-      payload: res,
-    });
-  } catch (error) {
-    logoutUserWhenTokenExpires(dispatch, error, FOLLOW_ARTIST_FAIL);
-    // dispatch({
-    //   type: FOLLOW_ARTIST_FAIL,
-    //   payload:
-    //     error.response && error.response.data.responseDescription
-    //       ? error.response.data.responseDescription
-    //       : error.message,
-    // });
-  }
-};
-export const unFollow_Artist = (id) => async (dispatch, getState) => {
+      const res = await axios.get(`${BASE_URL2}/accountuser/follow`, config);
+      console.log(res.data, 'FOLLOW SUCCESSFUL');
+      dispatch({
+        type: FOLLOW_ARTIST_SUCCESS,
+        payload: res,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, FOLLOW_ARTIST_FAIL);
+      // dispatch({
+      //   type: FOLLOW_ARTIST_FAIL,
+      //   payload:
+      //     error.response && error.response.data.responseDescription
+      //       ? error.response.data.responseDescription
+      //       : error.message,
+      // });
+    }
+  };
+export const unFollow_Artist = (id, state) => async (dispatch, getState) => {
   try {
     dispatch({
       type: UNFOLLOW_ARTIST_LOADING,
@@ -527,7 +659,7 @@ export const unFollow_Artist = (id) => async (dispatch, getState) => {
         'Content-Type': 'application/json',
       },
       params: {
-        status: false,
+        state: false,
         id,
       },
     };
@@ -550,13 +682,13 @@ export const unFollow_Artist = (id) => async (dispatch, getState) => {
   }
 };
 
-export const store_User_Location = (data) => {
+export const store_User_Location = data => {
   return {
     type: STORE_USER_LOCATION,
     payload: data,
   };
 };
-export const storeUserCoordinates = (data) => {
+export const storeUserCoordinates = data => {
   return {
     type: STORE_USER_COORDINATES,
     payload: data,

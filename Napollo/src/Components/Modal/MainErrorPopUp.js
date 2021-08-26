@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, Modal} from 'react-native';
 
-const SmallErrorPopUpModal = (props) => {
+const SmallErrorPopUpModal = props => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -20,6 +20,7 @@ const SmallErrorPopUpModal = (props) => {
           setShowModal(false);
           props.clearError();
         }
+        setShowModal(false);
       },
       props.clearTime ? props.clearTime : 500,
     );

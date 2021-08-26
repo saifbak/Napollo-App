@@ -25,6 +25,19 @@ import {
   ADD_MEDIA_TO_DISCOVER_PAGE_FAIL,
   ADD_MEDIA_TO_DISCOVER_PAGE_LOADING,
   ADD_MEDIA_TO_DISCOVER_PAGE_SUCCESS,
+  CLEAR_TRENDING_MEDIA_ERROR,
+  LIKE_A_DISCOVER_SONG_FAIL,
+  LIKE_A_DISCOVER_SONG_LOADING,
+  LIKE_A_DISCOVER_SONG_SUCCESS,
+  GET_ALL_USER_DISCOVERED_SONG_FAIL,
+  GET_ALL_USER_DISCOVERED_SONG_LOADING,
+  GET_ALL_USER_DISCOVERED_SONG_SUCCESS,
+  MARK_SONG_AS_DISCOVERED_FAIL,
+  MARK_SONG_AS_DISCOVERED_LOADING,
+  MARK_SONG_AS_DISCOVERED_SUCCESS,
+  DISCOVER_SCREEN_CURRENT_PAGE,
+  DISCOVER_SCREEN_CURRENT_SIZE,
+  CLEAR_TRAILER_MEDIA_ERROR,
 } from '../../constants/index';
 
 export const getMediaReducer = (
@@ -83,6 +96,12 @@ export const getTrailerMediaReducer = (
         loading: false,
         data: [],
         error: payload,
+      };
+    case CLEAR_TRAILER_MEDIA_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: '',
       };
 
     default:
@@ -284,11 +303,11 @@ export const addMediaToDiscoverPageReducer = (
 
 export const choosePostSongReducer = (
   state = {
-    mediaTitle: '',
-    mediaIdentity: '',
+    title: '',
+    id: '',
     likeCount: null,
     hitCount: null,
-    photoUrl: '',
+    image: '',
     artist: '',
   },
   {type, payload},
@@ -296,21 +315,124 @@ export const choosePostSongReducer = (
   switch (type) {
     case CHOOSE_POST_SONG:
       return {
-        mediaTitle: payload.title,
-        mediaIdentity: payload.id,
+        title: payload.title,
+        id: payload.id,
         likeCount: payload.likes,
         hitCount: payload.hits,
-        photoUrl: payload.image,
+        image: payload.image,
         artist: payload.artist,
       };
 
     case CLEAR_POST_SONG:
       return {
-        mediaTitle: '',
-        mediaIdentity: '',
+        title: '',
+        id: '',
         likeCount: null,
         hitCount: null,
-        photoUrl: '',
+        image: '',
+        artist: '',
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const getUserDiscoveredMediaReducer = (
+  state = {
+    discoveredMedia: [],
+    loading: false,
+    error: '',
+  },
+  {type, payload},
+) => {
+  switch (type) {
+    case GET_ALL_USER_DISCOVERED_SONG_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        data: [],
+      };
+    case GET_ALL_USER_DISCOVERED_SONG_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        data: payload,
+      };
+    case GET_ALL_USER_DISCOVERED_SONG_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        data: [],
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const likeADiscoverMediaReducer = (
+  state = {loading: false, error: '', status: false, message: ''},
+  {type, payload},
+) => {
+  switch (type) {
+    case LIKE_A_DISCOVER_SONG_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        status: false,
+        message: '',
+      };
+    case LIKE_A_DISCOVER_SONG_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        status: payload.responseStatus,
+        message: payload.responseDescription,
+      };
+    case LIKE_A_DISCOVER_SONG_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        status: false,
+        message: '',
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const increaseCurrentDiscoverPageReducer = (
+  state = {page: 0},
+  {type},
+) => {
+  switch (type) {
+    case DISCOVER_SCREEN_CURRENT_PAGE:
+      const newPage = state.page + 1;
+      return {
+        page: newPage,
+      };
+
+    default:
+      return state;
+  }
+};
+export const increaseCurrentDiscoverSizeReducer = (
+  state = {size: 30},
+  {type},
+) => {
+  switch (type) {
+    case DISCOVER_SCREEN_CURRENT_SIZE:
+      const newSize = state.size + 30;
+      return {
+        size: newSize,
       };
 
     default:

@@ -14,10 +14,15 @@ import CustomHeader from '../../../../Components/CustomHeader/CommonHeader';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 import {useDispatch, useSelector} from 'react-redux';
-import {get_Media} from '../../../../redux/actions/MediaActions/getMediaActions';
+import {
+  get_Media,
+  add_Media_To_Discover_Page,
+} from '../../../../redux/actions/MediaActions/getMediaActions';
 import LoadingAnime from '../../../../Components/Loading/Loading';
 import MainErrorPopup from '../../../../Components/Modal/MainErrorPopUp';
+import MainSuccessPopUp from '../../../../Components/Modal/MainSuccessPopUp';
 import SettingSongMedia from '../../../../Components/LibrarySongs/SettingsMediaSongs';
+import LoginBtn from '../../../../Components/Button/LoginBtn';
 
 const {width, height} = Dimensions.get('window');
 
@@ -27,12 +32,30 @@ const index = () => {
   const [songTitle, setSongTitle] = useState('');
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(50);
+  const [songId, setSongId] = useState('');
 
-  console.log(songTitle, 'DISCOVERED');
+  console.log(songId, 'DISCOVERED');
 
-  const chooseSong = (val) => {
+  const chooseSong = (val, val2) => {
     setSongTitle(val);
+    setSongId(val2);
   };
+
+  const markAsDiscovered = () => {
+    if (songId !== '') {
+      dispatch(add_Media_To_Discover_Page(songId));
+    }
+  };
+
+  const addMediaToDiscoverPage = useSelector(
+    state => state.addMediaToDiscoverPage,
+  );
+  const {
+    loading: addMediaLoading,
+    error: addMediaError,
+    message: addMediaMessage,
+    status: addMediaStatus,
+  } = addMediaToDiscoverPage;
 
   useEffect(() => {
     if (artistMedias.length <= 0) {
@@ -40,13 +63,13 @@ const index = () => {
     }
   }, []);
 
-  const getMedia = useSelector((state) => state.getMedia);
+  const getMedia = useSelector(state => state.getMedia);
   const {loading, error, data: artistMedias} = getMedia;
 
-  const fiterArtistData = (val) => {
+  const fiterArtistData = val => {
     if (val !== '') {
       const filtered = artistMedias.filter(
-        (item) => item.title?.toLowerCase().indexOf(val.toLowerCase()) >= 0,
+        item => item.title?.toLowerCase().indexOf(val.toLowerCase()) >= 0,
       );
       return filtered;
     } else {
@@ -73,11 +96,7 @@ const index = () => {
       </View>
     ));
   } else if (loading) {
-    return (mainView = (
-      <View style={{alignSelf: 'center', marginTop: 20}}>
-        <LoadingAnime width={60} height={60} />
-      </View>
-    ));
+    return (mainView = <LoadingAnime width={60} height={60} />);
   } else if (error) {
     return (
       <TouchableOpacity
@@ -108,7 +127,7 @@ const index = () => {
     mainView = (
       <FlatList
         data={fiterArtistData(searchValue)}
-        keyExtractor={(item) => item.title}
+        keyExtractor={item => item.title}
         contentContainerStyle={{paddingHorizontal: 20, paddingVertical: 20}}
         renderItem={({item, index}) => (
           <SettingSongMedia
@@ -118,7 +137,7 @@ const index = () => {
             showLikeBtn={true}
             indexes
             index={index}
-            chooseSong={(val) => chooseSong(val)}
+            chooseSong={(val, val2) => chooseSong(val, val2)}
             songTitle={songTitle}
           />
         )}
@@ -126,9 +145,27 @@ const index = () => {
     );
   }
 
+  let addMediasStatus = null;
+  if (addMediaLoading) {
+    addMediasStatus = <LoadingAnime width={60} height={60} />;
+  } else if (addMediaStatus === true) {
+    addMediasStatus = (
+      <MainSuccessPopUp successState={addMediaStatus} clearTime={1500}>
+        {addMediaMessage}
+      </MainSuccessPopUp>
+    );
+  } else if (addMediaError) {
+    addMediasStatus = (
+      <MainErrorPopup clearTime={1500} errorState={addMediaError}>
+        {addMediaError}
+      </MainErrorPopup>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <CustomHeader title={`Your songs (${artistMedias.length})`} />
+      {addMediasStatus}
       <View style={styles.content}>
         <View style={styles.search}>
           <Icon
@@ -141,7 +178,7 @@ const index = () => {
             placeholder="Search"
             placeholderTextColor="#999"
             value={searchValue}
-            onChangeText={(val) => setSearchValue(val)}
+            onChangeText={val => setSearchValue(val)}
             style={{
               paddingLeft: 10,
               color: '#eee',
@@ -161,8 +198,43 @@ const index = () => {
             }}>
             Pick a song to be discovered
           </Text>
+          <View style={{width: scale(100), height: scale(30)}}>
+            <LoginBtn
+              title="Apply"
+              textSize={scale(12)}
+              height={scale(30)}
+              width="100%"
+              onPress={() => markAsDiscovered()}
+            />
+          </View>
         </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+          }}>
+          <Icon
+            name="md-information-circle"
+            size={20}
+            color="#ff3333"
+            style={{width: '8%'}}
+          />
+          <Text
+            style={{
+              color: '#ddd',
+              fontSize: scale(10),
+              fontFamily: 'Helvetica-Regular',
 
+              textAlign: 'left',
+              width: '90%',
+              lineHeight: scale(12),
+            }}>
+            Choosing a new song will overwrite your initial song on the discover
+            page.
+          </Text>
+        </View>
         {mainView}
         {/* <ScrollView
           bounces={false}
@@ -186,6 +258,7 @@ const styles = ScaledSheet.create({
   content: {
     flex: 1,
     paddingTop: 20,
+    backgroundColor: '#000',
   },
   search: {
     borderWidth: 1,
@@ -207,5 +280,8 @@ const styles = ScaledSheet.create({
     paddingVertical: 20,
     borderBottomColor: '#333',
     borderWidth: 0.5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });

@@ -14,7 +14,12 @@ import {
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import PlayerContext from '../../PlayerContext/PlayerContext';
 import {connect} from 'react-redux';
-import {get_Trailer_Media} from '../../redux/actions/MediaActions/getMediaActions';
+import {
+  get_Trailer_Media,
+  like_A_Discover_Media,
+  increase_Discover_Media_Page,
+  increase_Discover_Media_Size,
+} from '../../redux/actions/MediaActions/getMediaActions';
 import FilterModal from './FilterModal';
 
 import DiscoverSlide from './DiscoverSlide';
@@ -23,6 +28,7 @@ import TrackPlayer, {State} from 'react-native-track-player';
 import LoadingAnime from '../../Components/Loading/Loading';
 import ErrorView from '../../Components/ErrorScreen/ErrorScreen';
 import FocusEffect from './useFocusEffect';
+import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -81,17 +87,18 @@ class Discovery extends Component {
     outputRange: [1, 0.8, 1],
     extrapolate: 'clamp',
   });
-  // componentDidMount() {
-  //   this.props.get_Trailer_Media(this.state.page, this.state.size);
-  //   if (this.props.getTrailerMedia.data !== []) {
-  //     this.props.getTrailerMedia.data.forEach(function (obj) {
-  //       obj.id = obj.mediaIdentity;
-  //       obj.url = obj.trailerUrl;
-  //       Object.preventExtensions(obj);
-  //     });
-  //     this.context.play(this.props.getTrailerMedia.data);
-  //   }
-  // }
+  componentDidMount() {
+    //   this.props.get_Trailer_Media(this.state.page, this.state.size);
+    //   if (this.props.getTrailerMedia.data !== []) {
+    //     this.props.getTrailerMedia.data.forEach(function (obj) {
+    //       obj.id = obj.mediaIdentity;
+    //       obj.url = obj.trailerUrl;
+    //       Object.preventExtensions(obj);
+    //     });
+    //     this.context.play(this.props.getTrailerMedia.data);
+    //   }
+    this.context.resetCurrentTrack();
+  }
 
   changeActiveTab = () => {
     this.setState({
@@ -103,17 +110,17 @@ class Discovery extends Component {
       activeTab: false,
     });
   };
-  changeGenreValue = (val) => {
+  changeGenreValue = val => {
     this.setState({
       genreValue: val,
     });
   };
-  changeCountryValue = (val) => {
+  changeCountryValue = val => {
     this.setState({
       countryValue: val,
     });
   };
-  changeCountryCode = (val) => {
+  changeCountryCode = val => {
     this.setState({
       countryCode: val,
     });
@@ -123,7 +130,7 @@ class Discovery extends Component {
       activeTab: false,
     });
   };
-  chooseState = (data) => {
+  chooseState = data => {
     this.setState({
       statesData: data,
     });
@@ -154,8 +161,9 @@ class Discovery extends Component {
             toValue: {x: SCREEN_WIDTH + 200, y: gestureState.dy},
             useNativeDriver: true,
           }).start(() => {
+            this.context.skip(this.state.currentIndex);
             this.setState(
-              (prevState) => ({currentIndex: prevState.currentIndex + 1}),
+              prevState => ({currentIndex: prevState.currentIndex + 1}),
               () => this.state.position.setValue({x: 0, y: 0}),
             );
           });
@@ -165,7 +173,7 @@ class Discovery extends Component {
             useNativeDriver: true,
           }).start(() => {
             this.setState(
-              (prevState) => ({currentIndex: prevState.currentIndex + 1}),
+              prevState => ({currentIndex: prevState.currentIndex + 1}),
               () => this.state.position.setValue({x: 0, y: 0}),
             );
           });
@@ -186,8 +194,9 @@ class Discovery extends Component {
       useNativeDriver: true,
       duration: 1000,
     }).start(() => {
+      this.context.skip(this.state.currentIndex);
       this.setState(
-        (prevState) => ({currentIndex: prevState.currentIndex + 1}),
+        prevState => ({currentIndex: prevState.currentIndex + 1}),
         () => this.state.position.setValue({x: 0, y: 0}),
       );
     });
@@ -200,27 +209,26 @@ class Discovery extends Component {
       duration: 1000,
     }).start(() => {
       this.setState(
-        (prevState) => ({currentIndex: prevState.currentIndex + 1}),
+        prevState => ({currentIndex: prevState.currentIndex + 1}),
         () => this.state.position.setValue({x: 0, y: 0}),
       );
     });
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.currentIndex != this.state.currentIndex) {
-      if (
-        this.props.getTrailerMedia.data[this.state.currentIndex]?.mediaIdentity
-      ) {
-        // this.UnlikeSong();
-        TrackPlayer.skip(
-          this.props.getTrailerMedia.data[this.state.currentIndex]
-            ?.mediaIdentity,
-        );
-      }
-      console.log('Index Changed');
-      console.log(this.props);
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevState.currentIndex != this.state.currentIndex) {
+  //     if (
+  //       this.props.getTrailerMedia.data[this.state.currentIndex]?.mediaIdentity
+  //     ) {
+  //       TrackPlayer.skip(
+  //         this.props.getTrailerMedia.data[this.state.currentIndex]
+  //           ?.mediaIdentity,
+  //       );
+  //     }
+  //     console.log('Index Changed');
+  //     console.log(this.props);
+  //   }
+  // }
   componentWillUnmount() {
     // TrackPlayer.remove(this.props.getTrailerMedia.data);
     // TrackPlayer.reset();
@@ -330,7 +338,10 @@ class Discovery extends Component {
     };
 
     const getTrailerData = () => {
-      this.props.get_Trailer_Media(this.state.page, this.state.size);
+      this.props.get_Trailer_Media(
+        this.props.increaseCurrentDiscoverPage.page,
+        this.props.increaseCurrentDiscoverSize.size,
+      );
     };
 
     let loadingView = null;
@@ -352,15 +363,16 @@ class Discovery extends Component {
     let pauseBtn = null;
     let loadingAnimes = null;
     let stoppedBtn = null;
+
     if (this.context.isPlaying) {
       playBtn = (
         <TouchableOpacity
           activeOpacity={0.6}
           style={styles.playContainer}
-          onPress={() => this.context.pause()}>
+          onPress={() => this.context.toggleMusicPlay()}>
           <Icon
             name="ios-pause"
-            size={55}
+            size={scale(40)}
             color="#fff"
             style={{paddingLeft: 2}}
           />
@@ -372,10 +384,10 @@ class Discovery extends Component {
         <TouchableOpacity
           activeOpacity={0.6}
           style={styles.playContainer}
-          onPress={() => this.context.musicPlay()}>
+          onPress={() => this.context.toggleMusicPlay()}>
           <Icon
             name="ios-caret-forward"
-            size={55}
+            size={scale(40)}
             color="#fff"
             style={{paddingLeft: 2}}
           />
@@ -384,8 +396,16 @@ class Discovery extends Component {
     }
     if (this.context.isBuffering) {
       loadingAnimes = (
-        <TouchableOpacity activeOpacity={0.6} style={styles.playContainer}>
-          <ActivityIndicator color="#fff" size={55} />
+        <TouchableOpacity
+          activeOpacity={0.6}
+          style={styles.playContainer}
+          onPress={() => this.context.toggleMusicPlay()}>
+          <Icon
+            name="ios-pause"
+            size={scale(40)}
+            color="#fff"
+            style={{paddingLeft: 2}}
+          />
         </TouchableOpacity>
       );
     }
@@ -394,10 +414,10 @@ class Discovery extends Component {
         <TouchableOpacity
           activeOpacity={0.6}
           style={styles.playContainer}
-          onPress={() => this.context.play()}>
+          onPress={() => this.context.toggleMusicPlay()}>
           <Icon
             name="ios-pause"
-            size={55}
+            size={scale(40)}
             color="#fff"
             style={{paddingLeft: 2}}
           />
@@ -405,17 +425,30 @@ class Discovery extends Component {
       );
     }
 
+    let mainView = null;
+    if (this.props.getTrailerMedia.data.length <= 0) {
+      mainView = (
+        <View style={{width: '100%', height: SCREEN_HEIGHT / 2}}>
+          <Text
+            style={{color: '#fff', fontSize: scale(25), textAlign: 'center'}}>
+            Empty Songs
+          </Text>
+        </View>
+      );
+    } else {
+      mainView = renderSongs();
+    }
     return (
       <View style={styles.container}>
         {loadingView}
         {errorView}
-        <FocusEffect
+        {/* <FocusEffect
           unLike={this.UnlikeSong}
           page={this.state.page}
           size={this.state.size}
-          chooseState={(val) => this.chooseState(val)}
+          chooseState={val => this.chooseState(val)}
           countryCode={this.state.countryCode}
-        />
+        /> */}
         <FilterModal
           showFilter={this.state.showFilter}
           onPress={this.closeFilter}
@@ -425,7 +458,8 @@ class Discovery extends Component {
         />
         <View>
           <View style={{flex: 1, position: 'relative'}}>
-            {renderSongs()}
+            {/* {renderSongs()} */}
+            {mainView}
 
             <View style={styles.filterBtn}>
               <TouchableOpacity
@@ -462,11 +496,22 @@ class Discovery extends Component {
   }
 }
 
-const mapStateToProps = ({getTrailerMedia}) => ({
+const mapStateToProps = ({
   getTrailerMedia,
+  increaseCurrentDiscoverPage,
+  increaseCurrentDiscoverSize,
+}) => ({
+  getTrailerMedia,
+  increaseCurrentDiscoverPage,
+  increaseCurrentDiscoverSize,
 });
 
-export default connect(mapStateToProps, {get_Trailer_Media})(Discovery);
+export default connect(mapStateToProps, {
+  get_Trailer_Media,
+  like_A_Discover_Media,
+  increase_Discover_Media_Page,
+  increase_Discover_Media_Size,
+})(Discovery);
 
 const styles = StyleSheet.create({
   container: {
@@ -489,13 +534,14 @@ const styles = StyleSheet.create({
     borderRadius: 80 / 2,
     width: 80,
     height: 80,
-    borderColor: '#f68128',
-    borderWidth: 1,
+    // borderColor: '#f68128',
+    // borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 20,
 
-    backgroundColor: '#f68128',
+    // backgroundColor: '#f68128',
+    backgroundColor: 'rgba(246, 129, 40,0.2)',
     alignSelf: 'flex-end',
   },
   // playView: {

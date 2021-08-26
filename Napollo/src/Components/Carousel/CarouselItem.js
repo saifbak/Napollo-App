@@ -12,6 +12,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
 import {openModalPlayer} from '../../redux/actions/musicPlayerActions';
+import {play_Media} from '../../redux/actions/MediaActions/getMediaActions';
 import {useNavigation} from '@react-navigation/native';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 
@@ -29,6 +30,8 @@ const CarouselItem = ({
 }) => {
   const playerContext = usePlayerContext();
   const dispatch = useDispatch();
+  const storeUserLocation = useSelector(state => state.storeUserLocation);
+  const {city, state, country} = storeUserLocation;
   const currentTrack = {
     title,
     url,
@@ -52,20 +55,15 @@ const CarouselItem = ({
     allSong.mediaSongs.forEach(item =>
       songsData.push({
         ...item,
-        artist: item.firstName
-          ? `${item.firstName} ${item.lastName}`
-          : item.title,
+        artist: item.ownerAccountUser
+          ? `${item.ownerAccountUser?.username}`
+          : `${item.firstName} ${item.lastName}`,
       }),
     );
     dispatch(openModalPlayer(songsData));
-    console.log(playerContext.currentTrackDetails, 'when PLAY IS CLICCKED');
-
+    dispatch(play_Media(city, state, country, id));
     // const check = [...allSongs.mediaSongs];
     const check = [allSong.currentTrack, ...songsData];
-    console.log(check, 'CHECHHHHHHKKK');
-
-    // playerContext.playMusic(allSongs.currentTrack, check);
-    console.log(index, 'INDEX');
     playerContext.playMusic(check);
   };
 
@@ -124,14 +122,14 @@ const CarouselItem = ({
           <View style={styles.listner}>
             <Icon
               name="headset"
-              color="#999"
+              color="#eee"
               size={scale(11)}
               style={{marginRight: 5}}
             />
             <Text
               style={{
-                color: '#999',
-                fontFamily: 'Helvetica-Medium',
+                color: '#eee',
+                fontFamily: 'Helvetica-Bold',
                 fontSize: scale(9),
                 textTransform: 'capitalize',
               }}>

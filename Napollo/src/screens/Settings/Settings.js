@@ -19,56 +19,18 @@ import SingleSettingsCont from './component/SingleSettingsCont';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 import {useDispatch} from 'react-redux';
 import {logout} from '../../redux/actions/userActions';
+import {useSelector} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
 const Settings = ({navigation}) => {
   const dispatch = useDispatch();
-  const [language, setLanguage] = useState('English');
-  const [languageModal, setLanguageModal] = useState(false);
-
-  const openLanguageModal = () => {
-    setLanguageModal(true);
-  };
-  const closeLanguageModal = () => {
-    setLanguageModal(false);
-  };
-  const items = [
-    {
-      label: 'English',
-      value: 'english',
-    },
-    {
-      label: 'French',
-      value: 'french',
-
-      hidden: true,
-    },
-
-    {
-      label: 'Spanish',
-      value: 'spanish',
-    },
-    {
-      label: 'Chinese',
-      value: 'madanrin',
-    },
-  ];
-  const changeLanguage = (val) => {
-    setLanguage(val);
-  };
-
+  const userLogin = useSelector(state => state.userLogin);
+  const {type} = userLogin;
   return (
     <View style={{flex: 1, backgroundColor: '#000'}}>
       <SafeAreaView style={{flex: 1}}>
         <View style={styles.container}>
-          <LanguageModal
-            closeModal={closeLanguageModal}
-            openModal={openLanguageModal}
-            language={language}
-            languageModal={languageModal}
-            changeLanguage={(val) => changeLanguage(val)}
-          />
           <CommonHeader title="Settings" />
           <View style={styles.content}>
             <ScrollView
@@ -93,11 +55,14 @@ const Settings = ({navigation}) => {
                   text="Manage your account details"
                   onPress={() => navigation.navigate('SettingAccount')}
                 />
-                <SingleSettingsCont
-                  title="Discover"
-                  text="Choose the song that represent you "
-                  onPress={() => navigation.navigate('SettingDiscover')}
-                />
+                {type === 'ARTIST' && (
+                  <SingleSettingsCont
+                    title="Discover"
+                    text="Choose the song that represent you "
+                    onPress={() => navigation.navigate('SettingDiscover')}
+                  />
+                )}
+
                 <SingleSettingsCont
                   title="Notifications"
                   text="Manage your notifications"

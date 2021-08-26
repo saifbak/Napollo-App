@@ -83,12 +83,12 @@ class SinglePlaylistScreen extends Component {
           style={{width: '100%', alignItems: 'center', marginTop: scale(10)}}>
           <Text
             style={{
-              textAlign: 'çenter',
+              textAlign: 'center',
               fontSize: scale(11),
               color: '#fff',
               fontFamily: 'Helvetica-Bold',
             }}>
-            You haven't added any song, Please do.
+            This playlist contains no songs
           </Text>
         </View>
       );
@@ -179,7 +179,7 @@ class SinglePlaylistScreen extends Component {
                 source={
                   url && url !== '' ? {uri: url} : PlaylistImagePlacHolder
                 }
-                blurRadius={5}>
+                blurRadius={0}>
                 {/* BLACK OVERLAY */}
                 <Animated.View
                   style={{
@@ -395,6 +395,6 @@ const styles = ScaledSheet.create({
     color: '#f68128',
     fontSize: 15,
     fontFamily: 'Helvetica-Medium',
-    marginTop: 5,
+    // marginTop: 5,
   },
 });

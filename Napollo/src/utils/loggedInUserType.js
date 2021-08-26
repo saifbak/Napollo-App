@@ -2,7 +2,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import React from 'react';
 import {logout} from '../redux/actions/userActions';
 import {LOGOUT_USER_WHEN_TOKEN_EXPIRES} from '../redux/constants';
-import {callingCodes} from '../data5'
+import {callingCodes} from '../data5';
 
 export const getLoggedInUserProfile = type => {
   const getUserProfile = useSelector(state => state.getUserProfile);
@@ -36,8 +36,6 @@ export const logoutUserWhenTokenExpires = (dispatch, error, type) => {
           ? error?.response?.data?.responseDescription
           : error?.message,
     });
-  } else if (error) {
-    console.log(error, 'GENERAL ERROR');
   } else {
     dispatch({
       type: type,
@@ -49,9 +47,8 @@ export const logoutUserWhenTokenExpires = (dispatch, error, type) => {
   }
 };
 
-
-export const getUserCallingCode = (val)=>{
-const res = callingCodes.filter((x) => x.code === val)
-console.log(res[0].dial_code,'CALLINGcODE')
-return res[0].dial_code
-}
+export const getUserCallingCode = val => {
+  const res = callingCodes.filter(x => x.code === val);
+  console.log(res[0].dial_code, 'CALLINGcODE');
+  return res[0].dial_code;
+};

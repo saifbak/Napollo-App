@@ -10,28 +10,16 @@ import {
 import CustomHeader from '../../Components/CustomHeader/CommonHeader';
 import SongContainer from '../../Components/LibrarySongs/GeneralSong';
 import data from '../../data';
+import {useDispatch, useSelector} from 'react-redux';
+import ArtistSongs from './UserTypes/ArtistSongs';
+import ListenerSongs from './UserTypes/ListenerSongs';
 
 const {width, height} = Dimensions.get('window');
 
 const FavoriteScreen = () => {
-  return (
-    <View style={{flex: 1, backgroundColor: '#000'}}>
-      <SafeAreaView style={{flex: 1}}>
-        <View style={styles.container}>
-          <CustomHeader title="Favorites Songs" />
-          <View style={styles.content}>
-            <FlatList
-              contentContainerStyle={{marginTop: 20}}
-              data={data}
-              keyExtractor={(item) => item.artwork}
-              renderItem={({item}) => <SongContainer {...item} />}
-            />
-            {/* <SongContainer /> */}
-          </View>
-        </View>
-      </SafeAreaView>
-    </View>
-  );
+  const userLogin = useSelector(state => state.userLogin);
+  const {type} = userLogin;
+  return <>{type === 'ARTIST' ? <ArtistSongs /> : <ListenerSongs />}</>;
 };
 
 export default FavoriteScreen;

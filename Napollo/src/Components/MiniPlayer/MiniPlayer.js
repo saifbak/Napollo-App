@@ -159,7 +159,7 @@ class MiniPlayer extends Component {
                   <Icon
                     name="pause"
                     color="#eee"
-                    size={scale(35)}
+                    size={scale(28)}
                     style={{paddingLeft: 2}}
                   />
                 </TouchableOpacity>
@@ -171,7 +171,7 @@ class MiniPlayer extends Component {
                   <Icon
                     name="play"
                     color="#eee"
-                    size={scale(35)}
+                    size={scale(28)}
                     style={{paddingLeft: 3}}
                   />
                 </TouchableOpacity>
@@ -183,7 +183,7 @@ class MiniPlayer extends Component {
                   <Icon
                     name="pause"
                     color="#eee"
-                    size={scale(35)}
+                    size={scale(28)}
                     style={{paddingLeft: 3}}
                   />
                 </TouchableOpacity>
@@ -197,7 +197,7 @@ class MiniPlayer extends Component {
                   <Icon
                     name="pause"
                     color="#eee"
-                    size={scale(35)}
+                    size={scale(28)}
                     style={{paddingLeft: 2}}
                   />
                 </TouchableOpacity>
@@ -209,7 +209,7 @@ class MiniPlayer extends Component {
                 <Icon
                   name="play-skip-forward"
                   color="#f68128"
-                  size={scale(24)}
+                  size={scale(22)}
                 />
               </TouchableOpacity>
             </View>

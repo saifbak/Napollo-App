@@ -47,15 +47,13 @@ const SearchScreen = () => {
 
   // useEffect(() => {
   // }, []);
+  // useFocusEffect(
+  //   useCallback(() => {;
+  //   }, []),
+  // );
   useFocusEffect(
     useCallback(() => {
       dispatch(get_New_Releases(page, size));
-      // dispatch(get_Trending_Media(page, size, city, state, country));
-    }, []),
-  );
-  useFocusEffect(
-    useCallback(() => {
-      // dispatch(get_New_Releases(page, size));
       dispatch(get_Trending_Media(page, size, city, state, country));
     }, []),
   );

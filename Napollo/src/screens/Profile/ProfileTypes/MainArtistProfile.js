@@ -32,7 +32,7 @@ import {
   get_User_Media_Listening_History,
   get_Artist_Media,
   get_Artist_Trending_Media,
-  get_Media
+  get_Media,
 } from '../../../redux/actions/MediaActions/getMediaActions';
 import TabView from './TabViews/ArtistTabView';
 import ProfileModal from '../../../Components/Modal/ProfileModal';
@@ -55,12 +55,12 @@ const MainArtistProfile = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(50);
-  const storeUserLocation = useSelector((state) => state.storeUserLocation);
+  const storeUserLocation = useSelector(state => state.storeUserLocation);
   const {city, state, country} = storeUserLocation;
 
   useFocusEffect(
     useCallback(() => {
-      dispatch(get_Media(page,size))
+      dispatch(get_Media(page, size));
       // dispatch(get_Artist_Trending_Media(city, state, country, page, size));
     }, []),
   );
@@ -89,6 +89,8 @@ const MainArtistProfile = () => {
       </LinearGradient>
       <View style={styles.content}>
         <ScrollView
+          showsVerticalScrollIndicator={false}
+          bounces={false}
           contentContainerStyle={{paddingTop: 30, paddingBottom: 50}}
           style={{flex: 1}}>
           <ArtistDetails onPress={() => navigation.navigate('Edit_Profile')} />

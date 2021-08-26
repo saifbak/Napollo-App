@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,6 +11,7 @@ import {
 import CustomHeader from '../../../../Components/CustomHeader/CommonHeader';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 import {useDispatch, useSelector} from 'react-redux';
+import {useFocusEffect} from '@react-navigation/native';
 import {getLoggedInUserProfile} from '../../../../utils/loggedInUserType';
 import {
   widthPercentageToDP as wp,
@@ -18,11 +19,37 @@ import {
 } from 'react-native-responsive-screen';
 import Divider from '../../../../Components/Divider/Divider';
 import SingleSubSettingsCont from '../../component/SingleSubSettings';
+import GeneralModal from '../../../../Components/Modal/GeneralModalCont';
+import UsernameUpdateCont from './componet/UsernameUpdateCont';
+import UserPasswordUpdate from './componet/UserPasswordUpdate';
+import {
+  CLEAR_UPDATE_USER_USERNAME_STATE,
+  CLEAR_UPDATE_USER_PASSWORD_STATE,
+  CLEAR_UPGRADE_USER_ACCOUNT_STATE,
+} from '../../../../redux/constants/index';
+import UpgradeConfirmModal from './componet/UpgradeConfirmModal';
 
 const {width, height} = Dimensions.get('window');
 
 const index = () => {
+  const dispatch = useDispatch();
   const userData = getLoggedInUserProfile('LISTENER');
+  const userLogin = useSelector(state => state.userLogin);
+  const {type} = userLogin;
+  const [usernameModal, setUsernameModal] = useState(false);
+  const [passwordModal, setPasswordModal] = useState(false);
+  const [upgradeModal, setUpgradeModal] = useState(false);
+  const [userType, setUserType] = useState(null);
+
+  console.log(userType, 'SWITCH ');
+
+  useEffect(() => {
+    if (type === 'ARTIST') {
+      setUserType('LISTENER');
+    } else {
+      setUserType('ARTIST');
+    }
+  }, []);
 
   const {
     userProfile: {
@@ -39,9 +66,45 @@ const index = () => {
     },
   } = userData;
 
+  useFocusEffect(
+    useCallback(() => {
+      dispatch({
+        type: CLEAR_UPDATE_USER_USERNAME_STATE,
+      });
+      dispatch({
+        type: CLEAR_UPDATE_USER_PASSWORD_STATE,
+      });
+      dispatch({
+        type: CLEAR_UPGRADE_USER_ACCOUNT_STATE,
+      });
+    }, []),
+  );
+
   return (
     <View style={styles.container}>
       <CustomHeader title={`@${username}`} />
+      <GeneralModal
+        bg="#000"
+        animate={true}
+        visible={usernameModal}
+        closeModal={() => setUsernameModal(false)}>
+        <UsernameUpdateCont
+          closeUsernameModal={() => setUsernameModal(false)}
+        />
+      </GeneralModal>
+      <GeneralModal
+        bg="#000"
+        animate={true}
+        visible={passwordModal}
+        closeModal={() => setPasswordModal(false)}>
+        <UserPasswordUpdate closeModal={() => setPasswordModal(false)} />
+      </GeneralModal>
+      <UpgradeConfirmModal
+        visible={upgradeModal}
+        closeModal={() => setUpgradeModal(false)}
+        type={userType}
+      />
+
       <View style={styles.content}>
         <ScrollView
           bounces={false}
@@ -60,18 +123,22 @@ const index = () => {
             ) : (
               <Image style={styles.profileImage} source={{uri: profileUrl}} />
             )}
-            <TouchableOpacity activeOpacity={0.7}>
-              <Text style={styles.imgText}>Become an Artist</Text>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => setUpgradeModal(true)}>
+              <Text style={styles.imgText}>Become an {userType}</Text>
             </TouchableOpacity>
           </View>
           <View>
             <SingleSubSettingsCont
               title="Update your username"
               text={`@${username}`}
+              onPress={() => setUsernameModal(true)}
             />
             <SingleSubSettingsCont
               title="Update your password"
               text="***********"
+              onPress={() => setPasswordModal(true)}
             />
           </View>
         </ScrollView>

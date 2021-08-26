@@ -17,7 +17,7 @@ const AlbumIconDetails = () => {
       </View>
       {/* SINGLE ICON */}
       <View style={{marginHorizontal: 10, marginVertical: 20}}>
-        <Icon name="chatbubble" size={24} color="#ddd" />
+        <Icon name="musical-notes" size={24} color="#ddd" />
         <Text style={{color: '#ddd', fontSize: 13}}>5K</Text>
       </View>
       {/* SINGLE ICON */}

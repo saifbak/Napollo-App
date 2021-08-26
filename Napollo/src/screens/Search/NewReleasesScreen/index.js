@@ -11,6 +11,8 @@ import {
 import CommonHeader from '../../../Components/CustomHeader/CommonHeader';
 import {useSelector, useDispatch} from 'react-redux';
 import {get_New_Releases} from '../../../redux/actions/MediaActions/SearchActions/index';
+import {play_Media} from '../../../redux/actions/MediaActions/getMediaActions';
+import {store_User_Location} from '../../../redux/actions/userActions';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {alphaBets} from '../../../data5';
 import CustomAlphaBtn from '../../../Components/Button/CustomAlphabetFilterView';
@@ -18,6 +20,9 @@ import LoadingAnime from '../../../Components/Loading/Loading';
 import MediaSong from '../../../Components/LibrarySongs/MediaSongs';
 import Divider from '../../../Components/Divider/Divider';
 import LoginBtn from '../../../Components/Button/LoginBtn';
+import {usePlayerContext} from '../../../PlayerContext/PlayerContext';
+import {openModalPlayer} from '../../../redux/actions/musicPlayerActions';
+import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const {width, height} = Dimensions.get('window');
 
@@ -27,19 +32,33 @@ const index = () => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(50);
 
-  const getNewReleases = useSelector((state) => state.getNewReleases);
+  const getNewReleases = useSelector(state => state.getNewReleases);
   const {loading, error, data: mediaData} = getNewReleases;
-
+  const storeUserLocation = useSelector(state => state.storeUserLocation);
+  const {city, state, country} = storeUserLocation;
   useFocusEffect(
     useCallback(() => {
       dispatch(get_New_Releases(page, size));
     }, []),
   );
 
-  const fiterArtistData = (val) => {
+  const {playMusic} = usePlayerContext();
+
+  const allSongs = {
+    currentTrack: mediaData[0],
+    mediaSongs: mediaData,
+  };
+
+  const playSongs = () => {
+    dispatch(play_Media(city, state, country, mediaData[0]?.id));
+    playMusic([...mediaData]);
+    dispatch(openModalPlayer(allSongs));
+  };
+
+  const fiterArtistData = val => {
     if (val !== 'All' && val !== '') {
-      const filtered = mediaData.filter(
-        (item) => item.title?.toLowerCase().indexOf(val.toLowerCase()) >= 0,
+      const filtered = mediaData.filter(item =>
+        item.title?.toLowerCase().startsWith(val.toLowerCase()),
       );
       return filtered;
     } else {
@@ -47,7 +66,7 @@ const index = () => {
     }
   };
 
-  const chooseFilterVal = (val) => {
+  const chooseFilterVal = val => {
     setFilterValue(val);
   };
   let mainView = null;
@@ -59,7 +78,7 @@ const index = () => {
         <Text
           style={{
             color: '#999',
-            fontSize: hp('2.2%'),
+            fontSize: scale(15),
             textAlign: 'center',
             marginTop: 40,
           }}>
@@ -81,7 +100,7 @@ const index = () => {
     mainView = (
       <FlatList
         data={fiterArtistData(filterValue)}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingVertical: 20,
@@ -128,7 +147,7 @@ const index = () => {
               horizontal={true}
               showsHorizontalScrollIndicator={false}
               data={alphaBets}
-              keyExtractor={(item) => item.title}
+              keyExtractor={item => item.title}
               renderItem={({item, index}) => (
                 <CustomAlphaBtn
                   {...item}
@@ -147,7 +166,12 @@ const index = () => {
               paddingHorizontal: 10,
               marginTop: 10,
             }}>
-            <LoginBtn title="Play All" icon="play" height={35} />
+            <LoginBtn
+              title="Play All"
+              icon="play"
+              height={35}
+              onPress={() => playSongs()}
+            />
           </View>
           <Divider mt={10} bc="#555" />
 

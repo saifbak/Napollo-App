@@ -7,7 +7,10 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import MainImage from '../../../assests/images/caro.jpg';
+import MainImage from '../../../assests/images/albums-placeholder.jpg';
+import {store_Active_Album_Details} from '../../../redux/actions/MediaActions/AlbumActions/index';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 
@@ -19,11 +22,34 @@ const AlbumContainer = ({
   photoUrl,
   song,
   artist,
+  url,
+  owner,
+  id,
+  year,
+  description,
 }) => {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const albumData = {
+    name,
+    description,
+    url,
+    year,
+    id,
+    owner,
+  };
+
+  const albumNavigate = () => {
+    dispatch(store_Active_Album_Details(albumData));
+    navigation.navigate('SingleAlbum');
+  };
   return (
-    <TouchableOpacity activeOpacity={0.6} style={[styles.container, {}]}>
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={() => albumNavigate()}
+      style={[styles.container, {}]}>
       <Image
-        source={photoUrl ? {uri: photoUrl} : MainImage}
+        source={url && url !== null ? {uri: url} : MainImage}
         style={styles.image}
       />
       {/* BLACK OVERLAY */}
@@ -44,7 +70,6 @@ const AlbumContainer = ({
             fontFamily: 'Helvetica-Bold',
           }}>
           {name}
-          Used to this
         </Text>
         <Text
           style={{
@@ -52,7 +77,8 @@ const AlbumContainer = ({
             fontSize: 10,
             fontFamily: 'Helvetica-Medium',
           }}>
-          {artist}Wizkid
+          {/* {owner?.username} */}
+          {year}
         </Text>
       </View>
     </TouchableOpacity>

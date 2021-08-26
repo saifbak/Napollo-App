@@ -23,6 +23,9 @@ import {
   storeUserLocationReducer,
   logoutUserWhenTokenExpiresReducer,
   storeUserCoordinatesReducer,
+  updateUserPasswordReducer,
+  updateUserUsernameReducer,
+  upgradeUserAccountReducer,
 } from './reducers/userReducer';
 
 import {
@@ -61,6 +64,7 @@ import {
 import {
   LikeMediaReducer,
   UnLikeMediaReducer,
+  userMediaLikedListReducer,
 } from './reducers/MediaReducers/Like_Unlike/Like_UnlikeReducer';
 
 import {
@@ -73,6 +77,10 @@ import {
   getTrendingMediaReducer,
   getUserMediaListeningHistoryReducer,
   addMediaToDiscoverPageReducer,
+  likeADiscoverMediaReducer,
+  getUserDiscoveredMediaReducer,
+  increaseCurrentDiscoverPageReducer,
+  increaseCurrentDiscoverSizeReducer,
 } from './reducers/MediaReducers/getAllMedia';
 
 import {
@@ -147,8 +155,12 @@ const rootReducer = combineReducers({
   getUserProfile: getUserProfileReducer,
   getUserProfileWithId: getUserProfileWithIdReducer,
   getGenreList: getGenreListReducer,
+  userMediaLikedList: userMediaLikedListReducer,
+  getUserDiscoveredMedia: getUserDiscoveredMediaReducer,
   artistRegister: artistRegisterReducer,
   customerType: customerTypeReducer,
+  increaseCurrentDiscoverPage: increaseCurrentDiscoverPageReducer,
+  increaseCurrentDiscoverSize: increaseCurrentDiscoverSizeReducer,
   getArtistProfile: getArtistProfileReducer,
   getMedia: getMediaReducer,
   playMedia: playMediaReducer,
@@ -157,6 +169,7 @@ const rootReducer = combineReducers({
   getUserMediaListeningHistory: getUserMediaListeningHistoryReducer,
   addMediaToDiscoverPage: addMediaToDiscoverPageReducer,
   getAllUsers: getAllUsersReducer,
+  likeADiscoverMedia: likeADiscoverMediaReducer,
   uploadMedia: uploadMediaReducer,
   uploadMediaArt: uploadMediaArtReducer,
   uploadTrimMedia: uploadTrimMediaReducer,
@@ -170,6 +183,9 @@ const rootReducer = combineReducers({
   updateArtistProfile: updateArtistProfileReducer,
   updateArtistProfilePics: updateArtistProfilePicsReducer,
   updateUserProfilePics: updateUserProfilePicsReducer,
+  updateUserUsername: updateUserUsernameReducer,
+  updateUserPassword: updateUserPasswordReducer,
+  upgradeUserAccount: upgradeUserAccountReducer,
   followArtist: followArtistReducer,
   unFollowArtist: unFollowArtistReducer,
   getAllArtists: getAllArtistsReducer,

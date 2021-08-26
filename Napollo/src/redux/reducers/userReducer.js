@@ -42,6 +42,18 @@ import {
   LOGOUT_USER_WHEN_TOKEN_EXPIRES,
   CLEAR_LOGOUT_TOKEN_MESSAGE,
   STORE_USER_COORDINATES,
+  UPDATE_USER_PASSWORD_REQUEST,
+  UPDATE_USER_PASSWORD_FAIL,
+  UPDATE_USER_PASSWORD_SUCCESS,
+  CLEAR_UPDATE_USER_PASSWORD_STATE,
+  UPDATE_USER_USERNAME_FAIL,
+  UPDATE_USER_USERNAME_REQUEST,
+  UPDATE_USER_USERNAME_SUCCESS,
+  CLEAR_UPDATE_USER_USERNAME_STATE,
+  UPGRADE_USER_ACCOUNT_FAIL,
+  UPGRADE_USER_ACCOUNT_REQUEST,
+  UPGRADE_USER_ACCOUNT_SUCCESS,
+  CLEAR_UPGRADE_USER_ACCOUNT_STATE,
 } from '../constants/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -342,6 +354,145 @@ export const updateUserProfileReducer = (
       return state;
   }
 };
+export const updateUserUsernameReducer = (
+  state = {
+    loading: false,
+    error: '',
+    status: false,
+    message: '',
+  },
+  {type, payload},
+) => {
+  switch (type) {
+    case UPDATE_USER_USERNAME_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        status: false,
+      };
+    case UPDATE_USER_USERNAME_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        status: payload.responseStatus,
+        error: '',
+        message: payload.responseDescription,
+      };
+    case UPDATE_USER_USERNAME_FAIL:
+      return {
+        ...state,
+        loading: false,
+        status: false,
+        error: payload,
+        message: '',
+      };
+    case CLEAR_UPDATE_USER_USERNAME_STATE:
+      return {
+        ...state,
+        loading: false,
+        status: false,
+        error: '',
+        message: '',
+      };
+
+    default:
+      return state;
+  }
+};
+export const updateUserPasswordReducer = (
+  state = {
+    loading: false,
+    error: '',
+    status: false,
+    message: '',
+  },
+  {type, payload},
+) => {
+  switch (type) {
+    case UPDATE_USER_PASSWORD_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        status: false,
+      };
+    case UPDATE_USER_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        status: payload.responseStatus,
+        error: '',
+        message: payload.responseDescription,
+      };
+    case UPDATE_USER_PASSWORD_FAIL:
+      return {
+        ...state,
+        loading: false,
+        status: false,
+        error: payload,
+        message: '',
+      };
+    case CLEAR_UPDATE_USER_PASSWORD_STATE:
+      return {
+        ...state,
+        loading: false,
+        status: false,
+        error: '',
+        message: '',
+      };
+
+    default:
+      return state;
+  }
+};
+export const upgradeUserAccountReducer = (
+  state = {
+    loading: false,
+    error: '',
+    status: false,
+    message: '',
+  },
+  {type, payload},
+) => {
+  switch (type) {
+    case UPGRADE_USER_ACCOUNT_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        status: false,
+        message: '',
+      };
+    case UPGRADE_USER_ACCOUNT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        status: payload.responseStatus,
+        error: '',
+        message: payload.responseDescription,
+      };
+    case UPGRADE_USER_ACCOUNT_FAIL:
+      return {
+        ...state,
+        loading: false,
+        status: false,
+        error: payload,
+        message: '',
+      };
+    case CLEAR_UPGRADE_USER_ACCOUNT_STATE:
+      return {
+        ...state,
+        loading: false,
+        status: false,
+        error: '',
+        message: '',
+      };
+
+    default:
+      return state;
+  }
+};
 export const updateUserProfilePicsReducer = (
   state = {
     loading: false,
@@ -484,7 +635,7 @@ export const followArtistReducer = (
 };
 
 export const storeUserLocationReducer = (
-  state = {city: '', state: '', country: '', countryCode: '',callingCode:''},
+  state = {city: '', state: '', country: '', countryCode: '', callingCode: ''},
   {type, payload},
 ) => {
   switch (type) {
@@ -494,7 +645,7 @@ export const storeUserLocationReducer = (
         state: payload.state,
         country: payload.country,
         countryCode: payload.countryCode,
-        callingCode: payload.callingCode
+        callingCode: payload.callingCode,
       };
 
     default:

@@ -5,6 +5,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   unLikeMedia,
   likeMedia,
+  addToLikedList,
+  removeFromLikedList,
 } from '../../redux/actions/MediaActions/Like_UnLike/Like_Unlike';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 
@@ -13,16 +15,43 @@ const LikeBtn = ({col, numListening, likes, likeCount, mediaId}) => {
   const [like, setLike] = useState(false);
   const [userLike, setUserLike] = useState(likes);
 
-  const toggleLikeUnlikeMedia = () => {
-    if (!like) {
-      dispatch(likeMedia(mediaId));
-      setLike(true);
-      setUserLike(userLike + 1);
+  const userMediaLikedList = useSelector(state => state.userMediaLikedList);
+  const {likedList, status} = userMediaLikedList;
+
+  const checkStatus = () => {
+    if (likedList.includes(mediaId)) {
+      return true;
     } else {
+      return false;
+    }
+  };
+
+  const value = checkStatus();
+
+  const toggleLikeUnlikeMedia = () => {
+    if (likedList.includes(mediaId)) {
       dispatch(unLikeMedia(mediaId));
       setLike(false);
+      dispatch(removeFromLikedList(mediaId));
       if (userLike >= 0) setUserLike(userLike - 1);
+    } else {
+      dispatch(likeMedia(mediaId));
+      dispatch(addToLikedList(mediaId));
+      setLike(true);
+      setUserLike(userLike + 1);
     }
+
+    // if (!like) {
+    //   dispatch(likeMedia(mediaId));
+    //   addToLikedList(mediaId);
+    //   setLike(true);
+    //   setUserLike(userLike + 1);
+    // } else {
+    //   dispatch(unLikeMedia(mediaId));
+    //   setLike(false);
+    //   removeFromLikedList(mediaId);
+    //   if (userLike >= 0) setUserLike(userLike - 1);
+    // }
   };
 
   return (
@@ -39,12 +68,12 @@ const LikeBtn = ({col, numListening, likes, likeCount, mediaId}) => {
           : {flexDirection: 'row'}
       }>
       <Icon
-        name={!like ? 'heart-outline' : 'heart-sharp'}
-        color={!like ? '#eee' : '#f68126'}
+        name={value === false ? 'heart-outline' : 'heart-sharp'}
+        color={value === false ? '#eee' : '#f68126'}
         size={col ? scale(20) : scale(18)}
         // style={{marginBottom: 5}}
       />
-      {!like ? (
+      {value === false ? (
         <Text
           style={
             col

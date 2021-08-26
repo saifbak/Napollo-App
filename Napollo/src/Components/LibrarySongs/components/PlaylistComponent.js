@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import MainImage from '../../../assests/images/onBoarding7.jpg';
+import MainImage from '../../../assests/images/playlist-image-placeholder.png';
 
 const {width, height} = Dimensions.get('window');
 

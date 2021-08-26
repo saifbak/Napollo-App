@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {
   StyleSheet,
   Text,
@@ -18,7 +18,7 @@ import CustomHeader from '../../../../Components/CustomHeader/CommonHeader';
 import CheckBox from './PlayListStateComponent';
 import Switch from '../../../../Components/Switch/Switch';
 import Button from '../../../../Components/Button/LoginBtn';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import ImageBottomSheetPicker from '../../../../Components/BottomSheet/ImagePicker';
 import {useDispatch, useSelector} from 'react-redux';
 import LoadingAnime from '../../../../Components/Loading/Loading';
@@ -28,7 +28,10 @@ import {
   get_All_Playlists,
   get_All_User_Playlist,
 } from '../../../../redux/actions/MediaActions/PlayListActions/index';
-import {CLEAR_PLAYLIST_FORM} from '../../../../redux/constants';
+import {
+  CLEAR_PLAYLIST_FORM,
+  CLEAR_PLAYLIST_STATE,
+} from '../../../../redux/constants';
 import SmallErrorModal from '../../../../Components/Modal/SmallErrorModalPopUp';
 import MainSuccessPopUp from '../../../../Components/Modal/MainSuccessPopUp';
 import MainErrorPopUp from '../../../../Components/Modal/MainErrorPopUp';
@@ -43,7 +46,7 @@ const playListState = [
 const PlaylistForm = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const createPlaylist = useSelector((state) => state.createPlaylist);
+  const createPlaylist = useSelector(state => state.createPlaylist);
   const {loading, error, status, message} = createPlaylist;
 
   const [name, setName] = useState('');
@@ -63,13 +66,13 @@ const PlaylistForm = () => {
   const openImagePicker = () => {
     bottomSheetRef.current.open();
   };
-  const chooseImage = (val) => {
+  const chooseImage = val => {
     setPlaylistArt(val);
   };
-  const chooseImageType = (val) => {
+  const chooseImageType = val => {
     setPlaylistArtType(val);
   };
-  const choosePlaylistState = (val) => {
+  const choosePlaylistState = val => {
     if (val === 'PUBLIC') {
       setVisible(true);
     } else {
@@ -91,9 +94,10 @@ const PlaylistForm = () => {
           playlistArtType,
         ),
       );
-      setName('');
-      setDescription('');
     }
+    setName('');
+    setDescription('');
+    setPlaylistArt('');
   };
   // const func = () => {
   //   navigation.;
@@ -101,19 +105,27 @@ const PlaylistForm = () => {
   useEffect(() => {
     if (status && status === true) {
       dispatch(get_All_User_Playlist(page, size));
-       navigation.navigate('Playlist');
-      // setTimeout(() => {
-      //   navigation.navigate('Playlist');
-      // }, 2500);
+      // navigation.navigate('Playlist');
+      setTimeout(() => {
+        navigation.navigate('Playlist');
+      }, 2500);
     }
   }, [status]);
 
-  const stateView = playListState.map((item) => (
+  useFocusEffect(
+    useCallback(() => {
+      dispatch({
+        type: CLEAR_PLAYLIST_STATE,
+      });
+    }, []),
+  );
+
+  const stateView = playListState.map(item => (
     <CheckBox
       {...item}
       key={item.id}
       value={playlistState}
-      chooseValue={(val) => choosePlaylistState(val)}
+      chooseValue={val => choosePlaylistState(val)}
     />
   ));
 
@@ -198,7 +210,7 @@ const PlaylistForm = () => {
                   <TextInput
                     style={styles.input}
                     value={name}
-                    onChangeText={(val) => setName(val)}
+                    onChangeText={val => setName(val)}
                   />
                 </View>
                 <View style={{marginTop: 20}}>
@@ -224,7 +236,7 @@ const PlaylistForm = () => {
                         color: '#eee',
                       }}
                       value={description}
-                      onChangeText={(val) => setDescription(val)}
+                      onChangeText={val => setDescription(val)}
                     />
                   </View>
                 </View>
@@ -249,8 +261,8 @@ const PlaylistForm = () => {
           </View>
           <ImageBottomSheetPicker
             ref={bottomSheetRef}
-            chooseImagePicture={(val) => chooseImage(val)}
-            choosePicType={(val) => chooseImageType(val)}
+            chooseImagePicture={val => chooseImage(val)}
+            choosePicType={val => chooseImageType(val)}
             closeImagePicker={closeImagePicker}
           />
         </View>

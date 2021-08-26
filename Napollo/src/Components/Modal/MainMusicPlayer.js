@@ -213,23 +213,23 @@ const MainMusicPlayer = () => {
     );
   }
 
-  const renderSongs = ({item, index}) => {
-    return (
-      <Animated.View
-        style={{
-          width,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <View style={styles.artworkWrapper}>
-          <Image style={styles.artWorkImg} source={{uri: item.image}} />
-          <View style={{position: 'absolute', top: '40%', right: '40%'}}>
-            {bufferingView}
-          </View>
-        </View>
-      </Animated.View>
-    );
-  };
+  // const renderSongs = ({item, index}) => {
+  //   return (
+  //     <Animated.View
+  //       style={{
+  //         width,
+  //         justifyContent: 'center',
+  //         alignItems: 'center',
+  //       }}>
+  //       <View style={styles.artworkWrapper}>
+  //         <Image style={styles.artWorkImg} source={{uri: item.image}} />
+  //         <View style={{position: 'absolute', top: '40%', right: '40%'}}>
+  //           {bufferingView}
+  //         </View>
+  //       </View>
+  //     </Animated.View>
+  //   );
+  // };
 
   useTrackPlayerEvents([Event.PlaybackTrackChanged], async event => {
     if (event.type === Event.PlaybackTrackChanged && event.nextTrack != null) {
@@ -263,7 +263,7 @@ const MainMusicPlayer = () => {
         style={{
           flex: 1,
           margin: 0,
-          zIndex: 100,
+          // zIndex: 100,
         }}>
         <ImageBackground
           //   source={require('../../assests/images/caro1.jpg')}
@@ -271,9 +271,11 @@ const MainMusicPlayer = () => {
           blurRadius={90}
           style={[
             {
-              //   height,
+              height,
               zIndex: 100,
               flex: 1,
+              position: 'absolute',
+              bottom: 0,
             },
           ]}>
           <BottomSheet
@@ -388,9 +390,7 @@ const MainMusicPlayer = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <Animated.View>
-            {/* <Text style={{color: '#fff'}}>Helo</Text> */}
-          </Animated.View>
+          <View></View>
         </ImageBackground>
       </Modal>
     </>

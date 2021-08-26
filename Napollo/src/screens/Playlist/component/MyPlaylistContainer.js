@@ -22,7 +22,7 @@ const MyPlaylistContainer = ({
         style={{flexDirection: 'row', width: '80%'}}>
         <Image
           source={
-            url !== '' || url !== null ? {uri: url} : PlaylistImagePlacHolder
+            url !== '' && url !== null ? {uri: url} : PlaylistImagePlacHolder
           }
           style={styles.image}
         />
