@@ -27,9 +27,8 @@ const UpgradeConfirmModal = props => {
   return (
     <Modal
       animationIn="zoomIn"
-      animationInTiming={500}
       animationOut="zoomOut"
-      animationOutTiming={500}
+      
       backdropOpacity={0.5}
       backdropColor="#111"
       isVisible={props.visible}

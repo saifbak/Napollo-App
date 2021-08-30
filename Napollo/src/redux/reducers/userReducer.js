@@ -54,6 +54,11 @@ import {
   UPGRADE_USER_ACCOUNT_REQUEST,
   UPGRADE_USER_ACCOUNT_SUCCESS,
   CLEAR_UPGRADE_USER_ACCOUNT_STATE,
+  STORE_ACTIVE_USER_DETAILS,
+  OPEN_SINGLE_USER_PROFILE_MODAL,
+  CLOSE_SINGLE_USER_PROFILE_MODAL,
+  ADD_USER_TO_FOLLOWED_LIST,
+  REMOVE_USER_FROM_FOLLOWED_LIST,
 } from '../constants/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -289,7 +294,7 @@ export const getUserProfileWithIdReducer = (
       return {
         ...state,
         loading: false,
-        userProfile: payload.responseBody,
+        userProfile: payload.responseBody.userProfile,
         error: '',
         profile: payload.responseBody.profile,
         genres: payload.responseBody.genres,
@@ -698,6 +703,77 @@ export const unFollowArtistReducer = (
         status: null,
         error: payload,
         message: '',
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const storeActiveUserDetailsReducer = (
+  state = {
+    userProfile: {},
+  },
+  {type, payload},
+) => {
+  switch (type) {
+    case STORE_ACTIVE_USER_DETAILS:
+      return {
+        ...state,
+        userProfile: payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const singleUserModalReducer = (
+  state = {
+    isModalOpen: false,
+  },
+  {type, payload},
+) => {
+  switch (type) {
+    case OPEN_SINGLE_USER_PROFILE_MODAL:
+      return {
+        isModalOpen: true,
+      };
+    case CLOSE_SINGLE_USER_PROFILE_MODAL:
+      return {
+        isModalOpen: false,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const userFollowerListReducer = (
+  state = {followerList: [], status: false},
+  {type, payload},
+) => {
+  switch (type) {
+    case ADD_USER_TO_FOLLOWED_LIST:
+      const id = payload;
+      let newList = [];
+      newList = [...state.followerList, id];
+      return {
+        ...state,
+        followerList: newList,
+        status: true,
+      };
+
+    case REMOVE_USER_FROM_FOLLOWED_LIST:
+      const unLikeId = payload;
+      let newunLikedList = [];
+      if (state.followerList.includes(unLikeId)) {
+        newunLikedList = state.followerList.filter(x => x !== unLikeId);
+      }
+      return {
+        ...state,
+        followerList: newunLikedList,
+        status: false,
       };
 
     default:

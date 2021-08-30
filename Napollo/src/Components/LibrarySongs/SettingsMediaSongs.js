@@ -28,15 +28,16 @@ import {
 } from 'react-native-responsive-screen';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 import Checkbox from '../../screens/Settings/component/DiscoverCheckbox';
+import {mainNumberFormat} from '../../utils/loggedInUserType';
 
 const {width} = Dimensions.get('window');
 
-const SettingsMediaSong = (props) => {
+const SettingsMediaSong = props => {
   //   console.log(props,'MUSIC PROPS')
   const navigation = useNavigation();
   const playerContext = usePlayerContext();
-  const musicPlayerDetails = useSelector((state) => state.openMusicPlayer);
-  const storeUserLocation = useSelector((state) => state.storeUserLocation);
+  const musicPlayerDetails = useSelector(state => state.openMusicPlayer);
+  const storeUserLocation = useSelector(state => state.storeUserLocation);
   const {city, state, country} = storeUserLocation;
   // const {mediaTitle, mediaUrl, photoUrl, likeCount} = data;
   // const {firstName, lastName, stageName} = artists;
@@ -186,7 +187,9 @@ const SettingsMediaSong = (props) => {
                 {/* SingleIcon */}
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Icon name="play" color="#f68128" size={18} />
-                  <Text style={styles.songPlay}>{props.hits}</Text>
+                  <Text style={styles.songPlay}>
+                    {mainNumberFormat(props.hits)}
+                  </Text>
                 </View>
                 {/* SingleIcon */}
                 {/* <View
@@ -206,7 +209,9 @@ const SettingsMediaSong = (props) => {
                     marginLeft: 20,
                   }}>
                   <Icon name="heart" color="#f68128" size={18} />
-                  <Text style={styles.songPlay}>{props.likes}</Text>
+                  <Text style={styles.songPlay}>
+                    {mainNumberFormat(props.likes)}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -222,7 +227,7 @@ const SettingsMediaSong = (props) => {
             width: '15%',
           }}>
           <Checkbox
-            chooseSong={() => props.chooseSong(props.title,props.id)}
+            chooseSong={() => props.chooseSong(props.title, props.id)}
             songTitle={props.songTitle}
             title={props.title}
           />

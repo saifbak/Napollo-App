@@ -9,8 +9,17 @@ import {
   removeFromLikedList,
 } from '../../redux/actions/MediaActions/Like_UnLike/Like_Unlike';
 import {scale, ScaledSheet} from 'react-native-size-matters';
+import {mainNumberFormat} from '../../utils/loggedInUserType';
 
-const LikeBtn = ({col, numListening, likes, likeCount, mediaId}) => {
+const LikeBtn = ({
+  col,
+  numListening,
+  likes,
+  likeCount,
+  mediaId,
+  increaseLike,
+  decreaseLike,
+}) => {
   const dispatch = useDispatch();
   const [like, setLike] = useState(false);
   const [userLike, setUserLike] = useState(likes);
@@ -33,12 +42,14 @@ const LikeBtn = ({col, numListening, likes, likeCount, mediaId}) => {
       dispatch(unLikeMedia(mediaId));
       setLike(false);
       dispatch(removeFromLikedList(mediaId));
-      if (userLike >= 0) setUserLike(userLike - 1);
+      // if (userLike > 0) setUserLike(userLike - 1);
+      decreaseLike();
     } else {
       dispatch(likeMedia(mediaId));
       dispatch(addToLikedList(mediaId));
       setLike(true);
-      setUserLike(userLike + 1);
+      // setUserLike(userLike + 1);
+      increaseLike();
     }
 
     // if (!like) {
@@ -80,7 +91,7 @@ const LikeBtn = ({col, numListening, likes, likeCount, mediaId}) => {
               ? {color: '#eee', fontSize: scale(11)}
               : {color: '#eee', fontSize: scale(13), marginLeft: 5}
           }>
-          {userLike}
+          {mainNumberFormat(userLike)}
         </Text>
       ) : (
         <Text
@@ -89,7 +100,7 @@ const LikeBtn = ({col, numListening, likes, likeCount, mediaId}) => {
               ? {color: '#f68128', fontSize: scale(11)}
               : {color: '#f68128', fontSize: scale(13), marginLeft: 5}
           }>
-          {userLike}
+          {mainNumberFormat(likes)}
         </Text>
       )}
     </TouchableOpacity>

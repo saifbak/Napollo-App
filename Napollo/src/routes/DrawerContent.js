@@ -27,7 +27,11 @@ import ContributionIcon from '../Components/Icons/ContirbutionIcon';
 import ReferralIcon from '../Components/Icons/referralIcon';
 import {useSelector, useDispatch} from 'react-redux';
 import {logout, clearAccessToken} from '../redux/actions/userActions';
-import {getLoggedInUserProfile} from '../utils/loggedInUserType';
+import {
+  getLoggedInUserProfile,
+  mainNumberFormat,
+  getFullCountry,
+} from '../utils/loggedInUserType';
 import {DEFAULT_IMAGE_URI} from '../utils/ImagePicker';
 import {loadDataFromStorage} from '../utils/asyncStorage';
 import {
@@ -49,7 +53,6 @@ const DrawerContent = props => {
   };
   // CUSTOMER PROFILE
   const userData = getLoggedInUserProfile('LISTENER');
-  
 
   const userLogin = useSelector(state => state.userLogin);
   const {type: userType} = userLogin;
@@ -182,7 +185,7 @@ const DrawerContent = props => {
                           fontSize: 10,
                           fontFamily: 'Helvetica-Medium',
                         }}>
-                        &nbsp;{`${state}, ${country}`}
+                        &nbsp;{`${state}, ${getFullCountry(country)}`}
                       </Text>
                     </Caption>
                   </View>
@@ -191,11 +194,15 @@ const DrawerContent = props => {
 
               <View style={styles.row}>
                 <View style={styles.section}>
-                  <Text style={styles.numbers}>{followerCount} &nbsp;</Text>
+                  <Text style={styles.numbers}>
+                    {mainNumberFormat(followerCount)} &nbsp;
+                  </Text>
                   <Caption style={styles.follow}>Followers</Caption>
                 </View>
                 <View style={styles.section}>
-                  <Text style={styles.numbers}>{followingCount} &nbsp;</Text>
+                  <Text style={styles.numbers}>
+                    {mainNumberFormat(followingCount)} &nbsp;
+                  </Text>
                   <Caption style={styles.follow}>Following</Caption>
                 </View>
               </View>

@@ -146,12 +146,12 @@ const LoginScreen = ({navigation, route}) => {
           <ErrorPopUp
             errorState={error}
             clearError={() => dispatch({type: CLEAR_USER_LOGIN_ERROR})}
-            clearTime={5000}>
+            clearTime={1500}>
             {error}
           </ErrorPopUp>
           <ErrorPopUp
             errorState={clientErr}
-            clearTime={3000}
+            clearTime={1500}
             clearError={() => setClientErr('')}>
             {clientErr}
           </ErrorPopUp>

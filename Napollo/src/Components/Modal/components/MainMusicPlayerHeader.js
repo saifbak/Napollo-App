@@ -17,7 +17,7 @@ const MainMusicPlayerHeader = props => {
         marginBottom: 20,
         paddingHorizontal: 20,
         position: 'absolute',
-        top: scale(35),
+        top: scale(20),
       }}>
       <TouchableOpacity
         activeOpacity={0.8}

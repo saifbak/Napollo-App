@@ -49,11 +49,26 @@ import MediaPlaylistModalForm from './src/Components/Modal/MediaPlaylistModalFor
 import {loadDataFromStorage} from './src/utils/asyncStorage';
 import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoder';
-import {CLEAR_LOGOUT_TOKEN_MESSAGE} from './src/redux/constants/index';
+import {
+  CLEAR_LOGOUT_TOKEN_MESSAGE,
+  CLOSE_COMMENT_MODAL,
+  CLOSE_GOOGLE_SEARCH_MODAL,
+  CLOSE_LISTEN_SONG_ELSEWHERE_MODAL,
+  CLOSE_MEDIA_COMMENT_MODAL,
+  CLOSE_MEDIA_PLAYLIST_MODAL,
+  CLOSE_MEDIA_PLAYLIST_MODAL_FORM,
+  CLOSE_SINGLE_ARTIST_MODAL,
+  CLOSE_MUSIC_PLAYER,
+  CLOSE_SINGLE_LISTENER_MODAL,
+  CLOSE_SINGLE_USER_PROFILE_MODAL,
+  CLOSE_NOTIFICATION_FILTER_MODAL,
+  CLOSE_SONG_BOTTOM_SHEET,
+} from './src/redux/constants/index';
 import {getUserCallingCode} from './src/utils/loggedInUserType';
 import MainMusicPlayer from './src/Components/Modal/MainMusicPlayer';
 import ListenElsewhereModal from './src/Components/Modal/ListenElsewhereModal';
 import NoConnectionModal from './src/Components/Modal/NoConnectionModal';
+import SingleUserModal from './src/Components/Modal/SingleUserModal';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -138,6 +153,20 @@ const App = () => {
       console.log(error);
       // }
     }
+  }, []);
+  useEffect(() => {
+    dispatch({type: CLOSE_COMMENT_MODAL});
+    dispatch({type: CLOSE_GOOGLE_SEARCH_MODAL});
+    dispatch({type: CLOSE_LISTEN_SONG_ELSEWHERE_MODAL});
+    dispatch({type: CLOSE_MEDIA_COMMENT_MODAL});
+    dispatch({type: CLOSE_MEDIA_PLAYLIST_MODAL});
+    dispatch({type: CLOSE_MEDIA_PLAYLIST_MODAL_FORM});
+    dispatch({type: CLOSE_SINGLE_ARTIST_MODAL});
+    dispatch({type: CLOSE_MUSIC_PLAYER});
+    dispatch({type: CLOSE_SINGLE_LISTENER_MODAL});
+    dispatch({type: CLOSE_SINGLE_USER_PROFILE_MODAL});
+    dispatch({type: CLOSE_NOTIFICATION_FILTER_MODAL});
+    dispatch({type: CLOSE_SONG_BOTTOM_SHEET});
   }, []);
 
   //GET user location
@@ -228,6 +257,7 @@ const App = () => {
           visible={networkState}
           closeNetworkModal={() => setNetworkState(false)}
         /> */}
+        <SingleUserModal />
         <Media_Comment_Modal />
         <CreatePlaylistModal />
         <MediaPlaylistModalForm />

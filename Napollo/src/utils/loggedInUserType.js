@@ -49,6 +49,58 @@ export const logoutUserWhenTokenExpires = (dispatch, error, type) => {
 
 export const getUserCallingCode = val => {
   const res = callingCodes.filter(x => x.code === val);
-  console.log(res[0].dial_code, 'CALLINGcODE');
+  // console.log(res[0].dial_code, 'CALLINGcODE');
   return res[0].dial_code;
+};
+
+export const getFullCountry = val => {
+  const res = callingCodes.filter(x => x.code === val);
+  // console.log(res[0], 'RES OBJECT');
+  return res[0]?.name || val;
+};
+export const formatNumbers = val => {
+  if (val >= 1000000 || val < 10000000) {
+    const value2 = (val / 1000000).toFixed(2);
+    return `${value2} M`;
+  } else if (10000000 <= val < 100000000) {
+    const value3 = (val / 10000000).toFixed(2);
+    return `${value3} M`;
+  } else if (100000000 <= val < 1000000000) {
+    const value4 = (val / 100000000).toFixed(2);
+    return `${value4} M`;
+  }
+};
+
+export const formatNumbers1 = val => {
+  if (val < 1000) {
+    return `${val}`;
+  } else if (1000 <= val < 10000) {
+    const value = (val / 1000).toFixed(2);
+    return `${value} K`;
+  } else if (10000 <= val < 100000) {
+    const value8 = (val / 10000).toFixed(2);
+    return `${value8} K`;
+  } else if (100000 <= val < 1000000) {
+    const value9 = (val / 100000).toFixed(2);
+    return `${value9} K`;
+  }
+};
+export const formatNumbers2 = val => {
+  if (1000000000 <= val < 10000000000) {
+    const value5 = (val / 1000000000).toFixed(2);
+    return `${value5} B`;
+  } else if (10000000000 <= val < 100000000000) {
+    const value6 = (val / 10000000000).toFixed(2);
+    return `${value6} B`;
+  }
+};
+
+export const mainNumberFormat = val => {
+  if (val < 1000000) {
+    return formatNumbers1(val);
+  } else if (val < 1000000000) {
+    return formatNumbers(val);
+  } else {
+    return formatNumbers2(val);
+  }
 };

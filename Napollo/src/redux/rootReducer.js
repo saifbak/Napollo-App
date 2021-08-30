@@ -26,6 +26,9 @@ import {
   updateUserPasswordReducer,
   updateUserUsernameReducer,
   upgradeUserAccountReducer,
+  storeActiveUserDetailsReducer,
+  singleUserModalReducer,
+  userFollowerListReducer,
 } from './reducers/userReducer';
 
 import {
@@ -156,6 +159,7 @@ const rootReducer = combineReducers({
   getUserProfileWithId: getUserProfileWithIdReducer,
   getGenreList: getGenreListReducer,
   userMediaLikedList: userMediaLikedListReducer,
+  userFollowerList: userFollowerListReducer,
   getUserDiscoveredMedia: getUserDiscoveredMediaReducer,
   artistRegister: artistRegisterReducer,
   customerType: customerTypeReducer,
@@ -201,6 +205,8 @@ const rootReducer = combineReducers({
   getAllUserPlaylist: getAllUserPlaylistReducer,
   getAllPlaylist: getAllPlaylistReducer,
   storeActivePlaylistDetails: storeActivePlaylistDetailsReducer,
+  storeActiveUserDetails: storeActiveUserDetailsReducer,
+  singleUserModal: singleUserModalReducer,
   createAlbum: createAlbumReducer,
   updateAlbumDetails: updateAlbumDetailsReducer,
   deleteAlbum: deleteAlbumReducer,

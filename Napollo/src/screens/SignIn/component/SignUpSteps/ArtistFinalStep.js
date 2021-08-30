@@ -13,7 +13,7 @@ import LoginBtn from '../../../../Components/Button/LoginBtn';
 
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 
-const ArtsitFinalStep = (props) => {
+const ArtsitFinalStep = props => {
   const [showPassword, setShowPassword] = useState(false);
   const [visible, setVisible] = useState(true);
   const navigation = useNavigation();
@@ -30,13 +30,16 @@ const ArtsitFinalStep = (props) => {
   return (
     <KeyboardAwareScrollView style={styles.container}>
       <View style={styles.container}>
-       
         <View style={styles.inputFlex}>
           {/* ADDRESS */}
           <TouchableOpacity
             onPress={() => props.openCountryModal()}
             activeOpacity={0.8}
-            style={{width: '48%'}}>
+            style={
+              props.address === 'United States'
+                ? {width: '48%'}
+                : {width: '100%'}
+            }>
             <Text style={styles.label}>Country:</Text>
             <View style={styles.textInput}>
               <Text
@@ -55,57 +58,45 @@ const ArtsitFinalStep = (props) => {
               />
             </View>
           </TouchableOpacity>
-          {/* <View
-            style={{width: '48%'}}
-          >
-            <Text style={styles.label}>Country:</Text>
-            <View style={styles.textInput}>
-              <TextInput
-                placeholder="country"
-                placeholderTextColor="#484848"
-                value={props.address}
-                onChangeText={props.onChangeAddress}
-                style={{width: '100%', color: '#fff'}}
-              />
-            </View>
-          </View> */}
+
           {/* CITY */}
-          {/* {props.address === 'United States' && ( */}
-          <TouchableOpacity
-            onPress={()=> props.openGenreModal()}
-            activeOpacity={0.8}
-            style={{width: '48%'}}>
-            <Text style={styles.label}>State:</Text>
-            <View style={styles.textInput}>
-              <Text
-                style={{
-                  alignSelf: 'center',
-                  color: '#fff',
-                  fontSize: 12,
-                  paddingLeft: 4,
-                }}>
-                {props.city}
-              </Text>
-              <Icon
-                name="chevron-down"
-                size={18}
-                style={[styles.inputIcon, {color: '#999'}]}
-              />
-            </View>
-          </TouchableOpacity>
+          {props.address === 'United States' && (
+            <TouchableOpacity
+              onPress={() => props.openGenreModal()}
+              activeOpacity={0.8}
+              style={{width: '48%'}}>
+              <Text style={styles.label}>State:</Text>
+              <View style={styles.textInput}>
+                <Text
+                  style={{
+                    alignSelf: 'center',
+                    color: '#fff',
+                    fontSize: 12,
+                    paddingLeft: 4,
+                  }}>
+                  {props.city}
+                </Text>
+                <Icon
+                  name="chevron-down"
+                  size={18}
+                  style={[styles.inputIcon, {color: '#999'}]}
+                />
+              </View>
+            </TouchableOpacity>
+          )}
         </View>
         <View style={{width: '100%'}}>
           <Text style={styles.label}>Phone Number:</Text>
           <View style={styles.textInput}>
             <View style={styles.countryStyle}>
               <MyDarkView
-                changeCountryCode={(val) => props.changeCountryCode(val)}
+                changeCountryCode={val => props.changeCountryCode(val)}
                 countryShortCode={props.countryShortCode}
                 userCallingCode={props.countryCode}
-                changeCountryShortCode={(val) =>
+                changeCountryShortCode={val =>
                   props.changeCountryShortCode(val)
                 }
-                changeCountry={(val) => props.onChangeAddress(val)}
+                changeCountry={val => props.onChangeAddress(val)}
               />
             </View>
             <TextInput

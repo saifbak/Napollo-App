@@ -15,6 +15,7 @@ import {openModalPlayer} from '../../redux/actions/musicPlayerActions';
 import {play_Media} from '../../redux/actions/MediaActions/getMediaActions';
 import {useNavigation} from '@react-navigation/native';
 import {scale, ScaledSheet} from 'react-native-size-matters';
+import {mainNumberFormat} from '../../utils/loggedInUserType';
 
 const CarouselItem = ({
   title,
@@ -133,7 +134,7 @@ const CarouselItem = ({
                 fontSize: scale(9),
                 textTransform: 'capitalize',
               }}>
-              {hits}
+              {mainNumberFormat(hits)}
             </Text>
           </View>
         </LinearGradient>

@@ -14,6 +14,7 @@ import {
   closeSongBottomSheetView,
   openListenElsewhereModal,
 } from '../../redux/actions/songBottomSheetAction';
+import {encode} from '../../utils/ShareSocals';
 import Divider from '../Divider/Divider';
 // ICONS
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -30,11 +31,16 @@ import {
   OPEN_MEDIA_PLAYLIST_MODAL_FORM,
 } from '../../redux/constants';
 import {
+  store_Active_User_Details,
+  openSingleUserModal,
+} from '../../redux/actions/userActions';
+import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {useNavigation} from '@react-navigation/native';
 import {scale, ScaledSheet} from 'react-native-size-matters';
+import {mainNumberFormat} from '../../utils/loggedInUserType';
 
 // import {useNavigation} from '@react-navigation/native';
 
@@ -49,6 +55,7 @@ const SongBottomModal = props => {
   const {
     isSongBottomSheetOpen,
     songDetails: {title: songTitle, artwork: songImage, artists, hitCount, id},
+    artistDetails,
   } = openSongBottomSheet;
   const getUserProfile = useSelector(state => state.getUserProfile);
   const {
@@ -72,6 +79,11 @@ const SongBottomModal = props => {
   //     navigating.navigation.goBack();
   //   }
   // };
+  const options = {
+    message: 'Test message',
+    // type: 'image/jpeg',
+    // url: 'https://samplesongs.netlify.app/album-arts/death-bed.jpg',
+  };
 
   const commentFunction = () => {
     closeBottomSheet();
@@ -94,12 +106,22 @@ const SongBottomModal = props => {
     closeBottomSheet();
     dispatch(openListenElsewhereModal());
   };
+  const goToArtist = () => {
+    dispatch(openSingleUserModal());
+    closeBottomSheet();
+    dispatch(store_Active_User_Details(artistDetails));
+  };
+
+  const shareFunc = () => {
+    closeBottomSheet();
+    encode(options);
+  };
 
   const arr2 = [
     {
       icon: <ShareIcon color="#999" />,
       title: 'Share',
-      onPress: () => closeBottomSheet(),
+      onPress: () => shareFunc(),
     },
     {
       icon: <Icon name="headset" size={28} color="#999" />,
@@ -120,7 +142,7 @@ const SongBottomModal = props => {
     {
       icon: <ArtistIcon color="#999" />,
       title: 'Go to Artiste Profile',
-      onPress: () => closeBottomSheet(),
+      onPress: () => goToArtist(),
     },
     {
       icon: <Icon name="chatbubble" size={25} color="#999" />,
@@ -151,6 +173,7 @@ const SongBottomModal = props => {
     artistNameView = (
       <TouchableOpacity
         activeOpacity={0.8}
+        onPress={() => goToArtist()}
         style={{flexDirection: 'row', alignItems: 'center'}}>
         <Text style={styles.artist}>{artists}</Text>
         <Icon
@@ -187,7 +210,7 @@ const SongBottomModal = props => {
                   size={scale(11)}
                   style={{marginTop: 5}}
                 />
-                <Text style={styles.count}>{hitCount}</Text>
+                <Text style={styles.count}>{mainNumberFormat(hitCount)}</Text>
               </View>
             </View>
           </View>

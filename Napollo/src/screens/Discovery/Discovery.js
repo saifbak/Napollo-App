@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  SafeAreaView,
+  StatusBar
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import PlayerContext from '../../PlayerContext/PlayerContext';
@@ -439,7 +441,7 @@ class Discovery extends Component {
       mainView = renderSongs();
     }
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {loadingView}
         {errorView}
         {/* <FocusEffect
@@ -491,7 +493,7 @@ class Discovery extends Component {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }

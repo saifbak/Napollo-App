@@ -3,9 +3,16 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
 import {openCommentModal} from '../../redux/actions/commentModal';
+import {
+  formatNumbers,
+  formatNumbers1,
+  formatNumbers2,
+  mainNumberFormat,
+} from '../../utils/loggedInUserType';
 
 const CommentBtn = ({onPress}) => {
   const dispatch = useDispatch();
+
   return (
     <TouchableOpacity
       activeOpacity={0.6}
@@ -26,7 +33,7 @@ const CommentBtn = ({onPress}) => {
             // marginTop: 2,
             fontFamily: 'Helvetica-Medium',
           }}>
-          1.2K Comments
+          {mainNumberFormat(100)} comments
         </Text>
       </View>
     </TouchableOpacity>

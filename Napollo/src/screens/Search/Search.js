@@ -35,14 +35,14 @@ const SearchScreen = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(30);
-  const getNewReleases = useSelector((state) => state.getNewReleases);
+  const getNewReleases = useSelector(state => state.getNewReleases);
   const {
     error: mediaError,
     loading: mediaLoading,
     data: mediaData,
   } = getNewReleases;
 
-  const storeUserLocation = useSelector((state) => state.storeUserLocation);
+  const storeUserLocation = useSelector(state => state.storeUserLocation);
   const {city, state, country} = storeUserLocation;
 
   // useEffect(() => {
@@ -76,7 +76,7 @@ const SearchScreen = () => {
         {mediaLoadingView}
         {networkView}
         <SongBottomModal />
-        <StatusBar barStyle="default" />
+        <StatusBar barStyle="default" backgroundColor="#000" />
         <ScrollView style={styles.container}>
           <HeaderWithImage
             onPress={() => navigation.navigate('SearchScreen')}

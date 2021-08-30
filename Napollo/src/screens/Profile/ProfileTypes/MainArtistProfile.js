@@ -100,7 +100,6 @@ const MainArtistProfile = () => {
               style={{
                 color: '#eee',
                 fontSize: scale(15),
-                fontFamily: 'Gilroy-Bold',
                 fontFamily: 'Helvetica-Bold',
               }}>
               Most Liked Song

@@ -9,6 +9,7 @@ import {
   closeMediaCommentModal,
 } from '../../../redux/actions/commentModal';
 const {width, height} = Dimensions.get('window');
+import {mainNumberFormat} from '../../../utils/loggedInUserType'
 
 const Comment_Header = ({likes, closeCommentModal,mediaComment}) => {
   // const navigation = useNavigation();
@@ -37,7 +38,7 @@ const Comment_Header = ({likes, closeCommentModal,mediaComment}) => {
         </TouchableOpacity>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={{color: '#EEE', fontSize: 16}}>
-            &nbsp;Comments&nbsp;({mediaComment})
+            &nbsp;Comments&nbsp;({mainNumberFormat(mediaComment)})
           </Text>
         </View>
         <View style={{width: '10%'}}></View>

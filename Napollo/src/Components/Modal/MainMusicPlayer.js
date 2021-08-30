@@ -248,69 +248,67 @@ const MainMusicPlayer = () => {
   // }, []);
 
   return (
-    <>
-      <Modal
-        animationType="slide"
-        swipeDirection="down"
-        backdropColor="transparent"
-        backdropOpacity={0}
-        isVisible={isMusicPlayerOpen}
-        onSwipeComplete={() => dispatch(closeModalPlayer())}
-        onRequestClose={() => dispatch(closeModalPlayer())}
-        // isVisible={this.props.openMusicPlayer.isMusicPlayerOpen}
-        // onSwipeComplete={() => this.props.closeModalPlayer()}
-        // onRequestClose={() => this.props.closeModalPlayer()}
-        style={{
-          flex: 1,
-          margin: 0,
-          // zIndex: 100,
-        }}>
-        <ImageBackground
-          //   source={require('../../assests/images/caro1.jpg')}
-          source={image !== '' ? {uri: image} : ImagePlaceholder}
-          blurRadius={90}
-          style={[
-            {
-              height,
-              zIndex: 100,
-              flex: 1,
-              position: 'absolute',
-              bottom: 0,
-            },
-          ]}>
-          <BottomSheet
-            ref={Br}
-            snapPoints={[400, 70]}
-            initialSnap={1}
-            callbackNode={fall}
-            enabledGestureInteraction={true}
-            renderHeader={renderHeader}
-            renderContent={renderContent}
-            enabledInnerScrolling={true}
-          />
-          <MainMusicPlayerHeader
-            title={title}
-            artist={ownerAccountUser?.username}
-            featured={featuringArtist}
-            closeModalPlayer={() => dispatch(closeModalPlayer())}
-            openBottomModal={() => openSongBottomSheetModal()}
-            // title={data[songIndex].title}
-            // artist={data[songIndex].ownerAccountUser.username}
-          />
-          <View style={styles.mainView}>
-            <View
-              style={{
-                width: width,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View style={styles.artworkWrapper}>
-                <Image style={styles.artWorkImg} source={{uri: image}} />
-                <View style={{position: 'absolute', top: '40%', right: '40%'}}>
-                  {bufferingView}
-                </View>
+    // <>
+    <Modal
+      animationType="slide"
+      swipeDirection="down"
+      isVisible={isMusicPlayerOpen}
+      onSwipeComplete={() => dispatch(closeModalPlayer())}
+      onRequestClose={() => dispatch(closeModalPlayer())}
+      // isVisible={this.props.openMusicPlayer.isMusicPlayerOpen}
+      // onSwipeComplete={() => this.props.closeModalPlayer()}
+      // onRequestClose={() => this.props.closeModalPlayer()}
+      style={{
+        flex: 1,
+        margin: 0,
+        // zIndex: 100,
+      }}>
+      <ImageBackground
+        //   source={require('../../assests/images/caro1.jpg')}
+        source={image !== '' ? {uri: image} : ImagePlaceholder}
+        blurRadius={90}
+        style={[
+          {
+            height,
+            zIndex: 100,
+            flex: 1,
+            position: 'absolute',
+            bottom: 0,
+          },
+        ]}>
+        <BottomSheet
+          ref={Br}
+          snapPoints={[400, 70]}
+          initialSnap={1}
+          callbackNode={fall}
+          enabledGestureInteraction={true}
+          renderHeader={renderHeader}
+          renderContent={renderContent}
+          enabledInnerScrolling={true}
+        />
+        <MainMusicPlayerHeader
+          title={title}
+          artist={ownerAccountUser?.username}
+          featured={featuringArtist}
+          closeModalPlayer={() => dispatch(closeModalPlayer())}
+          openBottomModal={() => openSongBottomSheetModal()}
+          // title={data[songIndex].title}
+          // artist={data[songIndex].ownerAccountUser.username}
+        />
+        <View style={styles.mainView}>
+          <View
+            style={{
+              width: width,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <View style={styles.artworkWrapper}>
+              <Image style={styles.artWorkImg} source={{uri: image}} />
+              <View style={{position: 'absolute', top: '40%', right: '40%'}}>
+                {bufferingView}
               </View>
-              {/* <Animated.FlatList
+            </View>
+            {/* <Animated.FlatList
                 ref={songSlider}
                 data={mediaSongs}
                 renderItem={renderSongs}
@@ -330,70 +328,69 @@ const MainMusicPlayer = () => {
                   {useNativeDriver: true},
                 )}
               /> */}
-            </View>
-            {/* SONG DETAILS */}
-            <View>
-              <Text style={styles.title}>
-                {title}&nbsp;
-                {featuringArtist && (
-                  <Text
-                    style={
-                      styles.featuredArtists
-                    }>{`ft (${featuringArtist})`}</Text>
-                )}
-              </Text>
-              <Text style={styles.artist}>{ownerAccountUser?.username}</Text>
-            </View>
-            {/* SLIDER */}
-            <View style={{width, paddingHorizontal: 20, marginTop: 10}}>
-              <SliderComponent color="#000" showTime />
-            </View>
-            <View style={styles.controls}>
-              <TouchableOpacity
-                onPress={() => changeRepeatMode()}
-                activeOpacity={0.8}
-                style={styles.icon}>
-                <MaterialCommunityIcons
-                  name={`${repeatIcon()}`}
-                  color={repeatState !== 'off' ? '#F68128' : '#FFF'}
-                  size={scale(26)}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.icons}
-                onPress={() => skipToPreviousMusic()}>
-                <Icon name="play-skip-back" color="#ddd" size={scale(28)} />
-              </TouchableOpacity>
-              {/* PLAY/PAUSEBT */}
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => toggleMusicPlay()}
-                style={styles.IconCont}>
-                {mainBtnView}
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.icons}
-                onPress={() => skipToNextMusic()}>
-                <Icon name="play-skip-forward" color="#ddd" size={scale(28)} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => toggleShuffle()}
-                activeOpacity={0.8}
-                style={[styles.icon]}>
-                <MaterialCommunityIcons
-                  name={shuffleState ? 'shuffle' : 'shuffle-disabled'}
-                  color={shuffleState ? '#f68128' : '#fff'}
-                  size={scale(28)}
-                />
-              </TouchableOpacity>
-            </View>
           </View>
-          <View></View>
-        </ImageBackground>
-      </Modal>
-    </>
+          {/* SONG DETAILS */}
+          <View>
+            <Text style={styles.title}>
+              {title}&nbsp;
+              {featuringArtist && (
+                <Text
+                  style={
+                    styles.featuredArtists
+                  }>{`ft (${featuringArtist})`}</Text>
+              )}
+            </Text>
+            <Text style={styles.artist}>{ownerAccountUser?.username}</Text>
+          </View>
+          {/* SLIDER */}
+          <View style={{width, paddingHorizontal: 20, marginTop: 10}}>
+            <SliderComponent color="#000" showTime />
+          </View>
+          <View style={styles.controls}>
+            <TouchableOpacity
+              onPress={() => changeRepeatMode()}
+              activeOpacity={0.8}
+              style={styles.icon}>
+              <MaterialCommunityIcons
+                name={`${repeatIcon()}`}
+                color={repeatState !== 'off' ? '#F68128' : '#FFF'}
+                size={scale(26)}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.icons}
+              onPress={() => skipToPreviousMusic()}>
+              <Icon name="play-skip-back" color="#ddd" size={scale(28)} />
+            </TouchableOpacity>
+            {/* PLAY/PAUSEBT */}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => toggleMusicPlay()}
+              style={styles.IconCont}>
+              {mainBtnView}
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.icons}
+              onPress={() => skipToNextMusic()}>
+              <Icon name="play-skip-forward" color="#ddd" size={scale(28)} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => toggleShuffle()}
+              activeOpacity={0.8}
+              style={[styles.icon]}>
+              <MaterialCommunityIcons
+                name={shuffleState ? 'shuffle' : 'shuffle-disabled'}
+                color={shuffleState ? '#f68128' : '#fff'}
+                size={scale(28)}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View></View>
+      </ImageBackground>
+    </Modal>
   );
 };
 

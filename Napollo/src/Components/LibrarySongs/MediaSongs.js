@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -27,6 +27,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {scale, ScaledSheet} from 'react-native-size-matters';
+import {mainNumberFormat} from '../../utils/loggedInUserType';
 
 const {width} = Dimensions.get('window');
 
@@ -45,6 +46,14 @@ const MedialSong = props => {
   // console.log(playerContext.currentMusicTrack.id, 'CURRENT MUSIC');
 
   const dispatch = useDispatch();
+  const [userLike, setUserLike] = useState(props.likes);
+
+  const increaseLike = () => {
+    setUserLike(userLike + 1);
+  };
+  const decreaseLike = () => {
+    if (userLike > 0) setUserLike(userLike - 1);
+  };
   const {} = musicPlayerDetails;
   const currentTrack = {
     title: props.title,
@@ -96,6 +105,7 @@ const MedialSong = props => {
 
   const openBottomSheet = () => {
     playerContext.bottomRef.current.open();
+
     dispatch(
       openSongBottomSheetView({
         title: props.title,
@@ -110,6 +120,7 @@ const MedialSong = props => {
         genre: props.genre?.name,
         album: props.album,
         featuredArtists: props.featuredArtists,
+        ownerAccountUser: props.ownerAccountUser,
       }),
     );
   };
@@ -120,10 +131,12 @@ const MedialSong = props => {
       <View style={{marginRight: scale(2)}}>
         <LikeBtn
           mediaId={props.id}
-          likes={props.likes}
+          likes={userLike}
           likeCount={props.hits}
           mediaBtn
           col
+          increaseLike={increaseLike}
+          decreaseLike={decreaseLike}
         />
       </View>
     );
@@ -225,7 +238,9 @@ const MedialSong = props => {
                 {/* SingleIcon */}
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Icon name="play" color="#f68128" size={18} />
-                  <Text style={styles.songPlay}>{props.hits}</Text>
+                  <Text style={styles.songPlay}>
+                    {mainNumberFormat(props.hits)}
+                  </Text>
                 </View>
                 {/* SingleIcon */}
                 {/* <View
@@ -245,7 +260,9 @@ const MedialSong = props => {
                     marginLeft: 20,
                   }}>
                   <Icon name="heart" color="#f68128" size={18} />
-                  <Text style={styles.songPlay}>{props.likes}</Text>
+                  <Text style={styles.songPlay}>
+                    {mainNumberFormat(userLike)}
+                  </Text>
                 </View>
               </View>
             </View>

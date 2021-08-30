@@ -17,50 +17,43 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {useSelector, useDispatch} from 'react-redux';
 import {getFullCountry} from '../../../../utils/loggedInUserType';
 // import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const ArtistDetails = ({onPress}) => {
   const artistData = getLoggedInUserProfile('ARTIST');
   const listenerData = getLoggedInUserProfile('LISTENER');
-  const [userDetails, setUserDetails] = useState({});
-  // console.log(listenerData, 'LISTENER');
+
+  const storeActiveUserDetails = useSelector(
+    state => state.storeActiveUserDetails,
+  );
+  const {userProfile} = storeActiveUserDetails;
   const {
-    userProfile: {
-      firstName,
-      lastName,
-      username,
-      followerCount,
-      followingCount,
-      website,
-      state,
-      country,
-      profileUrl,
-    },
-  } = listenerData;
-  // const {
-  //   firstName,
-  //   lastName,
-  //   username,
-  //   followerCount,
-  //   followingCount,
-  //   website,
-  //   state,
-  //   country,
-  //   profileUrl,
-  // } = userDetails;
+    firstName,
+    lastName,
+    username,
+    followerCount,
+    followingCount,
+    website,
+    state,
+    country,
+    profileUrl,
+    id,
+  } = userProfile;
+  console.log(followerCount);
+  const [userFollowers, setUserFollowers] = useState(followerCount);
 
+  const increaseFollowers = () => {
+    setUserFollowers(userFollowers + 1);
+  };
+  const decreaseFollowers = () => {
+    setUserFollowers(userFollowers - 1);
+  };
+  // console.log(listenerData, 'LISTENER');
   useEffect(() => {
-    const getUserDetails = async () => {
-      const userDetail = await loadDataFromStorage('user_Info');
-      setUserDetails(userDetail);
-    };
-    getUserDetails();
+    setUserFollowers(followerCount);
   }, []);
-
-
-
-  console.log(userDetails, 'USER DETAIL FROM STORAGE');
 
   return (
     <View style={styles.container}>
@@ -109,12 +102,20 @@ const ArtistDetails = ({onPress}) => {
               />
             </View> */}
 
-            <EditProfileBtn onPress={onPress} />
+            <FollowBtn
+              id={id}
+              followerCount={followerCount}
+              style={{width: scale(80)}}
+              title="Follow"
+              title2="Following"
+              increase={() => increaseFollowers()}
+              decrease={() => decreaseFollowers()}
+            />
           </View>
           <View style={styles.artistLikesCont}>
             <FollowersCont
               title="Followers"
-              num={mainNumberFormat(followerCount)}
+              num={mainNumberFormat(userFollowers)}
             />
             <FollowersCont
               title="Following"

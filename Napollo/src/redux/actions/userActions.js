@@ -52,6 +52,11 @@ import {
   UPGRADE_USER_ACCOUNT_REQUEST,
   UPGRADE_USER_ACCOUNT_SUCCESS,
   CLEAR_UPGRADE_USER_ACCOUNT_STATE,
+  STORE_ACTIVE_USER_DETAILS,
+  OPEN_SINGLE_USER_PROFILE_MODAL,
+  CLOSE_SINGLE_USER_PROFILE_MODAL,
+  ADD_USER_TO_FOLLOWED_LIST,
+  REMOVE_USER_FROM_FOLLOWED_LIST,
 } from '../constants/index';
 import axios from 'axios';
 import {Platform} from 'react-native';
@@ -645,42 +650,44 @@ export const follow_Artist =
       // });
     }
   };
-export const unFollow_Artist = (id, state) => async (dispatch, getState) => {
-  try {
-    dispatch({
-      type: UNFOLLOW_ARTIST_LOADING,
-    });
-    const token = getState().userLogin.token;
+export const unFollow_Artist =
+  (id, state = false) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: UNFOLLOW_ARTIST_LOADING,
+      });
+      const token = getState().userLogin.token;
 
-    const authorization = `Bearer ${token}`;
-    const config = {
-      headers: {
-        Authorization: authorization,
-        'Content-Type': 'application/json',
-      },
-      params: {
-        state: false,
-        id,
-      },
-    };
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'application/json',
+        },
+        params: {
+          state,
+          id,
+        },
+      };
 
-    const res = await axios.get(`${BASE_URL2}/accountuser/follow`, config);
-    console.log(res.data, 'UNFOLLOW SUCCESSFUL');
-    dispatch({
-      type: UNFOLLOW_ARTIST_SUCCESS,
-      payload: res,
-    });
-  } catch (error) {
-    logoutUserWhenTokenExpires(dispatch, error, UNFOLLOW_ARTIST_FAIL);
-    // dispatch({
-    //   type: UNFOLLOW_ARTIST_FAIL,
-    //   payload:
-    //     error.response && error.response.data.responseDescription
-    //       ? error.response.data.responseDescription
-    //       : error.message,
-    // });
-  }
-};
+      const res = await axios.get(`${BASE_URL2}/accountuser/follow`, config);
+      console.log(res.data, 'UNFOLLOW SUCCESSFUL');
+      dispatch({
+        type: UNFOLLOW_ARTIST_SUCCESS,
+        payload: res,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, UNFOLLOW_ARTIST_FAIL);
+      // dispatch({
+      //   type: UNFOLLOW_ARTIST_FAIL,
+      //   payload:
+      //     error.response && error.response.data.responseDescription
+      //       ? error.response.data.responseDescription
+      //       : error.message,
+      // });
+    }
+  };
 
 export const store_User_Location = data => {
   return {
@@ -694,59 +701,32 @@ export const storeUserCoordinates = data => {
     payload: data,
   };
 };
+export const store_Active_User_Details = data => {
+  return {
+    type: STORE_ACTIVE_USER_DETAILS,
+    payload: data,
+  };
+};
+export const openSingleUserModal = () => {
+  return {
+    type: OPEN_SINGLE_USER_PROFILE_MODAL,
+  };
+};
+export const closeSingleUserModal = () => {
+  return {
+    type: CLOSE_SINGLE_USER_PROFILE_MODAL,
+  };
+};
 
-// try {
-//   dispatch({
-//     type: UPDATE_USER_PROFILE_PICS_REQUEST,
-//   });
-
-//   const token = getState().userLogin.token;
-
-//   const authorization = `Bearer ${token}`;
-//   console.log(photo, profilePicType, 'DETAILS');
-
-//   const realPath =
-//     Platform.OS === 'ios' ? photo.replace('file://', '') : photo;
-
-//   let res = await RNFetchBlob.fetch(
-//     'PUT',
-//     `${BASE_URL2}/accountuser/photo`,
-//     {
-//       Authorization: authorization,
-//       'Content-Type': 'multipart/form-data',
-//     },
-//     [
-//       {
-//         name: 'photo',
-//         data: RNFetchBlob.wrap(realPath),
-//         type: profilePicType,
-//       },
-//     ],
-//   );
-//   let responseJson = await res.json();
-
-//   console.log(responseJson, 'JSON');
-//   if (responseJson.status === true) {
-//     dispatch({
-//       type: UPDATE_USER_PROFILE_PICS_SUCCESS,
-//       payload: responseJson,
-//     });
-
-//     // dispatch({
-//     //   type: CLEAR_UPLOAD_DATA,
-//     // });
-//   } else {
-//     dispatch({
-//       type: UPDATE_USER_PROFILE_PICS_FAIL,
-//       payload: responseJson.error,
-//     });
-//   }
-// } catch (error) {
-//   dispatch({
-//     type: UPDATE_USER_PROFILE_PICS_FAIL,
-//     payload:
-//       error.response && error.response.data.responseDescription
-//         ? error.response.data.responseDescription
-//         : error.message,
-//   });
-// }
+export const addToFollowersList = id => {
+  return {
+    type: ADD_USER_TO_FOLLOWED_LIST,
+    payload: id,
+  };
+};
+export const removeFromFollowersList = id => {
+  return {
+    type: REMOVE_USER_FROM_FOLLOWED_LIST,
+    payload: id,
+  };
+};

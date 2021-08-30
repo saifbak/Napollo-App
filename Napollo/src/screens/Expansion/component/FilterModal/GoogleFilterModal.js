@@ -117,7 +117,10 @@ const GoogleFilterModal = props => {
                   <Divider />
                 </View>
                 {/* STATES */}
-                <>
+
+                {/* <View style={{height: '30%',backgroundColor:"#900"}}> */}
+                {props.countryFilter === 'United States' && (
+                    <>
                   <Text
                     style={[
                       styles.searchHeaderText,
@@ -132,7 +135,6 @@ const GoogleFilterModal = props => {
                       </Text>
                     )}
                     {statesData && (
-                      // <View style={styles.stateCont}>
                       <FlatList
                         data={statesData}
                         keyExtractor={item => item.name}
@@ -159,10 +161,7 @@ const GoogleFilterModal = props => {
                     )}
                   </View>
                 </>
-                {/* <View style={{height: '30%',backgroundColor:"#900"}}> */}
-                {/* {countryValue === 'United States' && (
-                  
-                )} */}
+                )}
 
                 {/* </View> */}
                 <View style={{}}>

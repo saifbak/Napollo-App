@@ -51,7 +51,11 @@ const BottomSheetContent = ({
                 textTransform: 'capitalize',
                 fontFamily: 'Helvetica-Medium',
               }}>
-              &nbsp;&nbsp;{`${stateFilter}, ${countryFilter}`}
+              &nbsp;&nbsp;
+              {countryFilter === 'United States'
+                ? `${stateFilter}, ${countryFilter}`
+                : `${countryFilter}`}
+              {/* {`${stateFilter}, ${countryFilter}`} */}
             </Text>
           </Text>
         </View>
@@ -61,7 +65,7 @@ const BottomSheetContent = ({
       <View style={styles.data}>
         <FlatList
           data={data}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           renderItem={({item, index}) => (
             <SearchResult indexes {...item} index={index} />
           )}

@@ -11,7 +11,7 @@ import {
 import React, {useRef} from 'react';
 
 export const openSongBottomSheetReducer = (
-  state = {isSongBottomSheetOpen: false, songDetails: {}},
+  state = {isSongBottomSheetOpen: false, songDetails: {}, artistDetails: {}},
   {type, payload},
 ) => {
   switch (type) {
@@ -19,6 +19,7 @@ export const openSongBottomSheetReducer = (
       return {
         isSongBottomSheetOpen: true,
         songDetails: payload,
+        artistDetails: payload.ownerAccountUser,
       };
     case CLOSE_SONG_BOTTOM_SHEET:
       return {

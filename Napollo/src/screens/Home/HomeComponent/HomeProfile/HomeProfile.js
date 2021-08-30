@@ -10,7 +10,10 @@ import {
 import LeftUI from './LeftUi/LeftUI';
 import RightUi from './RightUI/RightUi';
 import {DEFAULT_IMAGE_URI} from '../../../../utils/ImagePicker';
-import {getLoggedInUserProfile} from '../../../../utils/loggedInUserType';
+import {
+  getLoggedInUserProfile,
+  mainNumberFormat,
+} from '../../../../utils/loggedInUserType';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
 import Follower from './RightUI/Follower';
@@ -70,7 +73,7 @@ const HomeProfile = () => {
     },
   } = userData;
 
-  const userLogin = useSelector((state) => state.userLogin);
+  const userLogin = useSelector(state => state.userLogin);
   const {type: userType} = userLogin;
   // let stageNameView = null;
   // if (userType && userType === 'ARTIST') {
@@ -111,7 +114,7 @@ const HomeProfile = () => {
               fontSize: scale(10),
               fontFamily: 'Helvetica-Bold',
             }}>
-            {followerCount}
+            {mainNumberFormat(followerCount)}
           </Text>
           <Text
             style={{
@@ -129,7 +132,7 @@ const HomeProfile = () => {
               fontSize: scale(10),
               fontFamily: 'Helvetica-Bold',
             }}>
-            {followingCount}
+            {mainNumberFormat(followingCount)}
           </Text>
           <Text
             style={{
