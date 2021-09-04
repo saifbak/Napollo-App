@@ -19,6 +19,10 @@ import {BASE_URL2, MOBILE_ADMIN_USERNAME, MOBILE_ADMIN_PASSWORD} from '@env';
 import {login} from '../userActions';
 import {logoutUserWhenTokenExpires} from '../../../utils/loggedInUserType';
 
+
+axios.defaults.timeout = 20000;
+axios.defaults.timeoutErrorMessage =
+  'Could not connect to server.Poor network connection';
 export const verify_Email =
   (emailAddress, activationCode) => async (dispatch, getState) => {
     try {

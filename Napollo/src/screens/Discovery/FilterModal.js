@@ -30,7 +30,7 @@ const FilterModal = (props) => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(50);
 
-  console.log(props, 'PROPS FROM GOOGLE FILTER MODAL');
+  // console.log(props, 'PROPS FROM GOOGLE FILTER MODAL');
 
   const changeActiveTab = () => {
     setActiveTab(true);

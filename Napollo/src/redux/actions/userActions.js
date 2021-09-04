@@ -71,41 +71,47 @@ import base64 from 'react-native-base64';
 import RNFetchBlob from 'rn-fetch-blob';
 import {logoutUserWhenTokenExpires} from '../../utils/loggedInUserType';
 
-export const login = (emailAddress, password) => async dispatch => {
-  try {
-    dispatch({
-      type: USER_LOGIN_REQUEST,
-    });
-    const token = base64.encode(`${emailAddress}:${password}`);
-    // console.log(emailAddress,password,'userLogin');
+axios.defaults.timeout = 20000;
+axios.defaults.timeoutErrorMessage =
+  'Could not connect to server.Poor network connection';
+export const login =
+  (emailAddress, password, city, country, latitude, longitude) =>
+  async dispatch => {
+    try {
+      dispatch({
+        type: USER_LOGIN_REQUEST,
+      });
+      const token = base64.encode(`${emailAddress}:${password}`);
+      // console.log(emailAddress,password,'userLogin');
 
-    const config = {
-      method: 'post',
-      url: `${BASE_URL2}/login`,
-      headers: {
-        Authorization: `Basic ${token}`,
-        'Content-Type': 'application/json',
-      },
-      data: null,
-    };
+      const config = {
+        method: 'post',
+        url: `${BASE_URL2}/login`,
+        // timeout: 5000,
+        headers: {
+          Authorization: `Basic ${token}`,
+          'Content-Type': 'application/json',
+        },
+        data: {city, country, latitude, longitude},
+      };
 
-    const data = await axios(config);
-    console.log(data.responseBody);
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: data.data.responseBody,
-    });
-    saveDataToStorage('user_token', data.data.responseBody.accessToken);
-  } catch (error) {
-    dispatch({
-      type: USER_LOGIN_FAIL,
-      payload:
-        error.response && error.response.data.responseDescription
-          ? error.response.data.responseDescription
-          : error.message,
-    });
-  }
-};
+      const data = await axios(config);
+      console.log(data.responseBody);
+      dispatch({
+        type: USER_LOGIN_SUCCESS,
+        payload: data.data.responseBody,
+      });
+      saveDataToStorage('user_token', data.data.responseBody.accessToken);
+    } catch (error) {
+      dispatch({
+        type: USER_LOGIN_FAIL,
+        payload:
+          error.response && error.response.data.responseDescription
+            ? error.response.data.responseDescription
+            : error.message,
+      });
+    }
+  };
 
 export const logout = () => dispatch => {
   removeDataFromStorage('user_token');
@@ -695,7 +701,7 @@ export const store_User_Location = data => {
     payload: data,
   };
 };
-export const storeUserCoordinates = data => {
+export const store_User_Coordinates = data => {
   return {
     type: STORE_USER_COORDINATES,
     payload: data,

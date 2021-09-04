@@ -52,12 +52,9 @@ class MiniPlayer extends Component {
   // final bottom anime animation: new Animated.ValueXY({x: 0, y: height - height / 1.5}),
 
   render() {
-    if (
-      this.context.isMusicEmpty ||
-      this.context.currentMusicTrack === null
-    )
-      return null;
-    const {title, url, image, id, artists, featuredArtists,ownerAccountUser} =
+    if (this.context.isMusicEmpty || !this.context.currentMusicTrack)return null;
+
+    const {title, url, image, id, artists, featuredArtists, ownerAccountUser} =
       this.context.currentTrackDetails;
     // console.log(this.context.currentTrackDetails, 'MY PROPS');
     const animatedHeight = {

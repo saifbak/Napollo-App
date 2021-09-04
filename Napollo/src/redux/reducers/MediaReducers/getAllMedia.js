@@ -38,6 +38,13 @@ import {
   DISCOVER_SCREEN_CURRENT_PAGE,
   DISCOVER_SCREEN_CURRENT_SIZE,
   CLEAR_TRAILER_MEDIA_ERROR,
+  GET_SINGLE_ARTIST_MEDIA_BY_ID_FAIL,
+  GET_SINGLE_ARTIST_MEDIA_BY_ID_LOADING,
+  GET_SINGLE_ARTIST_MEDIA_BY_ID_SUCCESS,
+  GET_USER_MEDIA_HISTORY_BY_ID_FAIL,
+  GET_USER_MEDIA_HISTORY_BY_ID_LOADING,
+  GET_USER_MEDIA_HISTORY_BY_ID_SUCCESS,
+  RESET_PAGE,
 } from '../../constants/index';
 
 export const getMediaReducer = (
@@ -72,7 +79,7 @@ export const getMediaReducer = (
   }
 };
 export const getTrailerMediaReducer = (
-  state = {loading: false, error: '', data: []},
+  state = {loading: false, error: '', data: [], totalPage: null},
   {type, payload},
 ) => {
   switch (type) {
@@ -81,13 +88,15 @@ export const getTrailerMediaReducer = (
         loading: true,
         error: '',
         data: [],
+        totalPage: null,
       };
 
     case GET_TRAILER_MEDIA_SUCCESS:
       return {
         ...state,
         loading: false,
-        data: payload,
+        data: payload.content,
+        totalPage: payload.totalPages,
         error: '',
       };
     case GET_TRAILER_MEDIA_FAIL:
@@ -96,6 +105,7 @@ export const getTrailerMediaReducer = (
         loading: false,
         data: [],
         error: payload,
+        totalPage: null,
       };
     case CLEAR_TRAILER_MEDIA_ERROR:
       return {
@@ -419,6 +429,10 @@ export const increaseCurrentDiscoverPageReducer = (
       return {
         page: newPage,
       };
+    case RESET_PAGE:
+      return {
+        page: 0,
+      };
 
     default:
       return state;
@@ -433,6 +447,77 @@ export const increaseCurrentDiscoverSizeReducer = (
       const newSize = state.size + 30;
       return {
         size: newSize,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const getSingleArtistMediasReducer = (
+  state = {
+    medias: [],
+    loading: false,
+    error: '',
+  },
+  {type, payload},
+) => {
+  switch (type) {
+    case GET_SINGLE_ARTIST_MEDIA_BY_ID_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        medias: [],
+      };
+    case GET_SINGLE_ARTIST_MEDIA_BY_ID_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        medias: payload,
+      };
+    case GET_SINGLE_ARTIST_MEDIA_BY_ID_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        medias: [],
+      };
+
+    default:
+      return state;
+  }
+};
+export const getSingleUserMediasHistoryReducer = (
+  state = {
+    medias: [],
+    loading: false,
+    error: '',
+  },
+  {type, payload},
+) => {
+  switch (type) {
+    case GET_USER_MEDIA_HISTORY_BY_ID_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        medias: [],
+      };
+    case GET_USER_MEDIA_HISTORY_BY_ID_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        medias: payload,
+      };
+    case GET_USER_MEDIA_HISTORY_BY_ID_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        medias: [],
       };
 
     default:

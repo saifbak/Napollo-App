@@ -27,15 +27,16 @@ import SpotifyIcon from '../Icons/SocialIcons/SpotifyIcon';
 import SoundCloudIcon from '../Icons/SocialIcons/SoundCloudIcon';
 import DeezerIcon from '../Icons/SocialIcons/DeezerIcon';
 import AmazonIcon from '../Icons/SocialIcons/AmazonIcon';
+import AppleMusicIcon from '../Icons/SocialIcons/AppleMusicIcon';
 
 const IconList = [
-  {name: 'Itunes', icon: <ItunesIcon />},
-  {name: 'Shazam', icon: <ShazamIcon />},
-  {name: 'Amazon', icon: <AmazonIcon />},
+  // {name: 'Itunes', icon: <ItunesIcon />},
+  // {name: 'Shazam', icon: <ShazamIcon />},
+  // {name: 'Amazon', icon: <AmazonIcon />},
   {name: 'Spotify', icon: <SpotifyIcon />},
-  // {name: 'Tidal', icon:  <TidalIcon />},
-  {name: 'SoundCloud', icon: <SoundCloudIcon />},
-  {name: 'Deezer', icon: <DeezerIcon />},
+  {name: 'Apple Music', icon: <AppleMusicIcon />},
+  // {name: 'SoundCloud', icon: <SoundCloudIcon />},
+  // {name: 'Deezer', icon: <DeezerIcon />},
   {name: 'Youtube Music', icon: <YoutubeIcon />},
 ];
 

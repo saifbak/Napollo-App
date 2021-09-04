@@ -29,6 +29,7 @@ import {
   storeActiveUserDetailsReducer,
   singleUserModalReducer,
   userFollowerListReducer,
+  grantLocationPermissionReducer,
 } from './reducers/userReducer';
 
 import {
@@ -84,6 +85,8 @@ import {
   getUserDiscoveredMediaReducer,
   increaseCurrentDiscoverPageReducer,
   increaseCurrentDiscoverSizeReducer,
+  getSingleArtistMediasReducer,
+  getSingleUserMediasHistoryReducer,
 } from './reducers/MediaReducers/getAllMedia';
 
 import {
@@ -124,6 +127,7 @@ import {
   getMediaCommentDetailsReducer,
   getMediaCommentsReducer,
   deleteMediaCommentReducer,
+  createMediaReplyReducer
 } from './reducers/MediaReducers/CommentReducers/index';
 import {reducer as network} from 'react-native-offline';
 
@@ -166,8 +170,11 @@ const rootReducer = combineReducers({
   increaseCurrentDiscoverPage: increaseCurrentDiscoverPageReducer,
   increaseCurrentDiscoverSize: increaseCurrentDiscoverSizeReducer,
   getArtistProfile: getArtistProfileReducer,
+  grantLocationPermission: grantLocationPermissionReducer,
   getMedia: getMediaReducer,
   playMedia: playMediaReducer,
+  getSingleArtistMedias: getSingleArtistMediasReducer,
+  getSingleUserMediasHistory: getSingleUserMediasHistoryReducer,
   getArtistTrendingMedia: getArtistTrendingMediaReducer,
   getTrendingMedia: getTrendingMediaReducer,
   getUserMediaListeningHistory: getUserMediaListeningHistoryReducer,
@@ -216,6 +223,7 @@ const rootReducer = combineReducers({
   storeUserLocation: storeUserLocationReducer,
   storeUserCoordinates: storeUserCoordinatesReducer,
   createMediaComment: createMediaCommentReducer,
+  createMediaReply: createMediaReplyReducer,
   getMediaCommentDetails: getMediaCommentDetailsReducer,
   getMediaComments: getMediaCommentsReducer,
   deleteMediaComment: deleteMediaCommentReducer,

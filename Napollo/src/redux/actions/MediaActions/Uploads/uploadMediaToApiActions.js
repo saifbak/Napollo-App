@@ -15,6 +15,10 @@ import FormData from 'form-data';
 import {Platform} from 'react-native';
 import {logoutUserWhenTokenExpires} from '../../../../utils/loggedInUserType';
 
+
+axios.defaults.timeout = 20000;
+axios.defaults.timeoutErrorMessage =
+  'Could not connect to server.Poor network connection';
 export const upload_Media =
   (
     mediaFile,

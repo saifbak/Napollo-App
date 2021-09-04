@@ -20,7 +20,15 @@ import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const {width} = Dimensions.get('window');
 
-const Comment_Container = ({time, name, comment, accountUser, timestamp}) => {
+const Comment_Container = ({
+  time,
+  name,
+  comment,
+  accountUser,
+  timestamp,
+  replies,
+  id,
+}) => {
   const [replyModal, setReplyModal] = useState(false);
   const {firstName, lastName, username, countryCode, profileUrl} = accountUser;
   const openReplyModal = () => {
@@ -36,13 +44,15 @@ const Comment_Container = ({time, name, comment, accountUser, timestamp}) => {
     countryCode,
     profileUrl,
     comment,
+    replies,
+    id,
   };
-  console.log(moment(timestamp).format('hh mm ss'), 'USER IMAGE');
+  // console.log(moment(timestamp).format('hh mm ss'), 'USER IMAGE');
 
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      // onPress={() => openReplyModal()}
+      onPress={() => openReplyModal()}
       style={styles.container}>
       <ReplyModal
         openReplyModal={openReplyModal}
@@ -88,6 +98,21 @@ const Comment_Container = ({time, name, comment, accountUser, timestamp}) => {
               </Text> */}
             </Text>
             {/* NUM_REPLIES */}
+            {replies?.length > 0 && (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.replies}
+                onPress={() => openReplyModal()}>
+                <Text
+                  style={{
+                    color: '#f68128',
+                    fontSize: scale(11),
+                    fontFamily: 'Helvetica-Medium',
+                  }}>
+                  replies&nbsp;({`${replies?.length}`})&nbsp;
+                </Text>
+              </TouchableOpacity>
+            )}
             {/* <TouchableOpacity
               activeOpacity={0.7}
               style={styles.replies}
@@ -103,9 +128,9 @@ const Comment_Container = ({time, name, comment, accountUser, timestamp}) => {
             </TouchableOpacity> */}
           </View>
         </View>
-        <View style={{marginTop: 20}}>
+        {/* <View style={{marginTop: 20}}>
           <LikeBtn col />
-        </View>
+        </View> */}
       </View>
     </TouchableOpacity>
   );
@@ -120,9 +145,10 @@ const styles = ScaledSheet.create({
     borderBottomWidth: 1,
   },
   comment: {
-    padding: 15,
+    padding: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    height: 90,
   },
   singleComment: {
     // width: '60%',

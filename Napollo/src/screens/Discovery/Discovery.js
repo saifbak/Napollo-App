@@ -11,7 +11,7 @@ import {
   Image,
   ActivityIndicator,
   SafeAreaView,
-  StatusBar
+  StatusBar,
 } from 'react-native';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import PlayerContext from '../../PlayerContext/PlayerContext';
@@ -99,7 +99,7 @@ class Discovery extends Component {
     //     });
     //     this.context.play(this.props.getTrailerMedia.data);
     //   }
-    this.context.resetCurrentTrack();
+    // this.context.resetCurrentTrack();
   }
 
   changeActiveTab = () => {
@@ -164,6 +164,10 @@ class Discovery extends Component {
             useNativeDriver: true,
           }).start(() => {
             this.context.skip(this.state.currentIndex);
+            console.log(
+              this.props.getTrailerMedia.data[this.state.currentIndex],
+              'CURRENT SONG',
+            );
             this.setState(
               prevState => ({currentIndex: prevState.currentIndex + 1}),
               () => this.state.position.setValue({x: 0, y: 0}),
@@ -197,6 +201,10 @@ class Discovery extends Component {
       duration: 1000,
     }).start(() => {
       this.context.skip(this.state.currentIndex);
+      console.log(
+        this.props.getTrailerMedia.data[this.state.currentIndex],
+        'CURRENT SONG',
+      );
       this.setState(
         prevState => ({currentIndex: prevState.currentIndex + 1}),
         () => this.state.position.setValue({x: 0, y: 0}),
@@ -210,6 +218,11 @@ class Discovery extends Component {
       useNativeDriver: true,
       duration: 1000,
     }).start(() => {
+      console.log(
+        this.props.getTrailerMedia.data[this.state.currentIndex],
+        'CURRENT SONG',
+      );
+      this.context.skip(this.state.currentIndex);
       this.setState(
         prevState => ({currentIndex: prevState.currentIndex + 1}),
         () => this.state.position.setValue({x: 0, y: 0}),
@@ -352,7 +365,7 @@ class Discovery extends Component {
       loadingView = <LoadingAnime width={70} height={70} />;
     }
     if (this.props.getTrailerMedia.error) {
-      TrackPlayer.reset();
+      // this.context.resetTrack();
       errorView = (
         <ErrorView
           errorTitle={this.props.getTrailerMedia.error}
@@ -430,10 +443,16 @@ class Discovery extends Component {
     let mainView = null;
     if (this.props.getTrailerMedia.data.length <= 0) {
       mainView = (
-        <View style={{width: '100%', height: SCREEN_HEIGHT / 2}}>
+        <View
+          style={{
+            width: '100%',
+            height: SCREEN_HEIGHT,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
           <Text
-            style={{color: '#fff', fontSize: scale(25), textAlign: 'center'}}>
-            Empty Songs
+            style={{color: '#fff', fontSize: scale(20), textAlign: 'center'}}>
+            Loading more songs...
           </Text>
         </View>
       );
@@ -444,13 +463,15 @@ class Discovery extends Component {
       <SafeAreaView style={styles.container}>
         {loadingView}
         {errorView}
-        {/* <FocusEffect
+        <FocusEffect
           unLike={this.UnlikeSong}
           page={this.state.page}
           size={this.state.size}
+          currentIndex={this.state.currentIndex}
           chooseState={val => this.chooseState(val)}
           countryCode={this.state.countryCode}
-        /> */}
+        />
+        <StatusBar barStyle="light-content" backgroundColor="#000" />
         <FilterModal
           showFilter={this.state.showFilter}
           onPress={this.closeFilter}

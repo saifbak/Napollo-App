@@ -42,6 +42,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import SingleUserMostPlayedCont from './UserDetails/SingleUserMostPlay';
 
 const {height, width} = Dimensions.get('window');
 
@@ -50,6 +51,13 @@ const MainArtistProfile = () => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(50);
   const dispatch = useDispatch();
+
+  const getUserMediaListeningHistory = useSelector(
+    state => state.getUserMediaListeningHistory,
+  );
+  const {data: listeningData} = getUserMediaListeningHistory;
+  const playedSong = listeningData?.sort((a, b) => b.plays - a.plays);
+  console.log(playedSong);
 
   useFocusEffect(
     useCallback(() => {
@@ -88,16 +96,28 @@ const MainArtistProfile = () => {
           <ArtistDetails onPress={() => navigation.navigate('Edit_Profile')} />
           {/* MOST LIKE SONG */}
           <View style={styles.likedSong}>
-            <Text
-              style={{
-                color: '#eee',
-                fontSize: scale(15),
-                fontFamily: 'Gilroy-Bold',
-                fontFamily: 'Helvetica-Bold',
-              }}>
-              Most Played Song
-            </Text>
-            <ArtistMostPlayedCont />
+            {playedSong && playedSong.length > 0 ? (
+              <Text
+                style={{
+                  color: '#eee',
+                  fontSize: scale(15),
+                  fontFamily: 'Helvetica-Bold',
+                }}>
+                {`Most played song (${playedSong[0]?.plays})`}
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  color: '#eee',
+                  fontSize: scale(15),
+                  fontFamily: 'Helvetica-Bold',
+                }}>
+                Most played song
+              </Text>
+            )}
+            {playedSong && playedSong.length > 0 && (
+              <SingleUserMostPlayedCont {...playedSong[0]?.media} />
+            )}
           </View>
           {/* TAB SCREENS */}
           <TabView />

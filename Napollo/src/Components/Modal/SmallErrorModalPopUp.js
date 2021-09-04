@@ -20,7 +20,7 @@ const SmallErrorPopUpModal = (props) => {
           props.clearError();
         }
       },
-      props.clearTime ? props.clearTime : 500,
+      props.clearTime ? props.clearTime : 1000,
     );
   }, [props.errorState]);
 

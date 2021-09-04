@@ -36,20 +36,18 @@ const ProfileSongs = () => {
   // const artistsSongs = mediaData.filter(
   //   (x) => x.artist.stageName === stageName,
   // );
-  const songsView = listeningData
-    .sort((a, b) => a.hits - b.hits)
-    .map((song, index) => (
-      <MediaSong
-        // data={song}
-        // {...artists}
-        {...song.media}
-        allSongs={allSongs}
-        key={index}
-        showLikeBtn={true}
-        indexes
-        index={index}
-      />
-    ));
+  const songsView = listeningData.map((song, index) => (
+    <MediaSong
+      // data={song}
+      // {...artists}
+      {...song.media}
+      allSongs={allSongs}
+      key={index}
+      showLikeBtn={true}
+      indexes
+      index={index}
+    />
+  ));
 
   // const songView = data.map((item, index) => (
   //   <GeneralSongs showLikeBtn={true} key={index} {...item} />
@@ -104,13 +102,21 @@ const ProfileSongs = () => {
       </TouchableOpacity>
     );
   } else {
-    return <View style={styles.container}>{songsView}</View>;
+    return (
+      <View style={styles.container}>
+        <Text
+          style={[
+            styles.sectionHeader,
+          ]}>{`Songs (${listeningData?.length})`}</Text>
+        {songsView}
+      </View>
+    );
   }
 };
 
 export default ProfileSongs;
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
     width: '100%',
@@ -121,5 +127,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  sectionHeader: {
+    fontSize: '14@s',
+    fontFamily: 'Helvetica-Bold',
+    color: '#eee',
+    marginBottom: 20,
   },
 });

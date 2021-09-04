@@ -28,7 +28,7 @@ const GoogleSearchModal = (props) => {
   const [result, setResult] = useState('');
   const [userValue, onChangeUserText] = useState('');
 
-  console.log(props, 'PROPS');
+  // console.log(props, 'PROPS');
 
   useEffect(() => {
     setData([]);
@@ -49,7 +49,7 @@ const GoogleSearchModal = (props) => {
     Geocoder.geocodeAddress(address)
       .then((res) => {
         const result = res[0].position;
-        console.log(result, 'LAT, LONG');
+        // console.log(result, 'LAT, LONG');
         if (result) {
           // props.changeUserLocation(result);
         }

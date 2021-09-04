@@ -7,11 +7,13 @@ import {
   SafeAreaView,
   StatusBar,
   ScrollView,
+  Linking,
 } from 'react-native';
 import Icons from '../../Components/IconsContainer/Icons';
 import CustomHeader from '../../Components/CustomHeader/CommonHeader';
 import Button from '../../Components/Button/LoginBtn';
 import Icon from 'react-native-vector-icons/Ionicons';
+import IconsCont from './IconsCont';
 
 const {width, height} = Dimensions.get('window');
 
@@ -28,7 +30,7 @@ const Support_Napollo = () => {
             <View style={styles.content}>
               {/* TEXT VIEW */}
               <View style={styles.textView}>
-                <Text style={styles.headerText}>Support Napollo</Text>
+                {/* <Text style={styles.headerText}>Support Napollo</Text> */}
                 <Text style={styles.subText}>
                   Help us empower artists & make music discovery fun again!
                 </Text>
@@ -72,8 +74,32 @@ const Support_Napollo = () => {
                         Follow our social media pages & Sebas on Twitter
                       </Text>
                     </View>
-                    <View style={{width: '100%', marginTop: 30}}>
-                      <Icons insta iconSize={30} />
+                    <View
+                      style={{
+                        width: '100%',
+                        marginTop: 30,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-around',
+                      }}>
+                      <IconsCont
+                        iconName="md-logo-twitter"
+                        iconColor="#00acee"
+                        onPress={() =>
+                          Linking.openURL(
+                            'https://twitter.com/napollomusic?s=21',
+                          )
+                        }
+                      />
+                      <IconsCont
+                        iconName="md-logo-instagram"
+                        iconColor="#8a3ab9"
+                        onPress={() =>
+                          Linking.openURL(
+                            'https://instagram.com/napollomusic?igshid=1jwpf81ctkw4n',
+                          )
+                        }
+                      />
                     </View>
                   </View>
                   {/* Individual Step */}
@@ -99,7 +125,14 @@ const Support_Napollo = () => {
                         marginTop: 30,
                         alignSelf: 'center',
                       }}>
-                      <Button title="Help us Improve" />
+                      <Button
+                        title="Help us Improve"
+                        onPress={() =>
+                          Linking.openURL(
+                            'https://airtable.com/shrNkFZ09hqsJPBXt',
+                          )
+                        }
+                      />
                     </View>
                   </View>
                   {/* Individual Step */}
@@ -161,7 +194,7 @@ const styles = StyleSheet.create({
   content: {
     width,
     // height,
-    marginTop: 10,
+    // marginTop: 10,
     flex: 1,
   },
   textView: {
@@ -173,22 +206,25 @@ const styles = StyleSheet.create({
     color: '#eee',
     textAlign: 'center',
     fontSize: 20,
-    fontFamily: 'Gilroy-Bold',
+    fontFamily: 'Helvetica-Bold',
   },
   subText: {
-    color: '#eee',
-    textAlign: 'left',
-    fontFamily: 'Gilroy-Bold',
-    fontSize: 15,
+    color: '#F68128',
+    textAlign: 'center',
+    fontFamily: 'Helvetica-Bold',
+    fontSize: 18,
     marginTop: 20,
+    lineHeight: 20,
+    letterSpacing: 0.5,
   },
   mainText: {
     color: '#eee',
     textAlign: 'left',
-    fontFamily: 'Gilroy-Bold',
+    fontFamily: 'Helvetica-Regular',
     fontSize: 15,
     marginTop: 30,
     width: '100%',
+    lineHeight: 20,
   },
   steps: {
     width,
@@ -220,7 +256,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     marginTop: 20,
-    fontFamily: 'Gilroy-Bold',
+    fontFamily: 'Helvetica-Bold',
+    lineHeight: 20,
+    letterSpacing: 0.5,
   },
   icons: {
     width,

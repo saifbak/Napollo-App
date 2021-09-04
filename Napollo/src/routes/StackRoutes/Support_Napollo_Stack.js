@@ -9,7 +9,7 @@ const Support_Napollo_Stack = ({navigation}) => {
     <Stack.Navigator
       screenOptions={{headerShown: false}}
       >
-      <Stack.Screen name="Support Napollo" component={Support_Napollo} />
+      <Stack.Screen name="Main Support Napollo" component={Support_Napollo} />
     </Stack.Navigator>
   );
 };

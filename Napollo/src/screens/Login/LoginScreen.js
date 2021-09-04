@@ -13,13 +13,14 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
+import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import LoginBtn from '../../Components/Button/LoginBtn';
 import Icons from '../../Components/IconsContainer/Icons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {
   login,
   clearData,
-  storeUserCoordinates,
+  store_User_Coordinates,
   store_User_Location,
 } from '../../redux/actions/userActions';
 import {clearRegisterError} from '../../redux/actions/artistActions';
@@ -49,6 +50,8 @@ const LoginScreen = ({navigation, route}) => {
   const [userData, setUserData] = useState(false);
   const {message, status} = userRegister;
   const storeUserLocation = useSelector(state => state.storeUserLocation);
+  const storeUserCoordinates = useSelector(state => state.storeUserCoordinates);
+  const {lat, lng} = storeUserCoordinates;
   const {
     city: userCity,
     state,
@@ -57,7 +60,7 @@ const LoginScreen = ({navigation, route}) => {
     callingCode,
   } = storeUserLocation;
 
-  const {error, loading} = userLogin;
+  const {error, loading, status: userStatus} = userLogin;
 
   const chooseUserInfo = user => {
     setEmail(user.email);
@@ -74,13 +77,16 @@ const LoginScreen = ({navigation, route}) => {
       setClientErr('');
       dispatch(clearData());
       // dispatch(clearRegisterError());
-      dispatch(login(email, password));
+      dispatch(login(email, password, state, userCountry, lat, lng));
       // setUserData(false);
-      setEmail('');
-      setPassword('');
+
       // actions.resetForm();
     } else {
       setClientErr('Please provide your login details');
+    }
+    if (userStatus && userStatus === true) {
+      setEmail('');
+      setPassword('');
     }
     // setUserData(true);
   };
@@ -111,7 +117,7 @@ const LoginScreen = ({navigation, route}) => {
             lat,
             lng,
           };
-          dispatch(storeUserCoordinates(userPosition));
+          dispatch(store_User_Coordinates(userPosition));
           Geocoder.geocodePosition(userPosition)
             .then(res => {
               console.log('USER REAL LOCATION', res[0]);
@@ -136,8 +142,10 @@ const LoginScreen = ({navigation, route}) => {
   };
   useEffect(() => {
     if (storeUserLocation.city === '' || storeUserLocation.country === '')
-      getUserLocation();
-  }, []);
+      if (RESULTS.GRANTED) {
+        getUserLocation();
+      }
+  }, [storeUserLocation.city]);
 
   return (
     <View style={styles.container}>

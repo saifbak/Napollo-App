@@ -53,7 +53,7 @@ const PlayerContext = React.createContext({
   getSongs: () => null,
   currentTrackId: '',
   currentTrackDetails: {},
-  currentDiscoveryTrack: [],
+  currentDiscoveryTrack: {},
   resetTrack: () => null,
   toggleShuffle: () => null,
   changeToOrder: () => null,
@@ -75,7 +75,7 @@ export const PlayerContextProvider = ({children}) => {
   const [currentTrimTrack, setCurrentTrimTrack] = useState(null);
   const [currentQueue, setCurrentQueue] = useState([]);
   const [currentDiscoveryTrackId, setDiscoveryTrackId] = useState('');
-  const [currentDiscoveryTrack, setCurrentDiscoveryTrack] = useState([]);
+  const [currentDiscoveryTrack, setCurrentDiscoveryTrack] = useState({});
   const [currentMusicTrack, setCurrentMusicTrack] = useState(null);
   const [isPlayerReady, setPlayerReady] = useState(false);
   const [currentTrackId, setCurrentTrackId] = useState('');
@@ -146,15 +146,17 @@ export const PlayerContextProvider = ({children}) => {
             artist: trackObject.ownerAccountUser.username,
           };
           // console.log('trackObject', newObject);
-          dispatch(play_Media(city, state, country, trackObject.id));
           setCurrentMusicTrack(event.nextTrack);
           setCurrentTrackDetails(newObject);
         } else {
           // console.log('trackObject', trackObject);
-          dispatch(play_Media(city, state, country, trackObject.id));
+          // dispatch(play_Media(city, state, country, trackObject.id));
           setCurrentMusicTrack(event.nextTrack);
           setCurrentTrackDetails(trackObject);
         }
+      }
+      if (currentMusicTrack && !currentDiscoveryTrack) {
+        dispatch(play_Media(city, state, country, trackObject.id));
       }
       if (trackQueue) {
         setCurrentQueue(trackQueue);
@@ -231,47 +233,46 @@ export const PlayerContextProvider = ({children}) => {
   //   );
   // }, [shuffleState]);
 
-  const play = useCallback(
-    async track => {
-      await TrackPlayer.reset();
-      setCurrentMusicTrack(null);
-      const currentTrackId = await TrackPlayer.getCurrentTrack();
-      if (track) {
-        await TrackPlayer.add([...track]);
-        if (currentTrackId !== null) {
-          // setCurrentMusicTrack(currentTrackId);
-          const trackObject = await TrackPlayer.getTrack(currentTrackId);
-          setCurrentTrackDetails(trackObject);
-          setCurrentTrackId(currentTrackId);
-          await TrackPlayer.play();
-        }
+  const play = useCallback(async track => {
+    await TrackPlayer.reset();
+    setCurrentMusicTrack(null);
+    const currentTrackId = await TrackPlayer.getCurrentTrack();
+    if (track) {
+      await TrackPlayer.add([...track]);
+      if (currentTrackId) {
+        const trackObject = await TrackPlayer.getTrack(currentTrackId);
+        // setCurrentMusicTrack(trackObject);
+        setCurrentTrackDetails(trackObject);
+        // setCurrentDiscoveryTrack(trackObject);
+        // setCurrentDiscoveryTrackId(currentTrackId);
+        await TrackPlayer.play();
       }
-      // await TrackPlayer.reset();
-      // setCurrentMusicTrack(null);
-      // if (!track) {
-      //   if (currentTrack) {
-      //     await TrackPlayer.play();
-      //   }
-      //   return;
-      // }
-      // if (track.id && currentTrack) {
-      //   if (track.id && currentTrack !== currentTrack.id) {
-      //     await TrackPlayer.reset();
-      //   }
-      // }
-      // setCurrentTrack(track);
-      // await TrackPlayer.add([...track]);
-      // if (currentTrack) {
-      //   await TrackPlayer.play();
-      // }
-      // setCurrentDiscoveryTrack(track);
-    },
-    [currentTrack],
-  );
+    }
+    // await TrackPlayer.reset();
+    // setCurrentMusicTrack(null);
+    // if (!track) {
+    //   if (currentTrack) {
+    //     await TrackPlayer.play();
+    //   }
+    //   return;
+    // }
+    // if (track.id && currentTrack) {
+    //   if (track.id && currentTrack !== currentTrack.id) {
+    //     await TrackPlayer.reset();
+    //   }
+    // }
+    // setCurrentTrack(track);
+    // await TrackPlayer.add([...track]);
+    // if (currentTrack) {
+    //   await TrackPlayer.play();
+    // }
+    // setCurrentDiscoveryTrack(track);
+  }, []);
 
   const playMusic = useCallback(
     async (track, index) => {
       await TrackPlayer.reset();
+      // setCurrentDiscoveryTrack({});
       // const currentTrackId = await TrackPlayer.getCurrentTrack();
       // if (track) {
       //   await TrackPlayer.add(track);
@@ -377,6 +378,7 @@ export const PlayerContextProvider = ({children}) => {
   };
   const resetCurrentTrack = () => {
     setCurrentMusicTrack(null);
+    setCurrentTrackDetails({});
   };
   const skip = async id => {
     await TrackPlayer.skip(id);

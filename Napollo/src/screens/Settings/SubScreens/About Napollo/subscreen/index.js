@@ -15,9 +15,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const {width, height} = Dimensions.get('window');
 
-
 const index = () => {
-    
   return (
     <View style={styles.maincontainer}>
       <CustomHeader title="Helpline" />
@@ -29,17 +27,15 @@ const index = () => {
           }}>
           <View style={styles.header}>
             <Text style={styles.headerText}>
-              We provide 24/7 hours availability support. Feel free to reach out
-              to u
+              We provide support 24/7. Feel free to reach out to us on the
+              listed channels.
             </Text>
           </View>
           <HelpLine
             name="Email"
             link="info@napollomusic.com"
             iconName="md-mail"
-            onPress={() =>
-              Linking.openURL('mailto:info@napollomusic.com')
-            }
+            onPress={() => Linking.openURL('mailto:info@napollomusic.com')}
           />
           <HelpLine
             name="Twitter"

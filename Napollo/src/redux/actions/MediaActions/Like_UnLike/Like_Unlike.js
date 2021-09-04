@@ -14,6 +14,9 @@ import {logoutUserWhenTokenExpires} from '../../../../utils/loggedInUserType';
 
 import axiosInstance from '../../../../utils/axiosInstance';
 
+axios.defaults.timeout = 20000;
+axios.defaults.timeoutErrorMessage =
+  'Could not connect to server.Poor network connection';
 export const likeMedia =
   (id, state = true) =>
   async (dispatch, getState) => {

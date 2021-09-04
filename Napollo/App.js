@@ -6,7 +6,7 @@ import {
   usePlayerContext,
 } from './src/PlayerContext/PlayerContext';
 import {Provider} from 'react-redux';
-
+import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import {persistor, store} from './src/redux/store';
 
 import TrackPlayer, {Capability} from 'react-native-track-player';
@@ -37,7 +37,7 @@ import {
   get_User_Profile,
   logout,
   store_User_Location,
-  storeUserCoordinates,
+  store_User_Coordinates,
 } from './src/redux/actions/userActions';
 import {get_Artist_Profile} from './src/redux/actions/artistActions';
 import {getGenres} from './src/redux/actions/getGenreActions';
@@ -181,7 +181,7 @@ const App = () => {
             lat,
             lng,
           };
-          dispatch(storeUserCoordinates(userPosition));
+          dispatch(store_User_Coordinates(userPosition));
           Geocoder.geocodePosition(userPosition)
             .then(res => {
               console.log('USER REAL LOCATION', res[0]);
@@ -205,7 +205,7 @@ const App = () => {
     );
   };
   useEffect(() => {
-    getUserLocation();
+    if (RESULTS.GRANTED) getUserLocation();
   }, []);
 
   // PERMISSION

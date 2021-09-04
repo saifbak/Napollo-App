@@ -4,15 +4,7 @@ import {PermissionsAndroid} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoder';
 import {useDispatch, useSelector} from 'react-redux';
-
-
-
-
-
-
-
-
-
+import {LOCATION_PERMISSION_GRANTED} from '../redux/constants';
 
 // PERMISSIONS
 // LOCATION
@@ -35,7 +27,7 @@ const PERMISSION_TYPE = {
 };
 
 class AppPermission {
-  checkPermission = async (type) => {
+  checkPermission = async type => {
     const permissions = REQUEST_PERMISSION_TYPE[type][Platform.OS];
     if (!permissions) {
       return true;
@@ -64,6 +56,7 @@ class AppPermission {
 const Permission = new AppPermission();
 
 const requestLocation = async () => {
+  // const dispatch = useDispatch();
   if (Platform.OS === 'ios') {
     const checkPermissionIOS = await check(
       PERMISSIONS.IOS.LOCATION_WHEN_IN_USE || PERMISSIONS.IOS.LOCATION_ALWAYS,
@@ -72,6 +65,7 @@ const requestLocation = async () => {
       const granted = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
       if (granted === RESULTS.GRANTED) {
         // alert("You've access for the location");
+        // dispatch({type: LOCATION_PERMISSION_GRANTED});
         console.log("You've access for the location");
       } else {
         alert("You don't have access for the location");
@@ -83,6 +77,7 @@ const requestLocation = async () => {
     );
     if (checkLocationPermission === PermissionsAndroid.RESULTS.GRANTED) {
       // alert("You've access for the location");
+      // dispatch({type: LOCATION_PERMISSION_GRANTED});
       console.log("You've access for the location");
     } else {
       try {
@@ -97,6 +92,7 @@ const requestLocation = async () => {
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           // alert("You've access for the location");
+          // dispatch({type: LOCATION_PERMISSION_GRANTED});
           console.log("You've access for the location");
         } else {
           alert("You don't have access for the location");

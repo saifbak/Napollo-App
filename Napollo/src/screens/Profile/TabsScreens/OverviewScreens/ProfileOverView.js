@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -20,23 +20,23 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { get_User_Media_Listening_History } from '../../../../redux/actions/MediaActions/getMediaActions';
+import {get_User_Media_Listening_History} from '../../../../redux/actions/MediaActions/getMediaActions';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const ProfileOverView = () => {
   const dispatch = useDispatch();
-  const [page,setPage] = useState(0)
-  const [size,setSize] = useState(50)
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(50);
   const navigation = useNavigation();
-  const getMedia = useSelector((state) => state.getMedia);
+  const getMedia = useSelector(state => state.getMedia);
   const {data: mediaData} = getMedia;
   const artistData = getLoggedInUserProfile('ARTIST');
-   const getUserMediaListeningHistory = useSelector(
-     (state) => state.getUserMediaListeningHistory,
-   );
-   const {loading, error, data: listeningData} = getUserMediaListeningHistory;
+  const getUserMediaListeningHistory = useSelector(
+    state => state.getUserMediaListeningHistory,
+  );
+  const {loading, error, data: listeningData} = getUserMediaListeningHistory;
 
-   const allSongs = listeningData.map(item => item.media);
+  const allSongs = listeningData.map(item => item.media);
   // const {
   //   artistProfile: {stageName},
   // } = artistData;
@@ -44,7 +44,7 @@ const ProfileOverView = () => {
   //   (x) => x.artist.stageName === stageName,
   // );
   const artistSongsView = listeningData
-    .sort((a, b) => b.hits - a.hits)
+    .sort((a, b) => b.plays - a.plays)
     .slice(0, 10)
     .map((song, index) => (
       <MediaSong
@@ -67,70 +67,65 @@ const ProfileOverView = () => {
   const supportersView = supporters.map((item, index) => (
     <SupportersCont key={index} {...item} />
   ));
-    if (listeningData.length <= 0 && !loading && !error) {
-      return (
-        <View style={styles.container}>
-          <Text
-            style={{
-              color: '#fff',
-              fontWeight: '800',
-              fontFamily: 'Helvetica-ExtraBold',
-              fontSize: scale(12),
-              marginTop: 30,
-              textAlign: 'center',
-            }}>
-            You haven't listened to any song yet.
-          </Text>
-        </View>
-      );
-    } else if (loading) {
-      return (
-        <View style={{alignSelf: 'center', marginTop: 20}}>
-          <ActivityIndicator size={30} color="#F68128" />
-        </View>
-      );
-    } else if (error) {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.7}
-          onPress={() =>
-            dispatch(get_User_Media_Listening_History(page, size))
-          }>
-          <Text
-            style={{
-              color: '#999',
-              fontSize: scale(12),
-              textAlign: 'center',
-              marginTop: 10,
-            }}>
-            {error}
-          </Text>
-          <Text
-            style={{
-              color: '#F68128',
-              fontSize: 10,
-              textAlign: 'center',
-              marginTop: hp('1.7%'),
-              fontFamily: 'Helvetica-Bold',
-            }}>
-            Try Again
-          </Text>
-        </TouchableOpacity>
-      );
-    }
- else{
+  if (listeningData.length <= 0 && !loading && !error) {
+    return (
+      <View style={styles.container}>
+        <Text
+          style={{
+            color: '#fff',
+            fontWeight: '800',
+            fontFamily: 'Helvetica-ExtraBold',
+            fontSize: scale(12),
+            marginTop: 30,
+            textAlign: 'center',
+          }}>
+          You haven't listened to any song yet.
+        </Text>
+      </View>
+    );
+  } else if (loading) {
+    return (
+      <View style={{alignSelf: 'center', marginTop: 20}}>
+        <ActivityIndicator size={30} color="#F68128" />
+      </View>
+    );
+  } else if (error) {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => dispatch(get_User_Media_Listening_History(page, size))}>
+        <Text
+          style={{
+            color: '#999',
+            fontSize: scale(12),
+            textAlign: 'center',
+            marginTop: 10,
+          }}>
+          {error}
+        </Text>
+        <Text
+          style={{
+            color: '#F68128',
+            fontSize: 10,
+            textAlign: 'center',
+            marginTop: hp('1.7%'),
+            fontFamily: 'Helvetica-Bold',
+          }}>
+          Try Again
+        </Text>
+      </TouchableOpacity>
+    );
+  } else {
     return (
       <View style={styles.container}>
         <View style={styles.sectionContainer}>
           {/* Popular Section */}
-          <Text style={[styles.sectionHeader, {marginTop: 20}]}>
-            Top (10) Played Songs
-          </Text>
+          <Text style={[styles.sectionHeader]}>Top (10) Played Songs</Text>
           <View>{artistSongsView}</View>
         </View>
       </View>
     );
- }
+  }
 };
 
 export default ProfileOverView;

@@ -15,7 +15,7 @@ const SmallSuccessPopUpModal = (props) => {
       } else if (props.clearMessage) {
         props.clearMessage();
       }
-    }, 500);
+    }, 1000);
   }, [props.succcessState]);
 
   if (!showModal) {

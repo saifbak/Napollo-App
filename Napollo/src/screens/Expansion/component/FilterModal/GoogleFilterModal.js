@@ -72,8 +72,8 @@ const GoogleFilterModal = props => {
     }
   }, [props.countryFilter]);
   // console.log(csc.getAllStates('NG'));
-  console.log(statesData, 'Country Code');
-  console.log(countryCode, 'Country Code');
+  // console.log(statesData, 'Country Code');
+  // console.log(countryCode, 'Country Code');
   // console.log(Data.getAllStatesFromCountry(countryCode), 'Country Code');
 
   return (

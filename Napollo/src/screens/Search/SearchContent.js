@@ -188,7 +188,7 @@ const HomeContent = () => {
     );
   } else {
     mainTrendingView = trendingData
-      .slice(0, 30)
+      .slice(0, 10)
       .sort((a, b) => b.hits - a.hits)
       .map((song, index) => (
         <MediaSong

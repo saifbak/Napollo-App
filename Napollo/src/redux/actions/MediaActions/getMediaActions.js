@@ -32,11 +32,22 @@ import {
   GET_ALL_USER_DISCOVERED_SONG_SUCCESS,
   DISCOVER_SCREEN_CURRENT_PAGE,
   DISCOVER_SCREEN_CURRENT_SIZE,
+  GET_SINGLE_ARTIST_MEDIA_BY_ID_FAIL,
+  GET_SINGLE_ARTIST_MEDIA_BY_ID_LOADING,
+  GET_SINGLE_ARTIST_MEDIA_BY_ID_SUCCESS,
+  GET_USER_MEDIA_HISTORY_BY_ID_FAIL,
+  GET_USER_MEDIA_HISTORY_BY_ID_LOADING,
+  GET_USER_MEDIA_HISTORY_BY_ID_SUCCESS,
 } from '../../constants/index';
 import {BASE_URL2} from '@env';
 import axios from 'axios';
 import {logoutUserWhenTokenExpires} from '../../../utils/loggedInUserType';
 
+
+
+axios.defaults.timeout = 20000;
+axios.defaults.timeoutErrorMessage =
+  'Could not connect to server. Poor network connection';
 export const get_Media = (page, size) => async (dispatch, getState) => {
   try {
     dispatch({
@@ -90,7 +101,7 @@ export const get_Trailer_Media = (page, size) => async (dispatch, getState) => {
 
     dispatch({
       type: GET_TRAILER_MEDIA_SUCCESS,
-      payload: data.responseBody.content,
+      payload: data.responseBody,
     });
   } catch (error) {
     logoutUserWhenTokenExpires(dispatch, error, GET_TRAILER_MEDIA_FAIL);
@@ -419,12 +430,85 @@ export const like_A_Discover_Media =
   };
 
 export const increase_Discover_Media_Page = () => {
-  return{
-    type:DISCOVER_SCREEN_CURRENT_PAGE
-  }
+  return {
+    type: DISCOVER_SCREEN_CURRENT_PAGE,
+  };
 };
 export const increase_Discover_Media_Size = () => {
-  return{
-    type:DISCOVER_SCREEN_CURRENT_SIZE
-  }
+  return {
+    type: DISCOVER_SCREEN_CURRENT_SIZE,
+  };
 };
+
+export const get_Single_Artist_Media =
+  (id, page, size) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: GET_SINGLE_ARTIST_MEDIA_BY_ID_LOADING,
+      });
+
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+        },
+        params: {
+          id,
+          page,
+          size,
+        },
+      };
+
+      const res = await axios.get(`${BASE_URL2}/media/accountuser`, config);
+
+      dispatch({
+        type: GET_SINGLE_ARTIST_MEDIA_BY_ID_SUCCESS,
+        payload: res.data.responseBody.content,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(
+        dispatch,
+        error,
+        GET_SINGLE_ARTIST_MEDIA_BY_ID_FAIL,
+      );
+    }
+  };
+
+export const get_Single_User_Media_History =
+  (id, page, size) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: GET_USER_MEDIA_HISTORY_BY_ID_LOADING,
+      });
+
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+        },
+        params: {
+          id,
+          page,
+          size,
+        },
+      };
+
+      const res = await axios.get(
+        `${BASE_URL2}/media/accountuser/history`,
+        config,
+      );
+
+      dispatch({
+        type: GET_USER_MEDIA_HISTORY_BY_ID_SUCCESS,
+        payload: res.data.responseBody.content,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(
+        dispatch,
+        error,
+        GET_USER_MEDIA_HISTORY_BY_ID_FAIL,
+      );
+    }
+  };

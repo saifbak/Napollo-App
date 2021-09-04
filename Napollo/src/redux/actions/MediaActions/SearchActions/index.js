@@ -22,6 +22,9 @@ import {BASE_URL2} from '@env';
 import axios from 'axios';
 import {logoutUserWhenTokenExpires} from '../../../../utils/loggedInUserType';
 
+axios.defaults.timeout = 20000;
+axios.defaults.timeoutErrorMessage =
+  'Could not connect to server.Poor network connection';
 export const get_Media_Search =
   (title, page = 0, size = 10) =>
   async (dispatch, getState) => {

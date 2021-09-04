@@ -100,16 +100,27 @@ const Expansion = () => {
     setUserArea(value);
   };
   const geocoder = async () => {
-    const loc = await Geocoder.geocodeAddress(
-      `${stateFilter},${countryFilter}`,
-    );
-    console.log(loc[0].position.lat);
-    if (loc) {
-      setUserLocation({
-        latitude: loc[0].position.lat,
-        longitude: loc[0].position.lng,
-        markerImage: profileUrl,
-      });
+    if (countryFilter === 'United States') {
+      const loc = await Geocoder.geocodeAddress(
+        `${stateFilter},${countryFilter}`,
+      );
+      if (loc) {
+        setUserLocation({
+          latitude: loc[0].position.lat,
+          longitude: loc[0].position.lng,
+          markerImage: profileUrl,
+        });
+      }
+    } else {
+      const loc = await Geocoder.geocodeAddress(`${countryFilter}`);
+
+      if (loc) {
+        setUserLocation({
+          latitude: loc[0].position.lat,
+          longitude: loc[0].position.lng,
+          markerImage: profileUrl,
+        });
+      }
     }
     console.log('GEOCODING!!!!!!');
   };
@@ -175,7 +186,7 @@ const Expansion = () => {
         <GoogleFilterModal
           showFilter={show}
           onPress={showModal}
-          apply={() => geocoder()}
+          apply={geocoder}
           stateFilter={stateFilter}
           countryFilter={countryFilter}
           resultNum={resultNum}

@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, View, Dimensions} from 'react-native';
 import LoginBtn from '../../Components/Button/LoginBtn';
+import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const {width, height} = Dimensions.get('window');
 
@@ -30,7 +31,7 @@ const ErrorScreen = ({onPress, errorTitle, clearError}) => {
 
 export default ErrorScreen;
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
@@ -47,11 +48,11 @@ const styles = StyleSheet.create({
     color: '#f68128',
     fontSize: 55,
     textTransform: 'uppercase',
-    fontFamily: 'Gilroy-ExtraBold',
+    fontFamily: 'Helvetica-ExtraBold',
   },
   messageText: {
     color: '#999',
-    fontSize: 15,
+    fontSize: '10@s',
     textTransform: 'capitalize',
     marginVertical: 20,
     textAlign: 'center',

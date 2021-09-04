@@ -42,6 +42,7 @@ import BottomSheetContent from '../BottomSheetContent';
 import {DEFAULT_IMAGE_URI} from '../../../utils/ImagePicker';
 import ArtistDetails from './UserDetails/ArtistDetails';
 import ArtistMostPlayedCont from './UserDetails/ArtistMostPlayedCont2';
+import SingleArtistMostPlayedCont from './UserDetails/SingleArtistMostPlayed';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -57,6 +58,10 @@ const MainArtistProfile = () => {
   const [size, setSize] = useState(50);
   const storeUserLocation = useSelector(state => state.storeUserLocation);
   const {city, state, country} = storeUserLocation;
+  const getMedia = useSelector(state => state.getMedia);
+  const {data: trendingData} = getMedia;
+
+  const likedSong = trendingData?.sort((a, b) => b.likes - a.likes);
 
   useFocusEffect(
     useCallback(() => {
@@ -104,7 +109,9 @@ const MainArtistProfile = () => {
               }}>
               Most Liked Song
             </Text>
-            <ArtistMostPlayedCont />
+            {trendingData?.length > 0 && (
+              <SingleArtistMostPlayedCont {...likedSong[0]} />
+            )}
           </View>
           {/* TAB SCREENS */}
           <TabView />

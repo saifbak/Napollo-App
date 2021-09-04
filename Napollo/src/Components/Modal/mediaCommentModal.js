@@ -32,6 +32,7 @@ import {
 import LoadingAnime from '../../Components/Loading/Loading';
 import ErrorScreen from '../../Components/ErrorScreen/ErrorScreen';
 import SmallErrorPopUpModal from './SmallErrorModalPopUp';
+import MainErrorModal from './MainErrorPopUp';
 import {CLEAR_MEDIA_COMMENTS_ERROR} from '../../redux/constants';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 
@@ -43,16 +44,16 @@ const Media_Comment_Modal = () => {
   const [comment, setComment] = useState('');
   const [show, setShow] = useState(false);
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(30);
+  const [size, setSize] = useState(100);
   const [emptyCommentErr, setEmptyCommentErr] = useState('');
-  const onClick = (emoji) => {
+  const onClick = emoji => {
     const selectedEmoji = emoji.code;
     const input = emoji ? comment.concat(selectedEmoji) : null;
     setComment(input);
   };
 
   const openMediaCommentModal = useSelector(
-    (state) => state.openMediaCommentModal,
+    state => state.openMediaCommentModal,
   );
   const {
     isMediaCommentModalOpen,
@@ -60,14 +61,15 @@ const Media_Comment_Modal = () => {
   } = openMediaCommentModal;
 
   // CREATE COMMENT STATE
-  const createMediaComment = useSelector((state) => state.createMediaComment);
+  const createMediaComment = useSelector(state => state.createMediaComment);
   const {
     loading: mediaCommentLoading,
     error: mediaCommentError,
     message: mediaCommentMessage,
+    status: mediaCommentStatus,
   } = createMediaComment;
 
-  const getMediaComments = useSelector((state) => state.getMediaComments);
+  const getMediaComments = useSelector(state => state.getMediaComments);
   const {
     loading: mediaCommentsLoading,
     error: mediaCommentsError,
@@ -80,7 +82,7 @@ const Media_Comment_Modal = () => {
     // return () => setEmptyCommentErr('');
   }, [mediaIdentity]);
 
-  const changeComment = (val) => {
+  const changeComment = val => {
     setComment(val);
   };
   const openEmoji = () => {
@@ -101,6 +103,8 @@ const Media_Comment_Modal = () => {
       setEmptyCommentErr('You cannot post empty comments');
     } else {
       dispatch(create_Media_Comment(comment, mediaIdentity, page, size));
+    }
+    if (mediaCommentStatus === true) {
       setComment('');
     }
   };
@@ -111,11 +115,11 @@ const Media_Comment_Modal = () => {
   }
   if (mediaCommentsError) {
     mediaCommentsErrorView = (
-      <ErrorScreen
-        clearError={() => dispatch({type: CLEAR_MEDIA_COMMENTS_ERROR})}
-        errorTitle={mediaCommentsError}
-        onPress={onSubmit}
-      />
+      <MainErrorModal
+        errorState={mediaCommentsError}
+        clearError={() => dispatch({type: CLEAR_MEDIA_COMMENTS_ERROR})}>
+        {mediaCommentsError}
+      </MainErrorModal>
     );
   }
 
@@ -161,7 +165,7 @@ const Media_Comment_Modal = () => {
             <CommentBottomInput
               data={mediaCommentsData}
               comment={comment}
-              changeComment={(val) => changeComment(val)}
+              changeComment={val => changeComment(val)}
               onSubmit={onSubmit}
               openEmoji={openEmoji}
               loadingState={mediaCommentLoading}
@@ -175,15 +179,18 @@ const Media_Comment_Modal = () => {
                     color: '#eee',
                     textAlign: 'center',
                     fontFamily: 'Helvetica-Medium',
+                    fontSize: scale(11),
                   }}>
-                  No comments yet.Be the first to comment
+                  No comments yet.Be the first to comment...
                 </Text>
               </View>
             )}
             {mediaCommentsData.length > 0 && (
               <FlatList
                 data={mediaCommentsData}
-                keyExtractor={(item) => item.id}
+                contentContainerStyle={{marginTop: 10}}
+                showsVerticalScrollIndicator={false}
+                keyExtractor={item => item.id}
                 renderItem={({item}) => <Comment_Container {...item} />}
               />
             )}

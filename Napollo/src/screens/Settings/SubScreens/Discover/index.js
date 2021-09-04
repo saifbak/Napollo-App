@@ -68,8 +68,8 @@ const index = () => {
 
   const fiterArtistData = val => {
     if (val !== '') {
-      const filtered = artistMedias.filter(
-        item => item.title?.toLowerCase().indexOf(val.toLowerCase()) >= 0,
+      const filtered = artistMedias.filter(item =>
+        item.title?.toLowerCase().startsWith(val.toLowerCase()),
       );
       return filtered;
     } else {

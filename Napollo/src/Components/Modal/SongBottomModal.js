@@ -107,9 +107,13 @@ const SongBottomModal = props => {
     dispatch(openListenElsewhereModal());
   };
   const goToArtist = () => {
-    dispatch(openSingleUserModal());
-    closeBottomSheet();
-    dispatch(store_Active_User_Details(artistDetails));
+    if (artists === username) {
+      closeBottomSheet();
+    } else {
+      closeBottomSheet();
+      dispatch(openSingleUserModal());
+      dispatch(store_Active_User_Details(artistDetails));
+    }
   };
 
   const shareFunc = () => {

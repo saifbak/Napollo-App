@@ -12,6 +12,9 @@ import {
   DELETE_MEDIA_COMMENT_LOADING,
   DELETE_MEDIA_COMMENT_SUCCESS,
   CLEAR_MEDIA_COMMENTS_ERROR,
+  CREATE_MEDIA_REPLY_FAIL,
+  CREATE_MEDIA_REPLY_LOADING,
+  CREATE_MEDIA_REPLY_SUCCESS,
 } from '../../../constants/index';
 
 export const createMediaCommentReducer = (
@@ -36,6 +39,40 @@ export const createMediaCommentReducer = (
         message: payload.responseDescription,
       };
     case CREATE_MEDIA_COMMENT_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        status: null,
+        message: '',
+      };
+
+    default:
+      return state;
+  }
+};
+export const createMediaReplyReducer = (
+  state = {loading: false, error: '', status: null, message: ''},
+  {type, payload},
+) => {
+  switch (type) {
+    case CREATE_MEDIA_REPLY_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        status: null,
+        message: '',
+      };
+    case CREATE_MEDIA_REPLY_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        status: payload.responseStatus,
+        message: payload.responseDescription,
+      };
+    case CREATE_MEDIA_REPLY_FAIL:
       return {
         ...state,
         loading: false,

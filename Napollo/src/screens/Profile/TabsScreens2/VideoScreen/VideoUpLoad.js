@@ -8,7 +8,7 @@ const VideoUpLoad = () => {
         style={{
           color: '#999',
           fontWeight: '800',
-          fontFamily: 'Gilroy-ExtraBold',
+          fontFamily: 'Helvetica-ExtraBold',
           fontSize: 20,
           marginTop: 30,
         }}>

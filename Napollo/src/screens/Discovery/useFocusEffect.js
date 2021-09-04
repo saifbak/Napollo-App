@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
 import {
@@ -14,12 +14,18 @@ import TrackPlayer, {
   RepeatMode,
 } from 'react-native-track-player';
 import Data from 'city-state-country';
-import {CLEAR_TRAILER_MEDIA_ERROR} from '../../redux/constants';
+import {CLEAR_TRAILER_MEDIA_ERROR, RESET_PAGE} from '../../redux/constants';
 
 const FocusEffect = ({page, size, unLike, chooseState, countryCode}) => {
   const [currentTrack, setCurrentTrack] = useState('');
   const dispatch = useDispatch();
-  const {play, resetCurrentTrack} = usePlayerContext();
+  const {
+    play,
+    resetCurrentTrack,
+    resetTrack,
+    currentDiscoveryTrack,
+    currentMusicTrack,
+  } = usePlayerContext();
   const getTrailerMedia = useSelector(state => state.getTrailerMedia);
   const increaseCurrentDiscoverPage = useSelector(
     state => state.increaseCurrentDiscoverPage,
@@ -30,7 +36,7 @@ const FocusEffect = ({page, size, unLike, chooseState, countryCode}) => {
   );
   const {size: currentSize} = increaseCurrentDiscoverSize;
 
-  const {data, loading, error} = getTrailerMedia;
+  const {data, loading, error, totalPages} = getTrailerMedia;
 
   // React.useEffect(() => {
   //   const Listener = TrackPlayer.addEventListener(
@@ -48,15 +54,15 @@ const FocusEffect = ({page, size, unLike, chooseState, countryCode}) => {
   //   };
   // }, []);
 
-  useEffect(() => {
-    dispatch(get_Trailer_Media(currentPage, currentSize));
-    if (data && data !== [] && loading !== false) {
-      const newData = data.every(item => {
-        item.url = item.trailer;
-      });
-      play(newData);
-    }
-  }, []);
+  // useEffect(() => {
+  //   dispatch(get_Trailer_Media(currentPage, currentSize));
+  //   if (data && data.length > 0 && loading === false) {
+  //     const newData = data.every(item => {
+  //       item.url = item.trailer;
+  //     });
+  //     play(newData);
+  //   }
+  // }, []);
 
   useTrackPlayerEvents(
     [Event.PlaybackTrackChanged, Event.PlaybackQueueEnded],
@@ -65,40 +71,100 @@ const FocusEffect = ({page, size, unLike, chooseState, countryCode}) => {
         event.type === Event.PlaybackTrackChanged &&
         event.nextTrack != null
       ) {
-        TrackPlayer.setRepeatMode(RepeatMode.Track);
+        if (!currentMusicTrack && currentDiscoveryTrack) {
+          TrackPlayer.setRepeatMode(RepeatMode.Track);
+        }
       }
       if (event.type === Event.PlaybackQueueEnded && event.nextTrack == null) {
-        dispatch(increaseCurrentDiscoverPage);
-        dispatch(get_Trailer_Media(currentPage, currentSize));
-        if (data && data.length <= 0 && loading !== false) {
-          const newData = data.every(item => {
-            item.url = item.trailer;
+        if (currentPage < totalPages) {
+          dispatch(increase_Discover_Media_Page());
+        } else if (currentPage > totalPages) {
+          dispatch({
+            type: RESET_PAGE,
           });
-          play(newData);
         }
+        // dispatch(get_Trailer_Media(currentPage, currentSize));
+        // if (data && data.length > 0 && loading === false) {
+        //   const newData = data.every(item => {
+        //     item.url = item.trailer;
+        //   });
+        //   play(newData);
+        // }
       }
     },
   );
 
+  // useEffect(() => {
+  //   dispatch(get_Trailer_Media(currentPage, currentSize));
+  //   const songData = [];
+  //   console.log('USEFFCT1');
+  //   if (data && data.length > 0 && loading === false) {
+  //     data.forEach(item =>
+  //       songData.push({
+  //         ...item,
+  //         url: item.trailer,
+  //         artist: item.ownerAccountUser.username,
+  //       }),
+  //     );
+  //     play(songData);
+  //   }
+  // }, []);
   // useTrackPlayerEvents([])
 
-  useEffect(() => {
-    dispatch(increaseCurrentDiscoverPage);
-    dispatch(get_Trailer_Media(currentPage, currentSize));
-    if (data && data.length <= 0 && loading !== false) {
-      const newData = data.every(item => {
-        item.url = item.trailer;
-      });
-      play(newData);
-    }
-  }, [data]);
+  // dispatch(increase_Discover_Media_Page());
+  // useEffect(() => {
+  //   console.log('USEFFCT2');
+  //   dispatch(get_Trailer_Media(currentPage, currentSize));
+  //   if (data && data.length <= 0 && loading === false) {
+  //     console.log('USEFFCT1');
+  //     dispatch(get_Trailer_Media(currentPage, currentSize));
+  //     const songData2 = [];
+  //     data.forEach(item =>
+  //       songData2.push({
+  //         ...item,
+  //         url: item.trailer,
+  //         artist: item.ownerAccountUser.username,
+  //       }),
+  //     );
+  //     play(songData2);
+  //   }
+  // }, [data]);
+  const trackReset = () => {
+    resetTrack();
+    resetCurrentTrack();
+  };
 
   useFocusEffect(
     React.useCallback(() => {
-      // TrackPlayer.reset();
+      // resetTrack();
       resetCurrentTrack();
       dispatch({type: CLEAR_TRAILER_MEDIA_ERROR});
-      return async () => TrackPlayer.reset();
+      const songData1 = [];
+      if (data && data.length <= 0 && loading === false) {
+        dispatch(get_Trailer_Media(currentPage, currentSize));
+        data.forEach(item =>
+          songData1.push({
+            ...item,
+            url: item.trailer,
+            artist: item.ownerAccountUser.username,
+          }),
+        );
+        play(songData1);
+      }
+
+      const songData = [];
+      if (data && data.length > 0 && loading !== true) {
+        data.forEach(item =>
+          songData.push({
+            ...item,
+            url: item.trailer,
+            artist: item.ownerAccountUser.username,
+          }),
+        );
+        play(songData);
+      }
+
+      return async () => trackReset();
     }, [data]),
   );
   return null;

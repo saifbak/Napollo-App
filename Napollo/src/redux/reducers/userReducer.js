@@ -59,8 +59,10 @@ import {
   CLOSE_SINGLE_USER_PROFILE_MODAL,
   ADD_USER_TO_FOLLOWED_LIST,
   REMOVE_USER_FROM_FOLLOWED_LIST,
+  LOCATION_PERMISSION_GRANTED,
 } from '../constants/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { State } from 'react-native-gesture-handler';
 
 const initialState = {
   token: '',
@@ -778,5 +780,23 @@ export const userFollowerListReducer = (
 
     default:
       return state;
+  }
+};
+
+export const grantLocationPermissionReducer = (
+  state = {
+    isGranted: false,
+  },
+  {type},
+) => {
+  switch (type) {
+    case LOCATION_PERMISSION_GRANTED:
+      return {
+        ...state,
+        isGranted: true,
+      };
+
+    default:
+     return State
   }
 };

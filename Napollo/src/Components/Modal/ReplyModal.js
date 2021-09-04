@@ -1,4 +1,5 @@
 import React, {useEffect, useState, Component, PureComponent} from 'react';
+import EmojiBoard from 'react-native-emoji-board';
 import {
   StyleSheet,
   Text,
@@ -14,7 +15,11 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-
+import {
+  create_Media_Comment,
+  get_Media_Comments,
+  create_Media_Reply,
+} from '../../redux/actions/MediaActions/CommentsActions/index';
 import LoadingAnime from '../../Components/Animations/Small_LoadingAnime';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LikeBtn from '../Button/LikeBtn';
@@ -22,11 +27,97 @@ import ReplysView from '../../screens/Comment/Component/ReplysView';
 import data4 from '../../data4';
 import Divider from '../../Components/Divider/Divider';
 import {scale, ScaledSheet} from 'react-native-size-matters';
+import CommentBottomInput from '../../Components/Button/CommentsBottomTab';
+import SmallErrorPopUpModal from './SmallErrorModalPopUp';
+import {useDispatch, useSelector} from 'react-redux';
+import MainErrorModal from './MainErrorPopUp';
 
-const ReplyModal = (props) => {
-  console.log(props.userData);
-  const {firstName, lastName, username, countryCode, profileUrl, comment} =
-    props.userData;
+const {width, height} = Dimensions.get('window');
+
+const ReplyModal = props => {
+  const dispatch = useDispatch();
+  const {
+    firstName,
+    lastName,
+    username,
+    countryCode,
+    profileUrl,
+    comment,
+    replies,
+    id: commentId,
+  } = props.userData;
+  const [reply, setReply] = useState('');
+  const [show, setShow] = useState(false);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(100);
+  const [emptyReplyErr, setEmptyReplyErr] = useState('');
+  const onClick = emoji => {
+    const selectedEmoji = emoji.code;
+    const input = emoji ? reply.concat(selectedEmoji) : null;
+    setReply(input);
+  };
+  const openMediaCommentModal = useSelector(
+    state => state.openMediaCommentModal,
+  );
+  const {
+    isMediaCommentModalOpen,
+    mediaCommentDetails: {id: mediaIdentity},
+  } = openMediaCommentModal;
+  const createMediaComment = useSelector(state => state.createMediaComment);
+  const {
+    loading: mediaCommentLoading,
+    error: mediaCommentError,
+    message: mediaCommentMessage,
+    status: mediaCommentStatus,
+  } = createMediaComment;
+  const createMediaReply = useSelector(state => state.createMediaReply);
+  const {
+    loading: mediaReplyLoading,
+    error: mediaReplyError,
+    message: mediaReplyMessage,
+    status: mediaReplyStatus,
+  } = createMediaReply;
+  const changeComment = val => {
+    setReply(val);
+  };
+  const openEmoji = () => {
+    setShow(!show);
+  };
+  const clearClientsCommentErr = () => {
+    setEmptyReplyErr('');
+  };
+
+  const onSubmit = () => {
+    setShow(false);
+    setEmptyReplyErr('');
+    if (reply === '') {
+      setEmptyReplyErr('You cannot post empty reply');
+    } else {
+      dispatch(create_Media_Reply(reply, commentId, mediaIdentity, page, size));
+    }
+    if (mediaReplyStatus === true) {
+      setReply('');
+    }
+  };
+
+  let clientsCommentErrCheckView = null;
+  let mediaCommentsErrorView = null;
+  if (emptyReplyErr !== '') {
+    clientsCommentErrCheckView = (
+      <SmallErrorPopUpModal
+        clearClientsErr={clearClientsCommentErr}
+        errorState={emptyReplyErr}>
+        {emptyReplyErr}
+      </SmallErrorPopUpModal>
+    );
+  }
+  if (mediaReplyError) {
+    mediaCommentsErrorView = (
+      <MainErrorModal errorState={mediaReplyError}>
+        {mediaReplyError}
+      </MainErrorModal>
+    );
+  }
   return (
     <Modal
       animationType="slide"
@@ -34,6 +125,7 @@ const ReplyModal = (props) => {
       visible={props.replyModal}
       onRequestClose={() => props.closeReplyModal}>
       <View style={styles.modalView}>
+        {clientsCommentErrCheckView}
         <View
           style={{
             flexDirection: 'row',
@@ -51,15 +143,16 @@ const ReplyModal = (props) => {
               fontSize: 15,
               fontFamily: 'Helvetica-Bold',
             }}>
-            Replies
+            Replies&nbsp;({`${replies?.length}`})
           </Text>
           <TouchableOpacity
             onPress={() => props.closeReplyModal()}
             style={styles.closeModalIcon}
             hitSlop={{top: 30, right: 30, left: 30, bottom: 30}}>
-            <Icon name="close-circle-outline" size={36} color="#f68128" />
+            <Icon name="close" size={36} color="#f68128" />
           </TouchableOpacity>
         </View>
+
         <View style={styles.contentView}>
           <View
             style={{
@@ -69,6 +162,7 @@ const ReplyModal = (props) => {
               paddingHorizontal: 10,
               backgroundColor: 'rgba(255,255,255,0.061)',
               paddingVertical: 15,
+              marginBottom: 2,
             }}>
             <View
               style={{
@@ -123,25 +217,56 @@ const ReplyModal = (props) => {
                 </View>
               </View>
             </View>
-            <View style={{}}>
+            {/* <View style={{}}>
               <LikeBtn col />
-            </View>
+            </View> */}
           </View>
+          <CommentBottomInput
+            // data={mediaCommentsData}
+            comment={reply}
+            placeholder="Your reply...."
+            changeComment={val => changeComment(val)}
+            onSubmit={onSubmit}
+            openEmoji={openEmoji}
+            loadingState={mediaReplyLoading}
+            clientsErr={clearClientsCommentErr}
+          />
 
           <Divider mt={15} mb={10} />
           {/* REPLIES VIEW */}
           <View style={styles.repliesView}>
-            {!data4 && (
+            {replies?.length <= 0 && (
               <View>
-                <Text>Nobody has commented on your reply</Text>
+                <Text
+                  style={{
+                    color: '#eee',
+                    textAlign: 'center',
+                    fontFamily: 'Helvetica-Medium',
+                    fontSize: scale(11),
+                  }}>
+                  No replys yet.Be the first to reply....
+                </Text>
               </View>
             )}
             <FlatList
-              data={data4}
-              keyExtractor={(item) => item.id}
+              data={replies}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={item => item.id}
               renderItem={({item}) => <ReplysView {...item} />}
             />
             {/* <ReplysView /> */}
+            {show && (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => setShow(false)}
+                style={{position: 'absolute', bottom: 0, height, width}}>
+                <EmojiBoard
+                  showBoard={show}
+                  onClick={onClick}
+                  containerStyle={{backgroundColor: '#111'}}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>

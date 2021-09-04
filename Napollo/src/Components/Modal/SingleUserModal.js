@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -22,12 +22,72 @@ const {width, height} = Dimensions.get('window');
 import SingleUserDetail from '../../screens/Profile/ProfileTypes/UserDetails/SingleUserDetails';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import ArtistMostPlayedCont from '../../screens/Profile/ProfileTypes/UserDetails/ArtistMostPlayedCont2';
+import SingleArtistMostPlayedCont from '../../screens/Profile/ProfileTypes/UserDetails/SingleArtistMostPlayed';
+import {
+  get_Single_Artist_Media,
+  get_Single_User_Media_History,
+} from '../../redux/actions/MediaActions/getMediaActions';
+import {get_User_Profile_With_Id} from '../../redux/actions/userActions';
 import {scale, ScaledSheet} from 'react-native-size-matters';
+import ArtistTabView from '../../screens/Profile/ProfileTypes/SingleUsersTabView/SingleArtistTabView';
+import ListenerTabView from '../../screens/Profile/ProfileTypes/SingleUsersTabView/SingleLinstenerTabView';
 
 const SingleUserModal = () => {
   const dispatch = useDispatch();
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(0);
+  const [userId, setUserId] = useState('');
   const singleUserModal = useSelector(state => state.singleUserModal);
   const {isModalOpen} = singleUserModal;
+  const storeActiveUserDetails = useSelector(
+    state => state.storeActiveUserDetails,
+  );
+  const getUserProfileWithId = useSelector(state => state.getUserProfileWithId);
+
+  const openSongBottomSheet = useSelector(state => state.openSongBottomSheet);
+  const {
+    artistDetails: {id, accountUserType},
+  } = openSongBottomSheet;
+
+  const getSingleArtistMedias = useSelector(
+    state => state.getSingleArtistMedias,
+  );
+  const {medias: trendingData} = getSingleArtistMedias;
+
+  const getSingleUserMediasHistory = useSelector(
+    state => state.getSingleUserMediasHistory,
+  );
+  const {medias: listeningData} = getSingleUserMediasHistory;
+
+  const likedSong = trendingData?.sort((a, b) => b.likes - a.likes);
+
+  const {
+    loading: userLoading,
+    error: userError,
+    userProfile: singleProfile,
+    profile: singleDetail,
+  } = getUserProfileWithId;
+
+  useEffect(() => {
+    if (accountUserType === 'ARTIST' && id !== '') {
+      dispatch(get_Single_Artist_Media(id, page, size));
+    } else {
+      dispatch(get_Single_User_Media_History(id, page, size));
+    }
+  }, [id]);
+  // const {
+  //   userProfile: {
+  //     profile: {type},
+  //   },
+  // } = storeActiveUserDetails;
+
+  useEffect(() => {
+    if (id !== '') {
+      console.log(id, 'USER ID SETTSS');
+      setUserId(id);
+    }
+  }, []);
+
   return (
     <Modal
       style={{margin: 0}}
@@ -58,8 +118,18 @@ const SingleUserModal = () => {
                 }}>
                 Most Liked Song
               </Text>
-              <ArtistMostPlayedCont />
+              {accountUserType === 'ARTIST' && trendingData?.length > 0 && (
+                <SingleArtistMostPlayedCont {...likedSong[0]} />
+              )}
+              {accountUserType !== 'ARTIST' && listeningData.length > 0 && (
+                <ArtistMostPlayedCont />
+              )}
             </View>
+            {accountUserType === 'ARTIST' ? (
+              <ArtistTabView />
+            ) : (
+              <ListenerTabView />
+            )}
           </ScrollView>
         </View>
       </View>

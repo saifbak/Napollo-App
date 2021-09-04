@@ -38,6 +38,10 @@ import axiosInstance from '../../../../utils/axiosInstance';
 import {Platform} from 'react-native';
 import {logoutUserWhenTokenExpires} from '../../../../utils/loggedInUserType';
 
+
+axios.defaults.timeout = 20000;
+axios.defaults.timeoutErrorMessage =
+  'Could not connect to server.Poor network connection';
 export const create_Playlist =
   (name, description, visible, artFile, fileType) =>
   async (dispatch, getState) => {

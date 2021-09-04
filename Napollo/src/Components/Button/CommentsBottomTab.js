@@ -13,9 +13,9 @@ import {
   replaceMentionValues,
 } from 'react-native-controlled-mentions';
 
-const CommentsBottomTab = (props) => {
+const CommentsBottomTab = props => {
   const renderSuggestions =
-    (suggestions) =>
+    suggestions =>
     ({keyword, onSuggestionPress}) => {
       if (keyword == null) {
         return null;
@@ -24,12 +24,12 @@ const CommentsBottomTab = (props) => {
       return (
         <View>
           {suggestions
-            .filter((one) =>
+            .filter(one =>
               one.name
                 .toLocaleLowerCase()
                 .includes(keyword.toLocaleLowerCase()),
             )
-            .map((one) => (
+            .map(one => (
               <TouchableOpacity
                 key={one.id}
                 onPress={() => onSuggestionPress(one)}
@@ -69,9 +69,11 @@ const CommentsBottomTab = (props) => {
         //   },
         // ]}
         value={props.comment}
-        placeholder="Your comment....."
+        placeholder={
+          props.placeholder ? props.placeholder : 'Your comment.....'
+        }
         placeholderTextColor="#999"
-        onChangeText={(val) => props.changeComment(val)}
+        onChangeText={val => props.changeComment(val)}
         onFocus={() => props.clientsErr()}
         // onChange={(val) =>
         //   props.changeComment(replaceMentionValues(val, ({name}) => `@${name}`))
@@ -89,7 +91,7 @@ const CommentsBottomTab = (props) => {
           <Icon name="md-at" size={26} color="#999" />
         </TouchableOpacity> */}
         <TouchableOpacity activeOpacity={0.6} onPress={() => props.openEmoji()}>
-          <Icon name="md-happy-outline" size={26} color="#999" />
+          <Icon name="md-happy-outline" size={24} color="#999" />
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.6}
@@ -98,7 +100,7 @@ const CommentsBottomTab = (props) => {
           {props.loadingState ? (
             <ActivityIndicator size="small" color="#f68128" />
           ) : (
-            <Icon name="ios-send" size={28} color="#f68128" />
+            <Icon name="ios-send" size={24} color="#f68128" />
           )}
         </TouchableOpacity>
       </View>

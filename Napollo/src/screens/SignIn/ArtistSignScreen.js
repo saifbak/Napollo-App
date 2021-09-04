@@ -25,16 +25,20 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   artistRegister,
   clearRegisterError,
-  
 } from '../../redux/actions/artistActions';
-import {register,storeUserCoordinates,store_User_Location} from '../../redux/actions/userActions';
-import {getUserCallingCode} from '../../utils/loggedInUserType'
+import {
+  register,
+  store_User_Coordinates,
+  store_User_Location,
+} from '../../redux/actions/userActions';
+import {getUserCallingCode} from '../../utils/loggedInUserType';
 import {getGenres} from '../../redux/actions/getGenreActions';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {
   CLEAR_REGISTER_ERROR,
   CLEAR_REGISTER_DATA,
 } from '../../redux/constants/index';
+import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import LoadingAnime from '../../Components/Loading/Loading';
 import NetworkError from '../NetworkErrorScreen.js/NetworkError';
 import {
@@ -129,7 +133,7 @@ const SignInScreen = () => {
             lat,
             lng,
           };
-          dispatch(storeUserCoordinates(userPosition));
+          dispatch(store_User_Coordinates(userPosition));
           Geocoder.geocodePosition(userPosition)
             .then(res => {
               console.log('USER REAL LOCATION', res[0]);
@@ -153,7 +157,11 @@ const SignInScreen = () => {
     );
   };
   useEffect(() => {
-    if(storeUserLocation.city === '' || storeUserLocation.country === '' ) getUserLocation();
+    if (storeUserLocation.city === '' || storeUserLocation.country === '') {
+      if (RESULTS.GRANTED) {
+        getUserLocation();
+      }
+    }
   }, []);
 
   //MODALS
@@ -348,7 +356,9 @@ const SignInScreen = () => {
 
   return (
     <View style={styles.container}>
-      <KeyboardAwareScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+      <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.container}>
         {mainView}
         <GenreModal
           genreModal={genreModal}

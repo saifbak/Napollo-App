@@ -24,7 +24,7 @@ const DiscoverSlide = (
     // featuredArtists,
   },
 ) => {
-  const {firstName, lastName} = realArtist;
+  // const {firstName, lastName} = realArtist;
   const {
     isBuffering,
     isEmpty,
@@ -34,14 +34,10 @@ const DiscoverSlide = (
     play,
     pause,
     currentTrackDetails,
+    currentDiscoveryTrack,
   } = usePlayerContext();
 
-  const {
-    image,
-    title,
-    ownerAccountUser: {username},
-    featuredArtists,
-  } = currentTrackDetails;
+  const {image, title, ownerAccountUser, featuredArtists} = currentTrackDetails;
 
   const featuringArtist = featuredArtists?.join('&');
 
@@ -49,67 +45,10 @@ const DiscoverSlide = (
   if (isBuffering) {
     btnView = (
       <View style={{position: 'absolute', top: '40%', left: '40%'}}>
-        <ActivityIndicator color="#fff" size={55} />;
+        <ActivityIndicator color="#fff" size={55} />
       </View>
     );
   }
-
-  // let playBtn = null;
-  // let pauseBtn = null;
-  // let loadingAnimes = null;
-  // let stoppedBtn = null;
-  // if (isPlaying) {
-  //   playBtn = (
-  //     <TouchableOpacity
-  //       activeOpacity={0.6}
-  //       style={styles.playContainer}
-  //       onPress={() => pause()}>
-  //       <Icon
-  //         name="ios-pause"
-  //         size={40}
-  //         color="#fff"
-  //         style={{paddingLeft: 2}}
-  //       />
-  //     </TouchableOpacity>
-  //   );
-  // }
-  // if (isPaused) {
-  //   pauseBtn = (
-  //     <TouchableOpacity
-  //       activeOpacity={0.6}
-  //       style={styles.playContainer}
-  //       onPress={() => play()}>
-  //       <Icon
-  //         name="ios-caret-forward"
-  //         size={40}
-  //         color="#fff"
-  //         style={{paddingLeft: 2}}
-  //       />
-  //     </TouchableOpacity>
-  //   );
-  // }
-  // if (isBuffering) {
-  //   loadingAnimes = (
-  //     <TouchableOpacity activeOpacity={0.6} style={styles.playContainer}>
-  //       <ActivityIndicator color="#fff" size="large" />
-  //     </TouchableOpacity>
-  //   );
-  // }
-  // if (isEmpty || isStopped) {
-  //   stoppedBtn = (
-  //     <TouchableOpacity
-  //       activeOpacity={0.6}
-  //       style={styles.playContainer}
-  //       onPress={() => play()}>
-  //       <Icon
-  //         name="ios-pause"
-  //         size={40}
-  //         color="#fff"
-  //         style={{paddingLeft: 2}}
-  //       />
-  //     </TouchableOpacity>
-  //   );
-  // }
 
   return (
     <ImageBackground
@@ -129,14 +68,6 @@ const DiscoverSlide = (
       ]}
       blurRadius={100}
       resizeMode="cover">
-      {/* <View
-        style={{
-          ...StyleSheet.absoluteFillObject,
-          backgroundColor: '#000',
-          opacity: 0.3,
-          zIndex: 300,
-        }}
-      /> */}
       <Image
         source={
           image !== null || image !== ''
@@ -147,7 +78,6 @@ const DiscoverSlide = (
           width: SCREEN_WIDTH / 1.3,
           height: '52%',
           resizeMode: 'cover',
-          // flex: 1,
           borderRadius: 10,
           marginBottom: 100,
           marginTop: '15%',
@@ -169,80 +99,36 @@ const DiscoverSlide = (
           zIndex: 500,
         }}>
         <View>
-          <Text
-            style={{
-              color: '#fff',
-              textTransform: 'uppercase',
-              fontSize: scale(20),
-              fontFamily: 'Helvetica-ExtraBold',
-            }}>
-            {title}
-            {featuringArtist && (
+          {title && ownerAccountUser && (
+            <>
               <Text
-                style={
-                  styles.featuredArtists
-                }>{`ft (${featuringArtist})`}</Text>
-            )}
-          </Text>
-          <Text
-            style={{
-              color: '#f68128',
-              textTransform: 'capitalize',
-              fontSize: scale(15),
-              fontFamily: 'Helvetica-ExtraBold',
-              textAlign: 'center',
-            }}>
-            {`${username}`}
-          </Text>
+                style={{
+                  color: '#fff',
+                  textTransform: 'uppercase',
+                  fontSize: scale(15),
+                  fontFamily: 'Helvetica-ExtraBold',
+                }}>
+                {title}
+                {featuringArtist && (
+                  <Text
+                    style={
+                      styles.featuredArtists
+                    }>{`ft (${featuringArtist})`}</Text>
+                )}
+              </Text>
+              <Text
+                style={{
+                  color: '#f68128',
+                  textTransform: 'capitalize',
+                  fontSize: scale(12),
+                  fontFamily: 'Helvetica-ExtraBold',
+                  textAlign: 'center',
+                }}>
+                {`${ownerAccountUser?.username}`}
+              </Text>
+            </>
+          )}
         </View>
-        {/* {isPlaying && (
-          <TouchableOpacity
-            activeOpacity={0.6}
-            style={styles.playContainer}
-            onPress={() => pause()}>
-            <Icon
-              name="ios-pause"
-              size={40}
-              color="#fff"
-              style={{paddingLeft: 2}}
-            />
-          </TouchableOpacity>
-        )}
-        {isPaused && (
-          <TouchableOpacity
-            activeOpacity={0.6}
-            style={styles.playContainer}
-            onPress={() => play()}>
-            <Icon
-              name="ios-caret-forward"
-              size={40}
-              color="#fff"
-              style={{paddingLeft: 2}}
-            />
-          </TouchableOpacity>
-        )} */}
-        {/* {playBtn}
-        {pauseBtn}
-        {loadingAnimes}
-        {stoppedBtn}  */}
-        {/* {isBuffering && (
-          <TouchableOpacity activeOpacity={0.8} style={styles.playContainer}>
-            <ActivityIndicator color="#fff" size="large" />;
-          </TouchableOpacity>
-        )}
-        {isEmpty && (
-          <TouchableOpacity
-            activeOpacity={0.6}
-            style={styles.playContainer}
-            onPress={() => play()}>
-            <Icon
-              name="ios-pause"
-              size={40}
-              color="#fff"
-              style={{paddingLeft: 2}}
-            />
-          </TouchableOpacity>
-        )} */}
       </View>
     </ImageBackground>
   );
@@ -252,7 +138,6 @@ export default DiscoverSlide;
 
 const styles = StyleSheet.create({
   playContainer: {
-    // padding: 5,
     borderRadius: 55 / 2,
     width: 55,
     height: 55,
@@ -260,7 +145,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    // marginRight: 20,
 
     backgroundColor: '#f68128',
     alignSelf: 'flex-end',
