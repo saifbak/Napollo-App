@@ -74,10 +74,11 @@ const LoginScreen = ({navigation, route}) => {
 
   const onSubmitValues = () => {
     if (email || password) {
+      const newEmail = email.trim()
       setClientErr('');
       dispatch(clearData());
       // dispatch(clearRegisterError());
-      dispatch(login(email, password, state, userCountry, lat, lng));
+      dispatch(login(newEmail, password, state, userCountry, lat, lng));
       // setUserData(false);
 
       // actions.resetForm();

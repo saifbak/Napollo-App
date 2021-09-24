@@ -9,6 +9,7 @@ import {
 import OverviewScreen from '../../TabsScreens2/OverviewScreens/ProfileOverView';
 import SongsScreen from '../../TabsScreens2/SongsScreens/ProfileSongs';
 import VideoScreen from '../../TabsScreens2/VideoScreen/VideoUpLoad';
+import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const ArtistTabView = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -70,8 +71,13 @@ const ArtistTabView = () => {
                     // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
+                    fontSize: scale(14),
                   }
-                : {color: '#999', fontFamily: 'Helvetica-Bold'},
+                : {
+                    color: '#999',
+                    fontFamily: 'Helvetica-Bold',
+                    fontSize: scale(12),
+                  },
             ]}>
             Overview
           </Text>
@@ -107,8 +113,13 @@ const ArtistTabView = () => {
                     // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
+                    fontSize: scale(14),
                   }
-                : {color: '#999', fontFamily: 'Helvetica-Bold'},
+                : {
+                    color: '#999',
+                    fontFamily: 'Helvetica-Bold',
+                    fontSize: scale(12),
+                  },
             ]}>
             Songs
           </Text>
@@ -144,8 +155,13 @@ const ArtistTabView = () => {
                     // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
+                    fontSize: scale(14),
                   }
-                : {color: '#999', fontFamily: 'Helvetica-Bold'},
+                : {
+                    color: '#999',
+                    fontFamily: 'Helvetica-Bold',
+                    fontSize: scale(12),
+                  },
             ]}>
             Activity
           </Text>

@@ -13,18 +13,20 @@ import {
 import {pickSinglePicture, pickSingleSong} from '../../../../utils/FilePicker';
 import {addTrimTrackDetails} from '../../trimTrackActions';
 
-export const chooseMedia = () => async (dispatch) => {
+export const chooseMedia = () => async dispatch => {
   try {
     dispatch({
       type: MEDIA_UPLOAD_LOADING,
     });
 
     const result = await pickSingleSong();
-    dispatch({
-      type: MEDIA_UPLOAD_SUCCESS,
-      payload: result,
-    });
-    dispatch(addTrimTrackDetails(result));
+    if (result) {
+      dispatch({
+        type: MEDIA_UPLOAD_SUCCESS,
+        payload: result,
+      });
+      dispatch(addTrimTrackDetails(result));
+    }
   } catch (error) {
     dispatch({
       type: MEDIA_UPLOAD_FAIL,
@@ -32,17 +34,19 @@ export const chooseMedia = () => async (dispatch) => {
     });
   }
 };
-export const chooseTrimMedia = () => async (dispatch) => {
+export const chooseTrimMedia = () => async dispatch => {
   try {
     dispatch({
       type: TRIM_MEDIA_UPLOAD_LOADING,
     });
 
     const result = await pickSingleSong();
-    dispatch({
-      type: TRIM_MEDIA_UPLOAD_SUCCESS,
-      payload: result,
-    });
+    if (result) {
+      dispatch({
+        type: TRIM_MEDIA_UPLOAD_SUCCESS,
+        payload: result,
+      });
+    }
   } catch (error) {
     dispatch({
       type: TRIM_MEDIA_UPLOAD_FAIL,
@@ -51,18 +55,19 @@ export const chooseTrimMedia = () => async (dispatch) => {
   }
 };
 
-export const chooseMediaArt = () => async (dispatch) => {
+export const chooseMediaArt = () => async dispatch => {
   try {
     dispatch({
       type: MEDIA_ART_UPLOAD_LOADING,
     });
 
     const result = await pickSinglePicture();
-
-    dispatch({
-      type: MEDIA_ART_UPLOAD_SUCCESS,
-      payload: result,
-    });
+    if (result) {
+      dispatch({
+        type: MEDIA_ART_UPLOAD_SUCCESS,
+        payload: result,
+      });
+    }
   } catch (error) {
     dispatch({
       type: MEDIA_ART_UPLOAD_FAIL,

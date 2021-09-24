@@ -210,15 +210,6 @@ const SignInScreen = () => {
           dob,
         ),
       );
-      setFirstName('');
-      setLastName('');
-      setEmailAddress('');
-      setBookingNumber('');
-      setPassword('');
-      setAddress('');
-      setCity('');
-      setCountryShortCode('');
-      setDOB('');
     } else {
       setClientErr('All fields are required');
     }
@@ -232,10 +223,20 @@ const SignInScreen = () => {
   };
   useEffect(() => {
     if (status && status === true) {
+      setFirstName('');
+      setLastName('');
+      setEmailAddress('');
+      setBookingNumber('');
+      setPassword('');
+      setAddress('');
+      setCity('');
+      setCountryShortCode('');
+      setDOB('');
       setTimeout(() => {
         navigation.navigate('EmailVerification');
       }, 2000);
     }
+    return () => clearTimeout();
   }, [status]);
 
   useEffect(() => {

@@ -44,10 +44,10 @@ const Settings = ({navigation}) => {
                   alignSelf: 'center',
                   paddingBottom: scale(30),
                 }}>
-                <LoginBtn
+                {/* <LoginBtn
                   title="GET PREMIUM"
                   onPress={() => navigation.navigate('Premium')}
-                />
+                /> */}
               </View>
               <View style={{width: '100%'}}>
                 <SingleSettingsCont

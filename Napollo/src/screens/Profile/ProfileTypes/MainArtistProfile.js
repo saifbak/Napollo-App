@@ -34,6 +34,10 @@ import {
   get_Artist_Trending_Media,
   get_Media,
 } from '../../../redux/actions/MediaActions/getMediaActions';
+import {
+  get_All_User_Album,
+  store_Active_Album_Details,
+} from '../../../redux/actions/MediaActions/AlbumActions/index';
 import TabView from './TabViews/ArtistTabView';
 import ProfileModal from '../../../Components/Modal/ProfileModal';
 import {getLoggedInUserProfile} from '../../../utils/loggedInUserType';
@@ -41,6 +45,7 @@ import LoginBtn from '../../../Components/Button/LoginBtn';
 import BottomSheetContent from '../BottomSheetContent';
 import {DEFAULT_IMAGE_URI} from '../../../utils/ImagePicker';
 import ArtistDetails from './UserDetails/ArtistDetails';
+import {get_User_Activities} from '../../../redux/actions/userActions';
 import ArtistMostPlayedCont from './UserDetails/ArtistMostPlayedCont2';
 import SingleArtistMostPlayedCont from './UserDetails/SingleArtistMostPlayed';
 import {
@@ -63,9 +68,19 @@ const MainArtistProfile = () => {
 
   const likedSong = trendingData?.sort((a, b) => b.likes - a.likes);
 
+  const getAllUserAlbum = useSelector(state => state.getAllUserAlbum);
+  const {
+    data: albumData,
+    loading: albumLoading,
+    error: albumError,
+  } = getAllUserAlbum;
+
   useFocusEffect(
     useCallback(() => {
       dispatch(get_Media(page, size));
+      dispatch(get_User_Activities(page, size));
+      if (albumData && albumData.length <= 0)
+        dispatch(get_All_User_Album(page, size));
       // dispatch(get_Artist_Trending_Media(city, state, country, page, size));
     }, []),
   );

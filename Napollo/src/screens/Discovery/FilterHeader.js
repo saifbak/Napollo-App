@@ -29,7 +29,7 @@ const FilterHeader = (props) => {
             </TouchableOpacity>
             {!props.activeTab && <View style={styles.activeBorder}></View>}
           </View>
-          <View style={styles.singleHeader}>
+          {/* <View style={styles.singleHeader}>
             <TouchableOpacity
               activeOpacity={0.6}
               onPress={() => props.changeTab()}>
@@ -38,7 +38,7 @@ const FilterHeader = (props) => {
               </Text>
             </TouchableOpacity>
             {props.activeTab && <View style={styles.activeBorder}></View>}
-          </View>
+          </View> */}
         </View>
       </View>
     </View>

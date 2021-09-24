@@ -11,7 +11,7 @@ export const getLoggedInUserProfile = type => {
   if (type === 'LISTENER') {
     return getUserProfile;
   } else if (type === 'ARTIST') {
-    return getArtistProfile;
+    return getUserProfile;
   }
 };
 

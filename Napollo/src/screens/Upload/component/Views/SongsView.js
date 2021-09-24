@@ -33,7 +33,7 @@ const SongsView = () => {
 
   const navigation = useNavigation();
   //MEDIA UPLOAD
-  const uploadMedia = useSelector((state) => state.uploadMedia);
+  const uploadMedia = useSelector(state => state.uploadMedia);
   const {
     loading: mediaLoading,
     error: mediaError,
@@ -42,7 +42,7 @@ const SongsView = () => {
   } = uploadMedia;
 
   //TRIMMEDIA
-  const uploadTrimMedia = useSelector((state) => state.uploadTrimMedia);
+  const uploadTrimMedia = useSelector(state => state.uploadTrimMedia);
   const {
     loading: trimMediaLoading,
     error: trimMediaError,
@@ -51,7 +51,7 @@ const SongsView = () => {
   } = uploadTrimMedia;
 
   //MEDIA UPLOAD
-  const uploadMediaArt = useSelector((state) => state.uploadMediaArt);
+  const uploadMediaArt = useSelector(state => state.uploadMediaArt);
   const {
     loading: mediaArtLoading,
     error: mediaArtError,
@@ -62,7 +62,7 @@ const SongsView = () => {
   const [type, setType] = useState('Full Song');
   const [errText, setErrText] = useState('');
 
-  const changeType = (val) => {
+  const changeType = val => {
     setType(val);
   };
 
@@ -78,7 +78,7 @@ const SongsView = () => {
   if (errText) {
     errTextView = (
       <MainErrorPopUp
-        clearTime={1500}
+        clearTime={2000}
         errorState={errText}
         clearError={() => setErrText('')}>
         {errText}

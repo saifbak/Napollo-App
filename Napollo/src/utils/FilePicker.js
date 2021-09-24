@@ -20,22 +20,24 @@ export const pickSingleSong = async () => {
     const res = await DocumentPicker.pick({
       type: [DocumentPicker.types.audio],
     });
-    // console.log(res);
     if (res) {
-      const path = await normalizePath(res.fileCopyUri);
+      console.log(res);
+      const path = await normalizePath(res[0]?.fileCopyUri);
 
       return {
         uri: path,
-        name: res.name,
-        size: res.size,
-        type: res.type,
+        name: res[0]?.name,
+        size: res[0]?.size,
+        type: res[0]?.type,
       };
     }
   } catch (err) {
     if (DocumentPicker.isCancel(err)) {
-      console.log(err);
+      return err
     } else {
-      throw err;
+        return err;
+      // throw err;
+      
     }
   }
 };
@@ -46,20 +48,20 @@ export const pickSinglePicture = async () => {
     });
     // console.log(res);
     if (res) {
-      const path = await normalizePath(res.fileCopyUri);
+      const path = await normalizePath(res[0]?.fileCopyUri);
 
       return {
         uri: path,
-        name: res.name,
-        size: res.size,
-        type: res.type,
+        name: res[0]?.name,
+        size: res[0]?.size,
+        type: res[0]?.type,
       };
     }
   } catch (err) {
     if (DocumentPicker.isCancel(err)) {
       console.log(err);
     } else {
-      throw err;
+        return err;
     }
   }
 };

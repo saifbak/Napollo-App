@@ -9,6 +9,7 @@ import {
 import OverviewScreen from '../../SingleArtistTabScreens/OverviewTab/index';
 import SongsScreen from '../../SingleArtistTabScreens/SongsTab/index';
 import VideoScreen from '../../SingleArtistTabScreens/ActivityTab/index';
+import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const SingleArtistTabView = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -70,8 +71,13 @@ const SingleArtistTabView = () => {
                     // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
+                    fontSize: scale(14),
                   }
-                : {color: '#999', fontFamily: 'Helvetica-Bold'},
+                : {
+                    color: '#999',
+                    fontFamily: 'Helvetica-Bold',
+                    fontSize: scale(12),
+                  },
             ]}>
             Overview
           </Text>
@@ -107,8 +113,13 @@ const SingleArtistTabView = () => {
                     // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
+                    fontSize: scale(14),
                   }
-                : {color: '#999', fontFamily: 'Helvetica-Bold'},
+                : {
+                    color: '#999',
+                    fontFamily: 'Helvetica-Bold',
+                    fontSize: scale(12),
+                  },
             ]}>
             Songs
           </Text>
@@ -144,8 +155,13 @@ const SingleArtistTabView = () => {
                     // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
+                    fontSize: scale(14),
                   }
-                : {color: '#999', fontFamily: 'Helvetica-Bold'},
+                : {
+                    color: '#999',
+                    fontFamily: 'Helvetica-Bold',
+                    fontSize: scale(12),
+                  },
             ]}>
             Activity
           </Text>

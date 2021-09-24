@@ -77,7 +77,10 @@ const SearchScreen = () => {
         {networkView}
         <SongBottomModal />
         <StatusBar barStyle="default" backgroundColor="#000" />
-        <ScrollView style={styles.container}>
+        <ScrollView
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+          style={styles.container}>
           <HeaderWithImage
             onPress={() => navigation.navigate('SearchScreen')}
             navigate

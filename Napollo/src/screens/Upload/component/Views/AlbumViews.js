@@ -29,10 +29,11 @@ const AlbumViews = () => {
   const [albumArt, setAlbumArt] = useState('');
   const [albumArtType, setAlbumArtType] = useState('');
   const [errText, setErrText] = useState('');
+  const [albumErr, setAlbumErr] = useState('');
   const bottomSheetRef = useRef(null);
   console.log(albumArtType, 'ALBUM TYPE');
 
-  const createAlbum = useSelector((state) => state.createAlbum);
+  const createAlbum = useSelector(state => state.createAlbum);
   const {loading, error, status, message} = createAlbum;
 
   const closeImagePicker = () => {
@@ -42,12 +43,22 @@ const AlbumViews = () => {
     bottomSheetRef.current.open();
   };
 
-  const chooseImage = (val) => {
+  const chooseImage = val => {
     setAlbumArt(val);
   };
-  const chooseImageType = (val) => {
+  const chooseImageType = val => {
     setAlbumArtType(val);
   };
+
+  useEffect(() => {
+    if (status && status === true) {
+      setName('');
+      setDescription('');
+      setYear('');
+      setAlbumArt('');
+      setAlbumArtType('');
+    }
+  }, [status]);
 
   let loadingView = null;
   let errorView = null;
@@ -82,6 +93,15 @@ const AlbumViews = () => {
         {errText}
       </MainErrorPopUp>
     );
+  } else if (albumErr) {
+    statusView = (
+      <MainErrorPopUp
+        clearTime={2000}
+        errorState={albumErr}
+        clearError={() => setAlbumErr('')}>
+        {albumErr}
+      </MainErrorPopUp>
+    );
   } else {
     statusView = null;
   }
@@ -94,14 +114,11 @@ const AlbumViews = () => {
       setErrText('Album year is required');
     } else if (name === '' && year === '') {
       setErrText('Album name and year  are both required');
+    } else if (albumArt === '') {
+      setAlbumErr('Album art is required');
     } else {
       dispatch(create_Album(albumArt, albumArtType, name, description, year));
     }
-    setName('');
-    setDescription('');
-    setYear('');
-    setAlbumArt('');
-    setAlbumArtType('');
   };
 
   return (
@@ -143,7 +160,7 @@ const AlbumViews = () => {
                 <TextInput
                   style={styles.input}
                   value={name}
-                  onChangeText={(val) => setName(val)}
+                  onChangeText={val => setName(val)}
                 />
               </View>
               <View style={{marginTop: 20}}>
@@ -171,7 +188,7 @@ const AlbumViews = () => {
                       color: '#eee',
                     }}
                     value={description}
-                    onChangeText={(val) => setDescription(val)}
+                    onChangeText={val => setDescription(val)}
                   />
                 </View>
               </View>
@@ -184,7 +201,7 @@ const AlbumViews = () => {
                   style={styles.input}
                   value={year}
                   keyboardType="number-pad"
-                  onChangeText={(val) => setYear(val)}
+                  onChangeText={val => setYear(val)}
                 />
               </View>
 
@@ -199,8 +216,8 @@ const AlbumViews = () => {
             </View>
             <ImageBottomSheetPicker
               ref={bottomSheetRef}
-              chooseImagePicture={(val) => chooseImage(val)}
-              choosePicType={(val) => chooseImageType(val)}
+              chooseImagePicture={val => chooseImage(val)}
+              choosePicType={val => chooseImageType(val)}
               closeImagePicker={closeImagePicker}
             />
           </ScrollView>

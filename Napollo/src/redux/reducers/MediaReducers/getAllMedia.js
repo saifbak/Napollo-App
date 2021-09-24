@@ -45,6 +45,12 @@ import {
   GET_USER_MEDIA_HISTORY_BY_ID_LOADING,
   GET_USER_MEDIA_HISTORY_BY_ID_SUCCESS,
   RESET_PAGE,
+  GET_LISTENER_LIKED_SONGS_FAIL,
+  GET_LISTENER_LIKED_SONGS_LOADING,
+  GET_LISTENER_LIKED_SONGS_SUCCESS,
+  GET_SINGLE_LISTENER_LIKED_SONGS_FAIL,
+  GET_SINGLE_LISTENER_LIKED_SONGS_LOADING,
+  GET_SINGLE_LISTENER_LIKED_SONGS_SUCCESS,
 } from '../../constants/index';
 
 export const getMediaReducer = (
@@ -518,6 +524,69 @@ export const getSingleUserMediasHistoryReducer = (
         loading: false,
         error: payload,
         medias: [],
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const getListenerLikedMediaReducer = (
+  state = {loading: false, error: '', data: []},
+  {type, payload},
+) => {
+  switch (type) {
+    case GET_LISTENER_LIKED_SONGS_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        // data: [],
+      };
+    case GET_LISTENER_LIKED_SONGS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        data: payload,
+      };
+    case GET_LISTENER_LIKED_SONGS_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        data: [],
+      };
+
+    default:
+      return state;
+  }
+};
+export const getSingleListenerLikedMediaReducer = (
+  state = {loading: false, error: '', data: []},
+  {type, payload},
+) => {
+  switch (type) {
+    case GET_SINGLE_LISTENER_LIKED_SONGS_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        data: [],
+      };
+    case GET_SINGLE_LISTENER_LIKED_SONGS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        data: payload,
+      };
+    case GET_SINGLE_LISTENER_LIKED_SONGS_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        data: [],
       };
 
     default:

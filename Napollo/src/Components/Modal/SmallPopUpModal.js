@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View, Modal} from 'react-native';
 
-const SmallPopUpModal = (props) => {
+const SmallPopUpModal = props => {
   const [showModal, setShowModal] = useState(true);
 
   useEffect(() => {
@@ -11,6 +11,7 @@ const SmallPopUpModal = (props) => {
       setShowModal(false);
       console.log('offffffff');
     }, 500);
+    return () => clearTimeout(() => {}, 500);
   }, []);
 
   if (!showModal) {

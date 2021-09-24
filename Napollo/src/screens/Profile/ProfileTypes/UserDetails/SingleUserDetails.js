@@ -55,13 +55,31 @@ const ArtistDetails = ({onPress}) => {
     setUserFollowers(followerCount);
   }, []);
 
+  let websiteView = null;
+  if (website && website !== '') {
+    websiteView = (
+      <View style={{flexDirection: 'row'}}>
+        <Icon name="md-link" color="#f68128" size={scale(18)} />
+        <Text
+          style={{
+            color: '#666',
+            fontSize: scale(10),
+            fontFamily: 'Helvetica-Medium',
+            marginLeft: 10,
+          }}>
+          {website}
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* TOP DETAILS */}
       <View style={styles.topDetails}>
         {profileUrl === '' || profileUrl === null ? (
           <View style={styles.thumbNail}>
-            <Text style={[styles.thumbNailName, {marginRight: 10}]}>
+            <Text style={[styles.thumbNailName, {marginRight: 2}]}>
               {firstName ? firstName[0] : null}
             </Text>
             <Text style={styles.thumbNailName}>
@@ -148,19 +166,7 @@ const ArtistDetails = ({onPress}) => {
             {state},&nbsp;{getFullCountry(country)}
           </Text>
         </View>
-
-        <View style={{flexDirection: 'row'}}>
-          <Icon name="md-link" color="#f68128" size={scale(18)} />
-          <Text
-            style={{
-              color: '#666',
-              fontSize: scale(10),
-              fontFamily: 'Helvetica-Medium',
-              marginLeft: 10,
-            }}>
-            {website}
-          </Text>
-        </View>
+        {websiteView}
       </View>
       {/* <Text
         style={{
@@ -226,7 +232,7 @@ const styles = ScaledSheet.create({
     marginRight: wp('4%'),
   },
   thumbNailName: {
-    fontSize: '15@s',
+    fontSize: '20@s',
     color: '#eee',
     fontFamily: 'Helvetica-Bold',
   },

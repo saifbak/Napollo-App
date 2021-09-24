@@ -11,6 +11,7 @@ import {
 import {BASE_URL2} from '@env';
 import axios from 'axios';
 import {logoutUserWhenTokenExpires} from '../../../../utils/loggedInUserType';
+import {get_Listener_Liked_Media} from '../getMediaActions';
 
 import axiosInstance from '../../../../utils/axiosInstance';
 
@@ -18,7 +19,7 @@ axios.defaults.timeout = 20000;
 axios.defaults.timeoutErrorMessage =
   'Could not connect to server.Poor network connection';
 export const likeMedia =
-  (id, state = true) =>
+  (id, state = true, page = 0, size = 200) =>
   async (dispatch, getState) => {
     try {
       dispatch({
@@ -41,6 +42,9 @@ export const likeMedia =
         type: LIKE_MEDIA_SUCCESS,
         payload: data,
       });
+      if (data) {
+        dispatch(get_Listener_Liked_Media(page, size));
+      }
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, LIKE_MEDIA_FAIL);
       // dispatch({
@@ -54,7 +58,7 @@ export const likeMedia =
   };
 
 export const unLikeMedia =
-  (id, state = false) =>
+  (id, state = false, page = 0, size = 200) =>
   async (dispatch, getState) => {
     try {
       dispatch({
@@ -77,6 +81,9 @@ export const unLikeMedia =
         type: UNLIKE_MEDIA_SUCCESS,
         payload: data,
       });
+      if (data) {
+        dispatch(get_Listener_Liked_Media(page, size));
+      }
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, UNLIKE_MEDIA_FAIL);
       // dispatch({
@@ -89,15 +96,15 @@ export const unLikeMedia =
     }
   };
 
-export const addToLikedList = id => {
+export const addToLikedList = media => {
   return {
     type: ADD_MEDIA_TO_LIKED_LIST,
-    payload: id,
+    payload: media,
   };
 };
-export const removeFromLikedList = id => {
+export const removeFromLikedList = media => {
   return {
     type: REMOVE_MEDIA_FROM_LIKED_LIST,
-    payload: id,
+    payload: media,
   };
 };

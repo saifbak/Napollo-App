@@ -60,9 +60,12 @@ import {
   ADD_USER_TO_FOLLOWED_LIST,
   REMOVE_USER_FROM_FOLLOWED_LIST,
   LOCATION_PERMISSION_GRANTED,
+  GET_USER_ACTIVITIES_FAIL,
+  GET_USER_ACTIVITIES_LOADING,
+  GET_USER_ACTIVITIES_SUCCESS,
 } from '../constants/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { State } from 'react-native-gesture-handler';
+import {State} from 'react-native-gesture-handler';
 
 const initialState = {
   token: '',
@@ -566,14 +569,48 @@ export const getAllUsersReducer = (
     case GET_ALL_USERS_SUCCESS:
       return {
         ...state,
-        loading: true,
+        loading: false,
         error: '',
         data: payload,
       };
     case GET_ALL_USERS_FAIL:
       return {
         ...state,
+        loading: false,
+        error: payload,
+        data: [],
+      };
+    default:
+      return state;
+  }
+};
+export const getAllUsersActivitiesReducer = (
+  state = {
+    loading: false,
+    error: '',
+    data: [],
+  },
+  {type, payload},
+) => {
+  switch (type) {
+    case GET_USER_ACTIVITIES_LOADING:
+      return {
+        ...state,
         loading: true,
+        error: '',
+        data: [],
+      };
+    case GET_USER_ACTIVITIES_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        data: payload,
+      };
+    case GET_USER_ACTIVITIES_FAIL:
+      return {
+        ...state,
+        loading: false,
         error: payload,
         data: [],
       };
@@ -797,6 +834,6 @@ export const grantLocationPermissionReducer = (
       };
 
     default:
-     return State
+      return State;
   }
 };

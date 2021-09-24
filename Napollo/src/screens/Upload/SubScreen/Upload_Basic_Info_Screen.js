@@ -31,6 +31,8 @@ import {get_All_User_Album} from '../../../redux/actions/MediaActions/AlbumActio
 import SmallErrorPopUp from '../../../Components/Modal/SmallErrorModalPopUp';
 import {loadDataFromStorage} from '../../../utils/asyncStorage';
 import {scale, ScaledSheet} from 'react-native-size-matters';
+import MainErrorPopUp from '../../../Components/Modal/MainErrorPopUp';
+import {CLEAR_UPLOAD_DATA} from '../../../redux/constants';
 
 const {width, height} = Dimensions.get('window');
 
@@ -98,6 +100,19 @@ const Upload_Basic_Info_Screen = props => {
   const featureed = featuring.split(',');
 
   useEffect(() => {
+    if (uploadStatus === true) {
+      setTitle('');
+      setFeaturing('');
+      setGenre('');
+      setGenreId('');
+      setSongErr('');
+      setAlbumId('');
+      setAlbum('');
+      setDescription('');
+    }
+  }, [uploadStatus]);
+
+  useEffect(() => {
     if (genreData.length <= 0) {
       dispatch(getGenres(genrePage, genreSize));
     }
@@ -118,15 +133,27 @@ const Upload_Basic_Info_Screen = props => {
     setGenreErrText('');
     setSongErr('');
     if (
-      title === '' ||
-      genre === '' ||
-      userMedia === '' ||
+      title === '' &&
+      genre === '' &&
+      userMedia === '' &&
       userTrimMedia === ''
     ) {
       setErrText('Title is required');
       setGenreErrText('Genre is required');
       setSongErr('Both Full Song And 15sec trailer required.');
-    } else if (albumId === '') {
+    } else if (title === '') {
+      setErrText('Title is required');
+    } else if (genre === '') {
+      setGenreErrText('Genre is required');
+    } else if (userMedia === '' || userTrimMedia === '') {
+      setSongErr('Both Full Song And 15sec trailer required.');
+    } else if (
+      albumId === '' &&
+      title !== '' &&
+      genre !== '' &&
+      userMedia !== '' &&
+      userTrimMedia !== ''
+    ) {
       dispatch(
         upload_Media(
           userMedia,
@@ -144,7 +171,13 @@ const Upload_Basic_Info_Screen = props => {
           featuring,
         ),
       );
-    } else {
+    } else if (
+      albumId !== '' &&
+      title !== '' &&
+      genre !== '' &&
+      userMedia !== '' &&
+      userTrimMedia !== ''
+    ) {
       dispatch(
         upload_Media(
           userMedia,
@@ -164,14 +197,6 @@ const Upload_Basic_Info_Screen = props => {
         ),
       );
     }
-    setTitle('');
-    setFeaturing('');
-    setGenre('');
-    setGenreId('');
-    setSongErr('');
-    setAlbumId('');
-    setAlbum('');
-    setDescription('');
   };
 
   const openModal = () => {
@@ -221,27 +246,12 @@ const Upload_Basic_Info_Screen = props => {
   }
   if (uploadError) {
     uploadErrorView = (
-      <View
-        style={{
-          ...StyleSheet.absoluteFillObject,
-          backgroundColor: '#000',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 500,
-        }}>
-        <View style={styles.subContent}>
-          <Text
-            style={{
-              color: '#900',
-              marginBottom: '20%',
-              fontSize: 30,
-              textTransform: 'uppercase',
-            }}>
-            Error.......
-          </Text>
-          <Text style={{color: '#fff'}}>{uploadError}</Text>
-        </View>
-      </View>
+      <MainErrorPopUp
+        clearTime={2000}
+        errorState={uploadError}
+        clearError={() => dispatch({type: CLEAR_UPLOAD_DATA})}>
+        {uploadError}
+      </MainErrorPopUp>
     );
   }
   if (uploadStatus === true) {
@@ -260,6 +270,7 @@ const Upload_Basic_Info_Screen = props => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#000'}}>
+      {uploadErrorView}
       <SafeAreaView style={{flex: 1}}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
@@ -280,6 +291,7 @@ const Upload_Basic_Info_Screen = props => {
                 dispatch(get_All_User_Album(genrePage, genreSize))
               }
             />
+
             <View style={styles.content}>
               {uploadLoadingView}
               {/* {uploadErrorView} */}

@@ -103,6 +103,7 @@ const index = () => {
         visible={upgradeModal}
         closeModal={() => setUpgradeModal(false)}
         type={userType}
+        defaultType={type}
       />
 
       <View style={styles.content}>
@@ -113,7 +114,7 @@ const index = () => {
           <View style={styles.imgCont}>
             {profileUrl === '' || profileUrl === null ? (
               <View style={styles.thumbNail}>
-                <Text style={[styles.thumbNailName, {marginRight: 10}]}>
+                <Text style={[styles.thumbNailName, {marginRight: 2}]}>
                   {firstName ? firstName[0] : null}
                 </Text>
                 <Text style={styles.thumbNailName}>
@@ -123,11 +124,9 @@ const index = () => {
             ) : (
               <Image style={styles.profileImage} source={{uri: profileUrl}} />
             )}
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => setUpgradeModal(true)}>
-              <Text style={styles.imgText}>Become an {userType}</Text>
-            </TouchableOpacity>
+
+            <Text style={styles.imgText}> {type}</Text>
+            {/* </TouchableOpacity> */}
           </View>
           <View>
             <SingleSubSettingsCont
@@ -140,6 +139,19 @@ const index = () => {
               text="***********"
               onPress={() => setPasswordModal(true)}
             />
+            {type === 'ARTIST' ? (
+              <SingleSubSettingsCont
+                title="Switch account"
+                text={`Switch to a ${userType}`}
+                onPress={() => setUpgradeModal(true)}
+              />
+            ) : (
+              <SingleSubSettingsCont
+                title="Switch account"
+                text={`Switch to an ${userType} account`}
+                onPress={() => setUpgradeModal(true)}
+              />
+            )}
           </View>
         </ScrollView>
       </View>
@@ -171,7 +183,7 @@ const styles = ScaledSheet.create({
     // marginRight: wp('4%'),
   },
   thumbNailName: {
-    fontSize: '15@s',
+    fontSize: '25@s',
     color: '#eee',
     fontFamily: 'Helvetica-Bold',
   },

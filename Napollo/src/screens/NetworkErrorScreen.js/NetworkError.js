@@ -63,6 +63,6 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     textAlign: 'center',
     fontFamily: 'Helvetica-Regular',
-    marginHorizontal: 5,
+    marginHorizontal: 10,
   },
 });

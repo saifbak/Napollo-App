@@ -113,6 +113,6 @@ const styles = StyleSheet.create({
     width,
     flex: 1,
     height,
-    paddingHorizontal: 25,
+    // paddingHorizontal: 25,
   },
 });

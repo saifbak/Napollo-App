@@ -62,7 +62,7 @@ const MedialSong = props => {
     id: props.id,
 
     artwork: props.image,
-    artist: props.ownerAccountUser.username,
+    artist: props.ownerAccountUser?.username,
     duration: props.duration,
     genre: props.genre?.name,
     album: props.album,
@@ -78,7 +78,7 @@ const MedialSong = props => {
     // ),
   };
 
-  const featuringArtist = props.featuredArtists.join('&');
+  const featuringArtist = props.featuredArtists?.join('&');
 
   // console.log(props.allSongs, 'INDEX');
   const navigate = () => {
@@ -112,10 +112,10 @@ const MedialSong = props => {
         url: props.url,
         image: props.image,
         id: props.id,
-        artists: props.ownerAccountUser.username,
+        artists: props.ownerAccountUser?.username,
         hitCount: props.hits,
         artwork: props.image,
-        artist: props.ownerAccountUser.username,
+        artist: props.ownerAccountUser?.username,
         duration: props.duration,
         genre: props.genre?.name,
         album: props.album,
@@ -225,7 +225,7 @@ const MedialSong = props => {
                 )}
               </Text>
               <Text style={styles.songArtist} numberOfLines={1}>
-                {props.ownerAccountUser.username}
+                {props.ownerAccountUser?.username}
               </Text>
               {/* <Text style={styles.songTime}>3:00pm</Text> */}
               {/* Song Details */}

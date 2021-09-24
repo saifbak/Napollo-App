@@ -30,6 +30,7 @@ import {
   singleUserModalReducer,
   userFollowerListReducer,
   grantLocationPermissionReducer,
+  getAllUsersActivitiesReducer,
 } from './reducers/userReducer';
 
 import {
@@ -69,6 +70,7 @@ import {
   LikeMediaReducer,
   UnLikeMediaReducer,
   userMediaLikedListReducer,
+  storeUserLikedListReducer
 } from './reducers/MediaReducers/Like_Unlike/Like_UnlikeReducer';
 
 import {
@@ -87,6 +89,8 @@ import {
   increaseCurrentDiscoverSizeReducer,
   getSingleArtistMediasReducer,
   getSingleUserMediasHistoryReducer,
+  getListenerLikedMediaReducer,
+  getSingleListenerLikedMediaReducer,
 } from './reducers/MediaReducers/getAllMedia';
 
 import {
@@ -127,7 +131,7 @@ import {
   getMediaCommentDetailsReducer,
   getMediaCommentsReducer,
   deleteMediaCommentReducer,
-  createMediaReplyReducer
+  createMediaReplyReducer,
 } from './reducers/MediaReducers/CommentReducers/index';
 import {reducer as network} from 'react-native-offline';
 
@@ -141,6 +145,8 @@ const rootReducer = combineReducers({
   listenElsewhereModal: listenElsewhereModalReducer,
   singleArtistModal: singleArtistModalReducer,
   singleListenerModal: singleListenerModalReducer,
+  getListenerLikedMedia: getListenerLikedMediaReducer,
+  getSingleListenerLikedMedia: getSingleListenerLikedMediaReducer,
   getAlbumSearch: getAlbumSearchReducer,
   getArtistSearch: getArtistSearchReducer,
   getGenreSearch: getGenreSearchReducer,
@@ -148,6 +154,8 @@ const rootReducer = combineReducers({
   getPlaylistSearch: getPlaylistSearchReducer,
   getNewReleases: getNewReleasesReducer,
   choosePostSong: choosePostSongReducer,
+  storeUserLikedList:storeUserLikedListReducer,
+  getAllUsersActivities: getAllUsersActivitiesReducer,
   userLogin: userLoginReducer,
   logoutUserWhenTokenExpires: logoutUserWhenTokenExpiresReducer,
   userRegister: userRegisterReducer,

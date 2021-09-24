@@ -24,6 +24,7 @@ const SmallSuccessPopUpModal = props => {
       },
       props.clearTime ? props.clearTime : 500,
     );
+     return () => clearTimeout(() => {}, props.clearTime);
   }, [props.successState]);
 
   if (props.successState === '' || props.successState === null) {

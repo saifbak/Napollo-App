@@ -13,7 +13,7 @@ import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const HeaderWithImage = ({onPress, navigate}) => {
   const navigation = useNavigation();
-  const artistData = getLoggedInUserProfile('ARTIST');
+  // const artistData = getLoggedInUserProfile('ARTIST');
    const userData = getLoggedInUserProfile('LISTENER');
      const {
        userProfile: {
@@ -29,14 +29,14 @@ const HeaderWithImage = ({onPress, navigate}) => {
        },
      } = userData;
 
-  const {
-    artistProfile: {profilePictureUrl: artistPics},
-  } = artistData;
+  // const {
+  //   artistProfile: {profilePictureUrl: artistPics},
+  // } = artistData;
   return (
     <View
       style={{
         flexDirection: 'row',
-        // justifyContent: 'space-between',
+        justifyContent: 'space-between',
         width: '100%',
         marginBottom: 5,
         position: 'absolute',
@@ -45,13 +45,14 @@ const HeaderWithImage = ({onPress, navigate}) => {
         paddingHorizontal: 20,
         flex: 1,
         alignItems: 'center',
+        paddingHorizontal: 30
       }}>
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
         {profileUrl === '' || profileUrl === null ? (
           <View style={styles.thumbNail}>
-            <Text style={[styles.thumbNailName, {marginRight: 10}]}>
+            <Text style={[styles.thumbNailName, {marginRight: 2}]}>
               {firstName ? firstName[0] : null}
             </Text>
             <Text style={styles.thumbNailName}>
@@ -66,18 +67,30 @@ const HeaderWithImage = ({onPress, navigate}) => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={onPress}
-          style={styles.search}>
-          <Icon name="search" color="#999" size={scale(20)} />
-          <Text
-            style={{
-              paddingLeft: 10,
-              color: '#999',
-              fontSize: scale(12),
-              fontFamily: 'Helvetica-Medium',
-            }}>
-            Search
-          </Text>
+          // onPress={() => dispatch(openGoogleSearchModal())}
+          style={styles.inputContainer}>
+          <Icon
+            name="search"
+            color="#fff"
+            size={24}
+            style={{alignSelf: 'center'}}
+          />
         </TouchableOpacity>
+        // <TouchableOpacity
+        //   activeOpacity={0.8}
+        //   onPress={onPress}
+        //   style={styles.search}>
+        //   <Icon name="search" color="#999" size={scale(20)} />
+        //   <Text
+        //     style={{
+        //       paddingLeft: 10,
+        //       color: '#999',
+        //       fontSize: scale(12),
+        //       fontFamily: 'Helvetica-Medium',
+        //     }}>
+        //     Search
+        //   </Text>
+        // </TouchableOpacity>
       )}
 
       {/* <Icon
@@ -126,5 +139,25 @@ const styles = ScaledSheet.create({
     height: '45@s',
     borderRadius: '45@s',
     marginRight: wp('3%'),
+  },
+  inputContainer: {
+    borderWidth: 1,
+    borderRadius: '45@s',
+    borderColor: '#555',
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: '#555',
+    height: '45@s',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+    width: '45@s',
+    zIndex: 100,
   },
 });

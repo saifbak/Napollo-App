@@ -69,7 +69,7 @@ const Comment_Container = ({
           <View style={styles.imageCont}>
             {profileUrl === '' || profileUrl === null ? (
               <View style={styles.thumbNail}>
-                <Text style={[styles.thumbNailName, {marginRight: 10}]}>
+                <Text style={[styles.thumbNailName, {marginRight: 2}]}>
                   {firstName ? firstName[0] : null}
                 </Text>
                 <Text style={styles.thumbNailName}>
@@ -190,7 +190,7 @@ const styles = ScaledSheet.create({
     marginRight: 10,
   },
   thumbNailName: {
-    fontSize: '15@s',
+    fontSize: '18@s',
     color: '#eee',
     fontFamily: 'Helvetica-Bold',
   },

@@ -57,6 +57,9 @@ import {
   CLOSE_SINGLE_USER_PROFILE_MODAL,
   ADD_USER_TO_FOLLOWED_LIST,
   REMOVE_USER_FROM_FOLLOWED_LIST,
+  GET_USER_ACTIVITIES_FAIL,
+  GET_USER_ACTIVITIES_LOADING,
+  GET_USER_ACTIVITIES_SUCCESS,
 } from '../constants/index';
 import axios from 'axios';
 import {Platform} from 'react-native';
@@ -64,6 +67,7 @@ import {
   saveDataToStorage,
   removeDataFromStorage,
   loadDataFromStorage,
+  clearDataFromStorage,
 } from '../../utils/asyncStorage';
 import {BASE_URL2, ADMIN_USERNAME, ADMIN_PASSWORD} from '@env';
 import axiosInstance from '../../utils/axiosInstance';
@@ -71,7 +75,7 @@ import base64 from 'react-native-base64';
 import RNFetchBlob from 'rn-fetch-blob';
 import {logoutUserWhenTokenExpires} from '../../utils/loggedInUserType';
 
-axios.defaults.timeout = 20000;
+axios.defaults.timeout = 60000;
 axios.defaults.timeoutErrorMessage =
   'Could not connect to server.Poor network connection';
 export const login =
@@ -118,6 +122,7 @@ export const logout = () => dispatch => {
   removeDataFromStorage('user_Info');
   removeDataFromStorage('userPlaylists');
   removeDataFromStorage('userAlbums');
+  // clearDataFromStorage();
   // removeDataFromStorage('token');
   dispatch({
     type: USER_LOGIN_LOGOUT,
@@ -307,6 +312,38 @@ export const get_User_Profile = () => async (dispatch, getState) => {
     });
   }
 };
+
+export const get_User_Activities =
+  (page, size) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: GET_USER_ACTIVITIES_LOADING,
+      });
+
+      const token = getState().userLogin.token;
+
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'application/json',
+        },
+        params: {
+          page,
+          size,
+        },
+      };
+
+      const {data} = await axios.get(`${BASE_URL2}/activities`, config);
+      dispatch({
+        type: GET_USER_ACTIVITIES_SUCCESS,
+        payload: data.content,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, GET_USER_ACTIVITIES_FAIL);
+    }
+  };
+
 export const get_User_Profile_With_Id = id => async (dispatch, getState) => {
   try {
     dispatch({
@@ -470,7 +507,7 @@ export const upgrade_User_Account = userType => async (dispatch, getState) => {
     });
 
     const token = getState().userLogin.token;
-    const id = getState().getUserProfile.profile.id;
+    const id = getState().getUserProfile.userProfile.id;
     const authorization = `Bearer ${token}`;
 
     const config = {
@@ -484,14 +521,14 @@ export const upgrade_User_Account = userType => async (dispatch, getState) => {
     };
 
     const res = await axios.get(
-      `${BASE_URL2}/accountuser${id}/upgrade`,
+      `${BASE_URL2}/accountuser/${id}/upgrade`,
       config,
     );
     dispatch({
       type: UPGRADE_USER_ACCOUNT_SUCCESS,
       payload: res.data,
     });
-    dispatch(logout());
+    // dispatch(logout());
   } catch (error) {
     logoutUserWhenTokenExpires(dispatch, error, UPGRADE_USER_ACCOUNT_FAIL);
     // dispatch({

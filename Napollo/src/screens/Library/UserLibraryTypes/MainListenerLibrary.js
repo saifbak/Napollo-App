@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   SafeAreaView,
   FlatList,
@@ -15,7 +15,7 @@ import {
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 // import LibraryComponent from '../../../Components/LibrarySongs/LibrarySongs';
 import LibraryHeader from '../component/LibraryHeader';
-
+import {useFocusEffect} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -34,11 +34,13 @@ import ArtistComponent from '../../../Components/LibrarySongs/components/ArtistC
 import RecentlyDiscovered from '../../../Components/LibrarySongs/components/RecentlyDiscovered';
 import LinearGradient from 'react-native-linear-gradient';
 import {loadDataFromStorage} from '../../../utils/asyncStorage';
+import {get_Listener_Liked_Media} from '../../../redux/actions/MediaActions/getMediaActions';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import DiscoveryImage from '../../../assests/images/onBoarding7.jpg';
+import SongsContainer from '../../../Components/LibrarySongs/components/SongsContainer';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 import DiscoveredSongContainer from '../../../Components/LibrarySongs/components/DiscoveredSongsCont';
 
@@ -50,7 +52,9 @@ const MainListenerLibraryPage = () => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(50);
   const getAllUserPlaylist = useSelector(state => state.getAllUserPlaylist);
-  const getAllArtists = useSelector(state => state.getAllArtists);
+  const getListenerLikedMedia = useSelector(
+    state => state.getListenerLikedMedia,
+  );
   const {
     loading: playlistLoading,
     error: playlistError,
@@ -58,56 +62,27 @@ const MainListenerLibraryPage = () => {
   } = getAllUserPlaylist;
 
   const {
-    loading: artistLoading,
-    error: artistError,
-    artists: artistsData,
-  } = getAllArtists;
+    loading: listenerLoading,
+    error: listenerError,
+    data: listenerData,
+  } = getListenerLikedMedia;
 
   const dicoveryMedia = [];
-
-  useEffect(() => {
-    const getPlaylists = async () => {
-      const userPlaylist = await loadDataFromStorage('userPlaylists');
-      console.log('LOADING PLAYLIST', userPlaylist);
-      if (userPlaylist === null || !userPlaylist) {
+  useFocusEffect(
+    useCallback(() => {
+      if (playlistData && playlistData.length <= 0) {
         dispatch(get_All_User_Playlist(page, size));
-      } else {
-        return null;
       }
-    };
-    getPlaylists();
-  }, []);
+      if (listenerData && listenerData.length <= 0) {
+        dispatch(get_Listener_Liked_Media(page, size));
+      }
+    }, []),
+  );
 
   const playlistNavigate = val => {
     dispatch(store_Active_Playlist_Details(val));
     navigation.navigate('SinglePlayList');
   };
-  // useEffect(() => {
-  //   const getArtists = async () => {
-  //     const appArtists = await loadDataFromStorage('App_Arists');
-  //     if (!appArtists && appArtists === []) {
-  //       dispatch(get_All_Artist(page, size));
-  //     } else {
-  //       return null;
-  //     }
-  //   };
-  //   getArtists();
-  //    dispatch(get_All_Artist(page, size));
-  // }, []);
-  // useEffect(() => {
-  //   const getPlaylists = async () => {
-  //     const userPlaylist = await loadDataFromStorage('userPlaylists');
-  //     console.log(userPlaylist, 'USERPLAYLIST');
-  //   };
-  //   getPlaylists();
-  // }, []);
-  // useEffect(() => {
-  //   const getArtists = async () => {
-  //     const appArtists = await loadDataFromStorage('App_Arists');
-  //     console.log(appArtists, 'APPARTISTS');
-  //   };
-  //   getArtists();
-  // }, []);
 
   const dataList = playlistData
     ?.slice(0, 5)
@@ -119,18 +94,11 @@ const MainListenerLibraryPage = () => {
       />
     ));
 
-  const dataList2 = artistsData?.slice(0, 5).map((data, index) => (
-    <ArtistComponent
-      {...data}
-      key={index}
-      onPress={() =>
-        navigation.navigate('Single_Artist_Profile', {
-          screen: 'Single_Artist_Profile',
-          params: data,
-        })
-      }
-    />
-  ));
+  const songList = listenerData
+    .slice(0, 5)
+    .map((data, index) => (
+      <SongsContainer {...data} allSongs={listenerData} key={index} />
+    ));
 
   const getPlaylistDataAgain = () => {
     dispatch({
@@ -139,10 +107,14 @@ const MainListenerLibraryPage = () => {
     dispatch(get_All_User_Playlist(page, size));
   };
 
+  const getSongsAgain = () => {
+    dispatch(get_Listener_Liked_Media(page, size));
+  };
+
   let playlistErrorView = null;
   let playlistLoadingView = null;
-  let artistLoadingView = null;
-  let artistErrorView = null;
+  let listenerLoadingView = null;
+  let listenerMainStatusView = null;
   if (playlistError) {
     playlistErrorView = (
       <TouchableOpacity
@@ -170,13 +142,23 @@ const MainListenerLibraryPage = () => {
       </TouchableOpacity>
     );
   }
-  if (artistError) {
-    artistErrorView = (
-      <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={() => dispatch(get_All_Artist(page, size))}>
-        <Text style={{color: '#999', fontSize: 12, textAlign: 'center'}}>
-          {artistError}
+  if (playlistLoading) {
+    playlistLoadingView = <ActivityIndicator size="small" color="#F68128" />;
+  }
+  if (listenerLoading) {
+    listenerMainStatusView = <ActivityIndicator size="small" color="#F68128" />;
+  }
+  if (listenerError) {
+    listenerMainStatusView = (
+      <TouchableOpacity activeOpacity={0.7} onPress={() => getSongsAgain()}>
+        <Text
+          style={{
+            color: '#999',
+            fontSize: 12,
+            textAlign: 'center',
+            marginTop: 10,
+          }}>
+          {listenerError}
         </Text>
         <Text
           style={{
@@ -190,12 +172,6 @@ const MainListenerLibraryPage = () => {
         </Text>
       </TouchableOpacity>
     );
-  }
-  if (playlistLoading) {
-    playlistLoadingView = <ActivityIndicator size="small" color="#F68128" />;
-  }
-  if (artistLoading) {
-    artistLoadingView = <ActivityIndicator size="small" color="#F68128" />;
   }
 
   return (
@@ -262,25 +238,27 @@ const MainListenerLibraryPage = () => {
                 discoveryImage={DiscoveryImage}
                 onPress={() => navigation.navigate('DiscoveredSongs')}
               />
-              {playlistLoading === false && playlistData.length <= 0 && (
-                <View
-                  style={{
-                    flexDirection: 'row',
-
-                    justifyContent: 'center',
-                    width: '50%',
-                    marginTop: '10%',
-                  }}>
-                  <Text
+              {playlistLoading === false &&
+                !playlistError &&
+                playlistData.length <= 0 && (
+                  <View
                     style={{
-                      color: '#eee',
-                      textAlign: 'center',
-                      fontSize: hp('1.9%'),
+                      flexDirection: 'row',
+
+                      // justifyContent: 'center',
+                      width: '40%',
+                      marginTop: '10%',
                     }}>
-                    You have no playlist. Please create new playlist
-                  </Text>
-                </View>
-              )}
+                    <Text
+                      style={{
+                        color: '#eee',
+                        textAlign: 'left',
+                        fontSize: scale(10),
+                      }}>
+                      You have no playlist. Please create new playlist
+                    </Text>
+                  </View>
+                )}
               {dataList}
             </ScrollView>
 
@@ -289,6 +267,7 @@ const MainListenerLibraryPage = () => {
               title="Favourites Songs"
               onPress={() => navigation.navigate('Favorite')}
             />
+            {listenerMainStatusView}
             <ScrollView
               contentContainerStyle={{
                 marginBottom: 15,
@@ -297,13 +276,28 @@ const MainListenerLibraryPage = () => {
               horizontal={true}
               scrollEventThrottle={16}
               showsHorizontalScrollIndicator={false}>
-              {/* {dataList} */}
-              <AlbumComponent />
-              <AlbumComponent />
-              <AlbumComponent />
-              <AlbumComponent />
-              <AlbumComponent />
-              <AlbumComponent />
+              {listenerLoading === false &&
+                !listenerError &&
+                listenerData.length <= 0 && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+
+                      justifyContent: 'center',
+                      width: '100%',
+                      marginTop: '10%',
+                    }}>
+                    <Text
+                      style={{
+                        color: '#eee',
+                        textAlign: 'center',
+                        fontSize: scale(12),
+                      }}>
+                      You have no favourite songs.Listen and like a song
+                    </Text>
+                  </View>
+                )}
+              {songList}
             </ScrollView>
             {/* ARTIST VIEW */}
 
@@ -357,7 +351,6 @@ const MainListenerLibraryPage = () => {
               horizontal={true}
               scrollEventThrottle={16}
               showsHorizontalScrollIndicator={false}>
-              {/* {dataList} */}
               <AlbumComponent />
               <AlbumComponent />
               <AlbumComponent />

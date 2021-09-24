@@ -91,6 +91,11 @@ const Media_Comment_Modal = () => {
   const clearClientsCommentErr = () => {
     setEmptyCommentErr('');
   };
+  useEffect(() => {
+    if (mediaCommentStatus === true) {
+      setComment('');
+    }
+  }, [mediaCommentStatus]);
 
   const onSubmit = () => {
     // if (comment) {
@@ -103,9 +108,6 @@ const Media_Comment_Modal = () => {
       setEmptyCommentErr('You cannot post empty comments');
     } else {
       dispatch(create_Media_Comment(comment, mediaIdentity, page, size));
-    }
-    if (mediaCommentStatus === true) {
-      setComment('');
     }
   };
   let commentsLoadingView = null;

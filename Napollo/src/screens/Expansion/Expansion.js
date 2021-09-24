@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect, useCallback} from 'react';
 import {
   StyleSheet,
   Text,
@@ -28,11 +28,17 @@ import {get_Artist_Trending} from '../../redux/actions/MediaActions/getMediaActi
 import BottomSheetContent from './component/BottomSheetContent';
 import GoogleSearchModal from '../../Components/Modal/GoogleSearchModal';
 import GoogleFilterModal from './component/FilterModal/GoogleFilterModal';
+import {
+  useFocusEffect,
+} from '@react-navigation/native';
+import LoadingAnime from '../../Components/Loading/Loading';
+import NetworkError from '../NetworkErrorScreen.js/NetworkError';
 
 const {width, height} = Dimensions.get('window');
 
 const Expansion = () => {
   // Show or Hide Modal
+  const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const [userLocation, setUserLocation] = useState({
     latitude: 0.0,
@@ -46,6 +52,10 @@ const Expansion = () => {
 
   const storeUserCoordinates = useSelector(state => state.storeUserCoordinates);
   const storeUserLocation = useSelector(state => state.storeUserLocation);
+  const getArtistTrendingMedia = useSelector(
+    state => state.getArtistTrendingMedia,
+  );
+  const {loading:artistLoading,error:artistError,data:artistData} = getArtistTrendingMedia;
 
   const {city, state, country, countryCode} = storeUserLocation;
 
@@ -58,11 +68,14 @@ const Expansion = () => {
   });
   const [filterValue, setFilterValue] = useState('');
   const [filterColor, setFilterColor] = useState(false);
+  const [cityFilter,setCityFilter] = useState('')
   const [userSearchValue, onChangeText] = useState('');
   const [stateFilter, setStateFilter] = useState('');
   const [countryFilter, setCountryFilter] = useState('');
   const [countryCodeFilter, setCountryCodeFilter] = useState('');
   const [resultNum, setResultNum] = useState(10);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(30);
   const showModal = () => {
     setShow(!show);
   };
@@ -74,10 +87,13 @@ const Expansion = () => {
   };
 
   const ShowValue = value => {
-    // console.log(value);
     setShow(false);
   };
-  const dispatch = useDispatch();
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(get_Artist_Trending(cityFilter, stateFilter, countryFilter,page,size))
+    }, [stateFilter,countryFilter]),
+  );
 
   // const geoCodeUserLocation = () => {
   //   const position = {
@@ -167,9 +183,33 @@ const Expansion = () => {
   //   geocoder();
   // }, []);
 
+  let mainStatusView = null;
+  if(artistLoading){
+    mainStatusView = <LoadingAnime width={60} height={60}/>
+  }
+  else if (artistError){
+      mainStatusView = (
+        <NetworkError
+          errorTitle={artistError}
+          onPress={() =>
+            dispatch(
+              get_Artist_Trending(
+                cityFilter,
+                stateFilter,
+                countryFilter,
+                page,
+                size,
+              ),
+            )
+          }
+        />
+      );
+  }
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView style={styles.container}>
+      {mainStatusView}
         <SearchComponent
           onPress={showModal}
           getUserLocation={() => getUserLocation()}

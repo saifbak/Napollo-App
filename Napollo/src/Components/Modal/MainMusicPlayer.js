@@ -251,6 +251,7 @@ const MainMusicPlayer = () => {
     // <>
     <Modal
       animationType="slide"
+      animationIn='slideInUp'
       swipeDirection="down"
       isVisible={isMusicPlayerOpen}
       onSwipeComplete={() => dispatch(closeModalPlayer())}

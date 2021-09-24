@@ -39,6 +39,8 @@ import {
   store_User_Location,
   store_User_Coordinates,
 } from './src/redux/actions/userActions';
+import {get_Listener_Liked_Media} from './src/redux/actions/MediaActions/getMediaActions';
+import NetInfo from '@react-native-community/netinfo';
 import {get_Artist_Profile} from './src/redux/actions/artistActions';
 import {getGenres} from './src/redux/actions/getGenreActions';
 import Comment_Modal from './src/Components/Modal/Comment_Modal';
@@ -63,6 +65,7 @@ import {
   CLOSE_SINGLE_USER_PROFILE_MODAL,
   CLOSE_NOTIFICATION_FILTER_MODAL,
   CLOSE_SONG_BOTTOM_SHEET,
+  STORE_USER_LIKED_LIST,
 } from './src/redux/constants/index';
 import {getUserCallingCode} from './src/utils/loggedInUserType';
 import MainMusicPlayer from './src/Components/Modal/MainMusicPlayer';
@@ -75,10 +78,22 @@ const App = () => {
   const [networkState, setNetworkState] = useState(false);
   //APP GENRE LIST
   const getAccessToken = useSelector(state => state.getAccessToken);
-  const {loading: accessTokenLoading, error: accessTokenError} = getAccessToken;
+  const {
+    loading: accessTokenLoading,
+    error: accessTokenError,
+    accessToken,
+  } = getAccessToken;
   const getUserProfile = useSelector(state => state.getUserProfile);
   const {userProfile, error} = getUserProfile;
   const userLogin = useSelector(state => state.userLogin);
+  const getListenerLikedMedia = useSelector(
+    state => state.getListenerLikedMedia,
+  );
+  const {
+    loading: listenerLoading,
+    error: listenerError,
+    data: listenerData,
+  } = getListenerLikedMedia;
   const {
     loading: loginLoading,
     error: loginError,
@@ -89,19 +104,23 @@ const App = () => {
     state => state.logoutUserWhenTokenExpires,
   );
   const {message} = logoutUserWhenTokenExpires;
-  const network = useSelector(state => state.network);
-  const {isConnected} = network;
 
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(20);
+  const [size, setSize] = useState(200);
 
   useEffect(() => {
-    if (isConnected === true) {
-      setNetworkState(false);
-    } else {
-      setNetworkState(true);
-    }
-  }, [isConnected]);
+    const removeListener = NetInfo.addEventListener(networkState => {
+      console.log(networkState.isConnected, networkState);
+      if (networkState.isConnected) {
+        setNetworkState(false);
+      } else {
+        setNetworkState(true);
+      }
+    });
+    return () => {
+      removeListener();
+    };
+  }, []);
 
   // BOTTOM SHEET CONTENT
   const playerContext = usePlayerContext();
@@ -125,9 +144,20 @@ const App = () => {
     };
     getUserProfile();
     // if (userProfile && userProfile === {}) {
-
+    if (listenerError || listenerData.length <= 0)
+      dispatch(get_Listener_Liked_Media(page, size));
     // }
   }, [loginToken]);
+
+  useEffect(() => {
+    // if (!listenerData && !listenerError && listenerData.length > 0) {
+      const newMediaIds = listenerData?.map(item => item?.id);
+      dispatch({
+        type: STORE_USER_LIKED_LIST,
+        payload: newMediaIds,
+      });
+    // }
+  }, [listenerData]);
   // GOOGLE AUTH
   useEffect(() => {
     GoogleSignin.configure({
@@ -146,10 +176,13 @@ const App = () => {
   //APPLICATION ACCESS TOKEN
   useEffect(() => {
     // if (!accessToken) {
+
     try {
       dispatch(get_Access_Token());
       dispatch(clearData());
     } catch (error) {
+      dispatch(get_Access_Token());
+      dispatch(clearData());
       console.log(error);
       // }
     }
@@ -173,7 +206,7 @@ const App = () => {
   const getUserLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
-        console.log('USER REAL POSITION', position);
+        // console.log('USER REAL POSITION', position);
         if (position) {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
@@ -184,7 +217,7 @@ const App = () => {
           dispatch(store_User_Coordinates(userPosition));
           Geocoder.geocodePosition(userPosition)
             .then(res => {
-              console.log('USER REAL LOCATION', res[0]);
+              // console.log('USER REAL LOCATION', res[0]);
               const callingCode = getUserCallingCode(res[0].countryCode);
               const data = {
                 city: res[0].subAdminArea,
@@ -253,10 +286,10 @@ const App = () => {
         <ModalOverlay />
         <GoogleModal />
         <Comment_Modal />
-        {/* <NoConnectionModal
+        <NoConnectionModal
           visible={networkState}
           closeNetworkModal={() => setNetworkState(false)}
-        /> */}
+        />
         <SingleUserModal />
         <Media_Comment_Modal />
         <CreatePlaylistModal />

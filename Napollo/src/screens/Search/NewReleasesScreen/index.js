@@ -89,7 +89,7 @@ const index = () => {
             color: '#F68128',
             fontSize: 10,
             textAlign: 'center',
-            marginTop: hp('2.2%'),
+            marginTop: scale(15),
             fontFamily: 'Helvetica-Bold',
           }}>
           Try Again

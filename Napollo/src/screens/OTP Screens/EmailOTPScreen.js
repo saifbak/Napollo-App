@@ -93,6 +93,7 @@ const EmailOTPScreen = () => {
         navigation.navigate('Login');
       }, 1000);
     }
+      return () => clearTimeout();
   }, [verifyStatus]);
 
   let resendBtnView = null;
@@ -116,7 +117,7 @@ const EmailOTPScreen = () => {
       <MainErrorPopUp
         clearTime={3000}
         errorState={resendError}
-        clearError={() => dispatch({type: CLEAR_OTP_STATUSES_3})}>
+        clearError={() => dispatch({type: CLEAR_OTP_STATUSES})}>
         {resendError}
       </MainErrorPopUp>
       <MainErrorPopUp

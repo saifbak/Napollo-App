@@ -51,6 +51,7 @@ import {
 import DiscoveryImage from '../../../assests/images/playlist-image-placeholder.png';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 import DiscoveredSongContainer from '../../../Components/LibrarySongs/components/DiscoveredSongsCont';
+import {get_Listener_Liked_Media} from '../../../redux/actions/MediaActions/getMediaActions';
 
 const {width, height} = Dimensions.get('window');
 
@@ -63,6 +64,9 @@ const MainArtistLibraryPage = () => {
   const {loading, error, data: artistMedias} = getMedia;
   const getAllUserPlaylist = useSelector(state => state.getAllUserPlaylist);
   const getAllArtists = useSelector(state => state.getAllArtists);
+  const getListenerLikedMedia = useSelector(
+    state => state.getListenerLikedMedia,
+  );
   const {
     loading: playlistLoading,
     error: playlistError,
@@ -74,6 +78,11 @@ const MainArtistLibraryPage = () => {
     error: artistError,
     artists: artistsData,
   } = getAllArtists;
+  const {
+    loading: listenerLoading,
+    error: listenerError,
+    data: listenerData,
+  } = getListenerLikedMedia;
 
   const getAllUserAlbum = useSelector(state => state.getAllUserAlbum);
   const {
@@ -331,25 +340,27 @@ const MainArtistLibraryPage = () => {
                 discoveryImage={DiscoveryImage}
                 onPress={() => navigation.navigate('DiscoveredSongs')}
               /> */}
-              {playlistLoading === false && playlistData.length <= 0 && (
-                <View
-                  style={{
-                    flexDirection: 'row',
-
-                    justifyContent: 'center',
-                    width: '50%',
-                    marginTop: '10%',
-                  }}>
-                  <Text
+              {playlistLoading === false &&
+                !playlistError &&
+                playlistData.length <= 0 && (
+                  <View
                     style={{
-                      color: '#eee',
-                      textAlign: 'center',
-                      fontSize: scale(12),
+                      flexDirection: 'row',
+
+                      justifyContent: 'center',
+                      width: '50%',
+                      marginTop: '10%',
                     }}>
-                    You have no playlist. Please create new playlist
-                  </Text>
-                </View>
-              )}
+                    <Text
+                      style={{
+                        color: '#eee',
+                        textAlign: 'center',
+                        fontSize: scale(12),
+                      }}>
+                      You have no playlist. Please create new playlist
+                    </Text>
+                  </View>
+                )}
               {dataList}
             </ScrollView>
 

@@ -95,21 +95,22 @@ const PlaylistForm = () => {
         ),
       );
     }
-    setName('');
-    setDescription('');
-    setPlaylistArt('');
   };
   // const func = () => {
   //   navigation.;
   // };
   useEffect(() => {
     if (status && status === true) {
+      setName('');
+      setDescription('');
+      setPlaylistArt('');
       dispatch(get_All_User_Playlist(page, size));
       // navigation.navigate('Playlist');
       setTimeout(() => {
         navigation.navigate('Playlist');
       }, 2500);
     }
+    return () => clearTimeout(() => {}, 2500);
   }, [status]);
 
   useFocusEffect(

@@ -30,10 +30,13 @@ const {width, height} = Dimensions.get('window');
 const HomeProfile = () => {
   const navigation = useNavigation();
   const [userDetails, setUserDetails] = useState({});
+  const userLogin = useSelector(state => state.userLogin);
+  const {type: userType} = userLogin;
 
-  const userData = getLoggedInUserProfile('LISTENER');
+  const userData = getLoggedInUserProfile(`${userType}`);
+  const getUserProfile = useSelector(state => state.getUserProfile);
 
-  console.log(userData, 'user data');
+  // console.log(userData, 'user data');
   // const {
   //   userProfile: {fullName},
   // } = userData;
@@ -71,10 +74,8 @@ const HomeProfile = () => {
       country,
       profileUrl,
     },
-  } = userData;
+  } = getUserProfile;
 
-  const userLogin = useSelector(state => state.userLogin);
-  const {type: userType} = userLogin;
   // let stageNameView = null;
   // if (userType && userType === 'ARTIST') {
   //   stageNameView = (
@@ -89,7 +90,7 @@ const HomeProfile = () => {
           onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
           {profileUrl === '' || profileUrl === null ? (
             <View style={styles.thumbNail}>
-              <Text style={[styles.thumbNailName, {marginRight: 10}]}>
+              <Text style={[styles.thumbNailName, {marginRight: 2}]}>
                 {firstName ? firstName[0] : null}
               </Text>
               <Text style={styles.thumbNailName}>

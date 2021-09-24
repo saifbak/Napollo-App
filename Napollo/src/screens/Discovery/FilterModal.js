@@ -9,15 +9,15 @@ import {
 } from 'react-native';
 import Divider from '../../Components/Divider/Divider';
 import FilterHeader from './FilterHeader';
-import CountrySelector from '../Expansion/component/CountrySelector';
+import CountrySelector from './CountrySelector';
 import Data from 'city-state-country';
 import {useDispatch, useSelector} from 'react-redux';
 import {getGenres} from '../../redux/actions/getGenreActions';
 import LoadingAnime from '../../Components/Animations/Small_LoadingAnime';
 
-const FilterModal = (props) => {
+const FilterModal = props => {
   const dispatch = useDispatch();
-  const getGenreList = useSelector((state) => state.getGenreList);
+  const getGenreList = useSelector(state => state.getGenreList);
   const {loading, error, data} = getGenreList;
   const [activeTab, setActiveTab] = useState(false);
   const [genreName, setGenreName] = useState('');
@@ -38,23 +38,23 @@ const FilterModal = (props) => {
   const changeActiveTab2 = () => {
     setActiveTab(false);
   };
-  const changeGenreValue = (val) => {
+  const changeGenreValue = val => {
     setGenreValue(val);
   };
-  const changeCountryValue = (val) => {
+  const changeCountryValue = val => {
     setCountryValue(val);
   };
-  const changeCountryCode = (val) => {
+  const changeCountryCode = val => {
     setCountryCode(val);
   };
   const incrementNumber = () => {
     if (numData < 10) {
-      setNumData((prevData) => prevData + 1);
+      setNumData(prevData => prevData + 1);
     }
   };
   const decrementNumber = () => {
     if (numData > 1) {
-      setNumData((prevData) => prevData - 1);
+      setNumData(prevData => prevData - 1);
     }
   };
   const closeModal = () => {
@@ -65,47 +65,47 @@ const FilterModal = (props) => {
     setGenreId(val2);
   };
   useEffect(() => {
-    const data = Data.getAllStatesFromCountry(countryCode);
+    const data = Data.getAllStatesFromCountry(props.country);
     // console.log(countryCode,'GOGLE COUNTRY')
     if (data) {
       setStatesData(data);
     }
-  }, [countryCode]);
-  useEffect(() => {
-    dispatch(getGenres(page, size));
-  }, [page, size]);
+  }, [props.country]);
+  // useEffect(() => {
+  //   dispatch(getGenres(page, size));
+  // }, [page, size]);
 
-  let loadingView = null;
-  let errorView = null;
-  if (loading) {
-    loadingView = <LoadingAnime width={50} height={50} />;
-  }
-  if (error) {
-    errorView = (
-      <View style={{width: '100%', alignSelf: 'center'}}>
-        <Text
-          style={{
-            color: '#eee',
-            fontSize: 12,
-            textAlign: 'center',
-            fontFamily: 'Helvetica-Bold',
-          }}>
-          {error}
-        </Text>
-        <TouchableOpacity activeOpacity={0.7}>
-          <Text
-            style={{
-              color: '#F68128',
-              fontSize: 13,
-              textAlign: 'center',
-              fontFamily: 'Helvetica-ExtraBold',
-            }}>
-            Try Again
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+  // let loadingView = null;
+  // let errorView = null;
+  // if (loading) {
+  //   loadingView = <LoadingAnime width={50} height={50} />;
+  // }
+  // if (error) {
+  //   errorView = (
+  //     <View style={{width: '100%', alignSelf: 'center'}}>
+  //       <Text
+  //         style={{
+  //           color: '#eee',
+  //           fontSize: 12,
+  //           textAlign: 'center',
+  //           fontFamily: 'Helvetica-Bold',
+  //         }}>
+  //         {error}
+  //       </Text>
+  //       <TouchableOpacity activeOpacity={0.7}>
+  //         <Text
+  //           style={{
+  //             color: '#F68128',
+  //             fontSize: 13,
+  //             textAlign: 'center',
+  //             fontFamily: 'Helvetica-ExtraBold',
+  //           }}>
+  //           Try Again
+  //         </Text>
+  //       </TouchableOpacity>
+  //     </View>
+  //   );
+  // }
 
   return (
     <Modal
@@ -136,11 +136,13 @@ const FilterModal = (props) => {
                   <Text style={[styles.searchHeaderText]}>
                     Filter by country
                   </Text>
+
                   <CountrySelector
-                    countryValue={countryValue}
-                    countryCode={countryCode}
-                    changeCountryCode={(val) => changeCountryCode(val)}
-                    changeCountry={(val) => changeCountryValue(val)}
+                    countryValue={props.country}
+                    countryCode={props.countryCode}
+                    changeCountryCode={val => props.changeCountryCode(val)}
+                    changeCountry={val => props.changeCountry(val)}
+                    changeState={val => props.changeState(val)}
                   />
                 </View>
                 <View style={{marginTop: 20}}>
@@ -168,12 +170,12 @@ const FilterModal = (props) => {
                         <FlatList
                           data={statesData}
                           contentContainerStyle={{paddingBottom: 30}}
-                          keyExtractor={(item) => item.name}
+                          keyExtractor={item => item.name}
                           renderItem={({item}) => (
                             <TouchableOpacity
                               activeOpacity={0.6}
                               style={styles.stateGenre}
-                              onPress={() => setUserState(item.name)}>
+                              onPress={() => props.changeState(item.name)}>
                               <View style={[styles.check]}>
                                 {userState === item.name && (
                                   <View style={[styles.activeCheck]}></View>
@@ -201,7 +203,7 @@ const FilterModal = (props) => {
               </>
             ) : (
               <View style={styles.genreView}>
-                {loadingView}
+                {/* {loadingView}
                 {errorView}
                 {data && (
                   <FlatList
@@ -230,7 +232,7 @@ const FilterModal = (props) => {
                       </TouchableOpacity>
                     )}
                   />
-                )}
+                )} */}
               </View>
             )}
           </View>

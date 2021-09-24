@@ -69,7 +69,7 @@ const styles = ScaledSheet.create({
     backgroundColor: '#000',
     width,
     height,
-    paddingTop: '20@s',
+    paddingTop: '10@s',
   },
   subContent: {
     width: '100%',

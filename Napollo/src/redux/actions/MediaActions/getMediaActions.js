@@ -38,12 +38,16 @@ import {
   GET_USER_MEDIA_HISTORY_BY_ID_FAIL,
   GET_USER_MEDIA_HISTORY_BY_ID_LOADING,
   GET_USER_MEDIA_HISTORY_BY_ID_SUCCESS,
+  GET_LISTENER_LIKED_SONGS_FAIL,
+  GET_LISTENER_LIKED_SONGS_LOADING,
+  GET_LISTENER_LIKED_SONGS_SUCCESS,
+  GET_SINGLE_LISTENER_LIKED_SONGS_FAIL,
+  GET_SINGLE_LISTENER_LIKED_SONGS_LOADING,
+  GET_SINGLE_LISTENER_LIKED_SONGS_SUCCESS,
 } from '../../constants/index';
 import {BASE_URL2} from '@env';
 import axios from 'axios';
 import {logoutUserWhenTokenExpires} from '../../../utils/loggedInUserType';
-
-
 
 axios.defaults.timeout = 20000;
 axios.defaults.timeoutErrorMessage =
@@ -509,6 +513,76 @@ export const get_Single_User_Media_History =
         dispatch,
         error,
         GET_USER_MEDIA_HISTORY_BY_ID_FAIL,
+      );
+    }
+  };
+
+export const get_Listener_Liked_Media =
+  (page = 0, size = 200) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: GET_LISTENER_LIKED_SONGS_LOADING,
+      });
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+        },
+        params: {
+          page,
+          size,
+        },
+      };
+
+      const {data} = await axios.get(`${BASE_URL2}/media/likes`, config);
+       console.log(data,'LISTENER SONG DATA');
+      dispatch({
+        type: GET_LISTENER_LIKED_SONGS_SUCCESS,
+        payload: data.responseBody,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(
+        dispatch,
+        error,
+        GET_LISTENER_LIKED_SONGS_FAIL,
+      );
+    }
+  };
+export const get_Single_Listener_Liked_Media =
+  (id, page = 0, size = 200) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: GET_SINGLE_LISTENER_LIKED_SONGS_LOADING,
+      });
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+        },
+        params: {
+          page,
+          size,
+        },
+      };
+
+      const {data} = await axios.get(
+        `${BASE_URL2}/media/${id}/accountuser/likes`,
+        config,
+      );
+     
+      dispatch({
+        type: GET_SINGLE_LISTENER_LIKED_SONGS_SUCCESS,
+        payload: data.responseBody,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(
+        dispatch,
+        error,
+        GET_SINGLE_LISTENER_LIKED_SONGS_FAIL,
       );
     }
   };

@@ -8,6 +8,7 @@ import {
   StatusBar,
   ScrollView,
   Linking,
+  TouchableOpacity,
 } from 'react-native';
 import Icons from '../../Components/IconsContainer/Icons';
 import CustomHeader from '../../Components/CustomHeader/CommonHeader';
@@ -39,14 +40,22 @@ const Support_Napollo = () => {
                   Napollo is the first black owned & developed music streaming
                   service that is built to change the music landscape. It is
                   solely founded by Sebas(LINK) & designed and developed by
-                  Oluwole & 24 Discovery design team(LINK). We've dedicated our
-                  all & made substantial sacrifices to get to this point;
-                  because we recognize the issues many up & coming artists face.
-                  Discovery, monetization, and engagement are the essentials
-                  aspects that play a huge role ina an artist's success. Our
-                  beta is just a preview to what we have in store, we're
-                  building the #1 community for creatives; and we'd love for you
-                  to join!.
+                  Oluwole & 24 Discovery design team&nbsp;
+                  {/* <TouchableOpacity> */}
+                  <Text
+                    onPress={() =>
+                      Linking.openURL('https://www.24group.com.ng')
+                    }
+                    style={{color: '#f68128'}}>
+                    (website)
+                  </Text>
+                  {/* </TouchableOpacity> */}&nbsp;.We've dedicated our all &
+                  made substantial sacrifices to get to this point; because we
+                  recognize the issues many up & coming artists face. Discovery,
+                  monetization, and engagement are the essentials aspects that
+                  play a huge role in an artist's success. Our beta is just a
+                  preview to what we have in store, we're building the #1
+                  community for creatives; and we'd love for you to join!.
                 </Text>
               </View>
               {/* HOW TO SUPPORT  */}

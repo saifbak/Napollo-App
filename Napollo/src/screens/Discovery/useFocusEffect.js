@@ -142,14 +142,16 @@ const FocusEffect = ({page, size, unLike, chooseState, countryCode}) => {
       const songData1 = [];
       if (data && data.length <= 0 && loading === false) {
         dispatch(get_Trailer_Media(currentPage, currentSize));
-        data.forEach(item =>
-          songData1.push({
-            ...item,
-            url: item.trailer,
-            artist: item.ownerAccountUser.username,
-          }),
-        );
-        play(songData1);
+        if (data) {
+          data.forEach(item =>
+            songData1.push({
+              ...item,
+              url: item.trailer,
+              artist: item.ownerAccountUser.username,
+            }),
+          );
+          play(songData1);
+        }
       }
 
       const songData = [];

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
@@ -10,6 +10,7 @@ import {
 } from '../../redux/actions/MediaActions/Like_UnLike/Like_Unlike';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 import {mainNumberFormat} from '../../utils/loggedInUserType';
+import {get_Listener_Liked_Media} from '../../redux/actions/MediaActions/getMediaActions';
 
 const LikeBtn = ({
   col,
@@ -24,8 +25,16 @@ const LikeBtn = ({
   const [like, setLike] = useState(false);
   const [userLike, setUserLike] = useState(likes);
 
-  const userMediaLikedList = useSelector(state => state.userMediaLikedList);
-  const {likedList, status} = userMediaLikedList;
+  const storeUserLikedList = useSelector(state => state.storeUserLikedList);
+  const getListenerLikedMedia = useSelector(
+    state => state.getListenerLikedMedia,
+  );
+  const {data: listenerData} = getListenerLikedMedia;
+  const {likedList} = storeUserLikedList;
+
+  // useEffect(() => {
+  //   dispatch(get_Listener_Liked_Media());
+  // }, []);
 
   const checkStatus = () => {
     if (likedList.includes(mediaId)) {

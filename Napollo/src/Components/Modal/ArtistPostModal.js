@@ -44,12 +44,12 @@ const ArtistPostModal = props => {
   const [songsModal, setSongsModal] = useState(false);
   const choosePostSong = useSelector(state => state.choosePostSong);
   const {title, id, likeCount, hitCount, image, artist} = choosePostSong;
-  const artistData = getLoggedInUserProfile('ARTIST');
+  // const artistData = getLoggedInUserProfile('ARTIST');
   const listenerData = getLoggedInUserProfile('LISTENER');
 
-  const {
-    artistProfile: {profilePictureUrl: artistPics},
-  } = artistData;
+  // const {
+  //   artistProfile: {profilePictureUrl: artistPics},
+  // } = artistData;
   const {
     userProfile: {
       firstName,

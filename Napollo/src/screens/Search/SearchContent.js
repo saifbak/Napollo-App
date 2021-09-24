@@ -48,6 +48,8 @@ const HomeContent = () => {
     error: trendingDataError,
     loading: trendingDataLoading,
   } = getTrendingMedia;
+  const storeUserLocation = useSelector(state => state.storeUserLocation);
+  const {city, state, country} = storeUserLocation;
 
   // const newMedia = [
   //   ...mediaData?.forEach(function (obj) {
@@ -152,7 +154,7 @@ const HomeContent = () => {
             marginTop: 30,
             textAlign: 'center',
           }}>
-          No trending data.
+          No trending data in your location.
         </Text>
       </View>
     );
@@ -163,12 +165,13 @@ const HomeContent = () => {
       <TouchableOpacity
         activeOpacity={0.7}
         style={{paddingBottom: 30}}
-        onPress={() => dispatch(get_Trending_Media(page, size))}
-      >
+        onPress={() =>
+          dispatch(get_Trending_Media(page, size, city, state, country))
+        }>
         <Text
           style={{
             color: '#999',
-            fontSize: hp('2%'),
+            fontSize: scale(13),
             textAlign: 'center',
             marginTop: 10,
           }}>
@@ -233,8 +236,8 @@ const HomeContent = () => {
           </View>
           <View style={{marginTop: 10, flex: 1}}>
             <ScrollView
+              showsHorizontalScrollIndicator={false}
               horizontal={true}
-              pagingEnabled={true}
               scrollEventThrottle={16}>
               {mainReleasesView}
             </ScrollView>
@@ -242,7 +245,7 @@ const HomeContent = () => {
         </View>
         {/* TRENDING VIEW */}
         <View style={{marginTop: '7%'}}>
-          <ScrollView>
+          <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
             <View style={styles.more}>
               <Text
                 style={{

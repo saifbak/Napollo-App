@@ -13,6 +13,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {scale, ScaledSheet} from 'react-native-size-matters';
 
 const TabView = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -56,13 +57,13 @@ const TabView = () => {
                   borderRadius: 5,
                   flexDirection: 'row',
                   alignItems: 'center',
-                  width: '33.3%',
+                  width: '50%',
                   justifyContent: 'center',
                 }
               : {
                   flexDirection: 'row',
                   alignItems: 'center',
-                  width: '33.3%',
+                  width: '50%',
                   justifyContent: 'center',
                 },
           ]}>
@@ -71,22 +72,21 @@ const TabView = () => {
               activeIndex == 0
                 ? {
                     color: '#fff',
-                    // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
-                    fontSize: hp('2.3%'),
+                    fontSize: scale(14),
                   }
                 : {
                     color: '#999',
                     fontFamily: 'Helvetica-Bold',
-                    fontSize: hp('2%'),
+                    fontSize: scale(12),
                   },
             ]}>
             Overview
           </Text>
         </TouchableOpacity>
         {/* THIRD TAB */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           hitSlop={{top: 20, right: 20, left: 20, bottom: 20}}
           activeOpacity={0.6}
           onPress={() => segmentClicked(1)}
@@ -113,21 +113,19 @@ const TabView = () => {
               activeIndex == 1
                 ? {
                     color: '#fff',
-                    // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
-                    fontSize: hp('2.3%'),
+                    fontSize: scale(14),
                   }
                 : {
                     color: '#999',
                     fontFamily: 'Helvetica-Bold',
-                    fontSize: hp('2%'),
+                    fontSize: scale(12),
                   },
             ]}>
             Songs
           </Text>
-        </TouchableOpacity>
-        {/* FOURTH TAB */}
+        </TouchableOpacity> */}
         <TouchableOpacity
           hitSlop={{top: 20, right: 20, left: 20, bottom: 20}}
           activeOpacity={0.6}
@@ -140,13 +138,13 @@ const TabView = () => {
                   borderRadius: 5,
                   flexDirection: 'row',
                   alignItems: 'center',
-                  width: '33.3%',
+                  width: '50%',
                   justifyContent: 'center',
                 }
               : {
                   flexDirection: 'row',
                   alignItems: 'center',
-                  width: '33.3%',
+                  width: '50%',
                   justifyContent: 'center',
                 },
           ]}>
@@ -158,21 +156,19 @@ const TabView = () => {
                     // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
-                    fontSize: hp('2.3%'),
+                    fontSize: scale(14),
                   }
                 : {
                     color: '#999',
                     fontFamily: 'Helvetica-Bold',
-                    fontSize: hp('2%'),
+                    fontSize: scale(12),
                   },
             ]}>
             Activity
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={{paddingTop: 10, paddingHorizontal: 5}}>
-        {renderViews}
-      </View>
+      <View style={{paddingTop: 10, paddingHorizontal: 5}}>{renderViews}</View>
       {/* <ScrollView style={{paddingTop: 10, paddingHorizontal: 5}}>
         {renderViews}
       </ScrollView> */}

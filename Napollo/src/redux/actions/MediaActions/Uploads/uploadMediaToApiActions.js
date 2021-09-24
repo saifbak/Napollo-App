@@ -97,7 +97,11 @@ export const upload_Media =
           //   type: CLEAR_UPLOAD_DATA,
           // });
         } else {
-          logoutUserWhenTokenExpires(dispatch, error, MEDIA_UPLOAD_TO_API_FAIL);
+          logoutUserWhenTokenExpires(
+            dispatch,
+            responseJson.responseDescription,
+            MEDIA_UPLOAD_TO_API_FAIL,
+          );
           // dispatch({
           //   type: MEDIA_UPLOAD_TO_API_FAIL,
           //   payload: responseJson.responseDescription,
@@ -107,7 +111,11 @@ export const upload_Media =
           });
         }
       } catch (error) {
-        logoutUserWhenTokenExpires(dispatch, error, MEDIA_UPLOAD_TO_API_FAIL);
+        logoutUserWhenTokenExpires(
+          dispatch,
+          responseJson.responseDescription,
+          MEDIA_UPLOAD_TO_API_FAIL,
+        );
         // dispatch({
         //   type: MEDIA_UPLOAD_TO_API_FAIL,
         //   payload:

@@ -30,6 +30,7 @@ import LikeBtn from '../../../Components/Button/LikeBtn';
 import UploadIcon from '../../../Components/Icons/UploadIcon';
 import HeaderBackBtn from '../../../Components/CustomHeader/HeaderWithBackBtn';
 import {get_User_Media_Listening_History} from '../../../redux/actions/MediaActions/getMediaActions';
+import {get_User_Activities} from '../../../redux/actions/userActions';
 import TabView from './TabViews/ListenerTabView';
 import ProfileModal from '../../../Components/Modal/ProfileModal';
 import {getLoggedInUserProfile} from '../../../utils/loggedInUserType';
@@ -62,6 +63,7 @@ const MainArtistProfile = () => {
   useFocusEffect(
     useCallback(() => {
       dispatch(get_User_Media_Listening_History(page, size));
+      dispatch(get_User_Activities(page, size));
     }, []),
   );
 

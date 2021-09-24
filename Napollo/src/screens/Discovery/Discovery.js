@@ -50,6 +50,9 @@ class Discovery extends Component {
     statesData: [],
     userState: '',
     showFilter: false,
+    state: '',
+    country: '',
+    countryCode: '',
   };
 
   static contextType = PlayerContext;
@@ -100,6 +103,15 @@ class Discovery extends Component {
     //     this.context.play(this.props.getTrailerMedia.data);
     //   }
     // this.context.resetCurrentTrack();
+    this.setState({
+      state: this.props.storeUserLocation.state,
+    });
+    this.setState({
+      country: this.props.storeUserLocation.country,
+    });
+    this.setState({
+      countryCode: this.props.storeUserLocation.countryCode,
+    });
   }
 
   changeActiveTab = () => {
@@ -119,7 +131,7 @@ class Discovery extends Component {
   };
   changeCountryValue = val => {
     this.setState({
-      countryValue: val,
+      country: val,
     });
   };
   changeCountryCode = val => {
@@ -132,9 +144,9 @@ class Discovery extends Component {
       activeTab: false,
     });
   };
-  chooseState = data => {
+  chooseState = val => {
     this.setState({
-      statesData: data,
+      state: val,
     });
   };
   closeFilter = () => {
@@ -478,6 +490,12 @@ class Discovery extends Component {
           changeTab={this.changeActiveTab}
           changeTab2={this.changeActiveTab2}
           changeModal={this.closeModal}
+          state={this.state.state}
+          country={this.state.country}
+          countryCode={this.state.countryCode}
+          changeState={val => this.chooseState(val)}
+          changeCountry={val => this.changeCountryValue(val)}
+          changeCountryCode={val => this.changeCountryCode(val)}
         />
         <View>
           <View style={{flex: 1, position: 'relative'}}>
@@ -523,10 +541,12 @@ const mapStateToProps = ({
   getTrailerMedia,
   increaseCurrentDiscoverPage,
   increaseCurrentDiscoverSize,
+  storeUserLocation,
 }) => ({
   getTrailerMedia,
   increaseCurrentDiscoverPage,
   increaseCurrentDiscoverSize,
+  storeUserLocation,
 });
 
 export default connect(mapStateToProps, {

@@ -12,6 +12,7 @@ import Upload_Basic_Info_Screen from '../../screens/Upload/SubScreen/Upload_Basi
 import Share_Song_Screen from '../../screens/Upload/SubScreen/Share_Song_Screen';
 import UploadScreen from '../../screens/Upload/UploadScreen';
 import Trim_Upload from '../../screens/Upload/SubScreen/Trim_Upload';
+import AllUserActivities from '../../screens/Profile/AllActivities/AllUserActivities';
 
 const Stack = createStackNavigator();
 
@@ -61,6 +62,7 @@ const ProfileStack = () => {
         name="SingleArtistAllSongScreen"
         component={SingleArtistAllSongView}
       />
+      <Stack.Screen name="AllActivities" component={AllUserActivities} />
     </Stack.Navigator>
   );
 };

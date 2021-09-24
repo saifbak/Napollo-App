@@ -8,6 +8,7 @@ import MainSuccessPopUp from '../../../../../Components/Modal/MainSuccessPopUp';
 import LoginBtn from '../../../../../Components/Button/LoginBtn';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 import {CLEAR_UPGRADE_USER_ACCOUNT_STATE} from '../../../../../redux/constants/index';
+import {logout} from '../../../../../redux/actions/userActions';
 
 const UpgradeConfirmModal = props => {
   const dispatch = useDispatch();
@@ -18,17 +19,19 @@ const UpgradeConfirmModal = props => {
     dispatch(upgrade_User_Account(props.type));
   };
   useEffect(() => {
-    if (status && status === true)
-      //   setTimeout(() => {
-      props.closeModal();
-    //   }, 2000);
+    if (status && status === true) {
+      setTimeout(() => {
+        props.closeModal();
+        dispatch(logout());
+      }, 2000);
+    }
+    // return () => clearTimeout(() => {}, 2000);
   }, [status]);
-  console.log(props.type, 'SWITCH2');
+  // console.log(props.type, 'SWITCH2');
   return (
     <Modal
       animationIn="zoomIn"
       animationOut="zoomOut"
-      
       backdropOpacity={0.5}
       backdropColor="#111"
       isVisible={props.visible}
@@ -42,14 +45,21 @@ const UpgradeConfirmModal = props => {
       <MainSuccessPopUp
         clearSuccess={() => dispatch({type: CLEAR_UPGRADE_USER_ACCOUNT_STATE})}
         successState={message}
-        clearTime={1500}>
+        clearTime={2500}>
         {message}
       </MainSuccessPopUp>
       <View style={styles.container}>
-        <Text style={styles.confirmText}>Confirm Account Upgrade</Text>
-        <Text style={styles.confirmSubText}>
-          Are you sure you want to upgrade to a {props.type} account?
-        </Text>
+        <Text style={styles.confirmText}>Confirm Account Switch</Text>
+        {props.defaultType === 'ARTIST' ? (
+          <Text style={styles.confirmSubText}>
+            Experience Napollo as a {props.type} ?
+          </Text>
+        ) : (
+          <Text style={styles.confirmSubText}>
+            Experience Napollo as an {props.type} ?
+          </Text>
+        )}
+
         <View style={styles.flexBtn}>
           <LoginBtn
             title="Cancel"
@@ -58,10 +68,10 @@ const UpgradeConfirmModal = props => {
             height={scale(35)}
           />
           {loading ? (
-            <ActivityIndicator size={scale(40)} color="#F68128" />
+            <ActivityIndicator size={scale(30)} color="#F68128" />
           ) : (
             <LoginBtn
-              title="Upgrade"
+              title="Switch"
               width="40%"
               height={scale(35)}
               onPress={() => upgrade()}

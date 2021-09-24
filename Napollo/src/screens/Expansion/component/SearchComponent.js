@@ -45,7 +45,7 @@ const SearchComponent = (props) => {
         />
       </TouchableOpacity>
       <TouchableOpacity
-        activeOpacity={0.6}
+        activeOpacity={0.8}
         onPress={() => dispatch(openGoogleSearchModal())}
        
         style={styles.inputContainer}>
@@ -58,7 +58,7 @@ const SearchComponent = (props) => {
       </TouchableOpacity>
       {/* UserLocation */}
       <TouchableOpacity
-        activeOpacity={0.6}
+        activeOpacity={0.8}
         onPress={props.getUserLocation}
         style={styles.inputContainer}>
         <Icon
@@ -101,8 +101,6 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     backgroundColor: 'rgba(255,255,255,0.9)',
     height: 50,
-    // width: 280,
-    // width: 50,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -114,7 +112,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.18,
     shadowRadius: 1.0,
     width: 50,
-    // elevation: 1,
     zIndex: 100,
   },
   input: {
