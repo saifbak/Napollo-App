@@ -9,31 +9,35 @@ import {
   SafeAreaView,
 } from 'react-native';
 import {scale, ScaledSheet} from 'react-native-size-matters';
-import CustomHeader from '../../../Components/CustomHeader/CommonHeader';
+import CustomHeader from '../../../../Components/CustomHeader/CommonHeader';
 import {useDispatch, useSelector} from 'react-redux';
-import MainSuccessPopUp from '../../../Components/Modal/MainSuccessPopUp';
-import MainErrorPopUp from '../../../Components/Modal/MainErrorPopUp';
-import {get_All_User_Album} from '../../../redux/actions/MediaActions/AlbumActions/index';
-import CustomAlphaBtn from '../../../Components/Button/CustomAlphabetFilterView';
-import {alphaBets} from '../../../data5';
-import LoadingAnime from '../../../Components/Loading/Loading';
-import AlbumContainer from '../../../Components/LibrarySongs/components/AllAlbumComponent';
-
+import MainSuccessPopUp from '../../../../Components/Modal/MainSuccessPopUp';
+import MainErrorPopUp from '../../../../Components/Modal/MainErrorPopUp';
+import {get_All_User_Album} from '../../../../redux/actions/MediaActions/AlbumActions/index';
+import CustomAlphaBtn from '../../../../Components/Button/CustomAlphabetFilterView';
+import {alphaBets} from '../../../../data5';
+import LoadingAnime from '../../../../Components/Loading/Loading';
+import AlbumContainer from '../../../../Components/LibrarySongs/components/AddSongAlbumComponent';
+import Icon from 'react-native-vector-icons/Ionicons';
+import GeneralModalCont from '../../../../Components/Modal/GeneralModalCont';
+import AlbumSongAdd from '../../../FavoriteScreen/UserTypes/AlbumSongsAdd';
 const {width, height} = Dimensions.get('window');
 
 const ArtistAlbum = () => {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(50);
+  const [songModal, setSongModal] = useState(false);
   const [filterValue, setFilterValue] = useState('All');
+  
   const getAllUserAlbum = useSelector(state => state.getAllUserAlbum);
   const {data, loading, error} = getAllUserAlbum;
 
-    useEffect(() => {
-      if (data.length <= 0) {
-        dispatch(get_All_User_Album(page, size));
-      }
-    }, []);
+  useEffect(() => {
+    if (data.length <= 0) {
+      dispatch(get_All_User_Album(page, size));
+    }
+  }, []);
 
   const filterAlbumData = val => {
     if (val !== 'All' && val !== '') {
@@ -60,13 +64,15 @@ const ArtistAlbum = () => {
         contentContainerStyle={{
           width: '100%',
           alignSelf: 'center',
-          paddingBottom: 70,
+          paddingBottom: 100,
           paddingHorizontal: 10,
         }}
         numColumns={2}
         data={filterAlbumData(filterValue)}
         keyExtractor={item => item.name}
-        renderItem={({item}) => <AlbumContainer {...item} />}
+        renderItem={({item}) => (
+          <AlbumContainer {...item} onPress={() => setSongModal(true)} />
+        )}
       />
     );
   } else if (loading) {
@@ -103,6 +109,11 @@ const ArtistAlbum = () => {
     <SafeAreaView style={styles.container}>
       <View style={{flex: 1, backgroundColor: '#000', width: '100%'}}>
         <CustomHeader title="Your Albums" />
+        <GeneralModalCont
+          visible={songModal}
+          closeModal={() => setSongModal(false)}>
+          <AlbumSongAdd func={() => setSongModal(false)} />
+        </GeneralModalCont>
         <View style={styles.content}>
           <View
             style={{
@@ -132,7 +143,36 @@ const ArtistAlbum = () => {
               )}
             />
           </View>
-          <View style={{width: '100%'}}>{mainView}</View>
+          <View style={{width: '100%'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+              }}>
+              <Icon
+                name="md-information-circle"
+                size={20}
+                color="#ff3333"
+                style={{width: '8%'}}
+              />
+              <Text
+                style={{
+                  color: '#ddd',
+                  fontSize: scale(10),
+                  fontFamily: 'Helvetica-Regular',
+
+                  textAlign: 'left',
+                  width: '90%',
+                  lineHeight: scale(12),
+                }}>
+                Please select the album you wish to add your song.
+              </Text>
+            </View>
+
+            {mainView}
+          </View>
         </View>
       </View>
     </SafeAreaView>

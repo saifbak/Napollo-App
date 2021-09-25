@@ -70,7 +70,7 @@ import {
   LikeMediaReducer,
   UnLikeMediaReducer,
   userMediaLikedListReducer,
-  storeUserLikedListReducer
+  storeUserLikedListReducer,
 } from './reducers/MediaReducers/Like_Unlike/Like_UnlikeReducer';
 
 import {
@@ -124,6 +124,7 @@ import {
   getAlbumDetailsReducer,
   getAllUserAlbumReducer,
   storeActiveAlbumDetailsReducer,
+  addSongToAlbumReducer,
 } from './reducers/MediaReducers/AlbumReducers/index';
 
 import {
@@ -144,6 +145,7 @@ const rootReducer = combineReducers({
   openMediaPlaylistModal: openMediaPlaylistModalReducer,
   listenElsewhereModal: listenElsewhereModalReducer,
   singleArtistModal: singleArtistModalReducer,
+  addSongToAlbum: addSongToAlbumReducer,
   singleListenerModal: singleListenerModalReducer,
   getListenerLikedMedia: getListenerLikedMediaReducer,
   getSingleListenerLikedMedia: getSingleListenerLikedMediaReducer,
@@ -154,7 +156,7 @@ const rootReducer = combineReducers({
   getPlaylistSearch: getPlaylistSearchReducer,
   getNewReleases: getNewReleasesReducer,
   choosePostSong: choosePostSongReducer,
-  storeUserLikedList:storeUserLikedListReducer,
+  storeUserLikedList: storeUserLikedListReducer,
   getAllUsersActivities: getAllUsersActivitiesReducer,
   userLogin: userLoginReducer,
   logoutUserWhenTokenExpires: logoutUserWhenTokenExpiresReducer,

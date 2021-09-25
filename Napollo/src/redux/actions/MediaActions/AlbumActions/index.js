@@ -19,6 +19,9 @@ import {
   UPDATE_ALBUM_DETAILS_SUCCESS,
   CLEAR_UPDATE_ALBUM_DETAILS,
   STORE_ACTIVE_ALBUM_DETAILS,
+  ADD_SONG_TO_ALBUM_FAIL,
+  ADD_SONG_TO_ALBUM_LOADING,
+  ADD_SONG_TO_ALBUM_SUCCESS,
 } from '../../../constants/index';
 
 import {BASE_URL2} from '@env';
@@ -26,7 +29,6 @@ import axios from 'axios';
 import {saveDataToStorage} from '../../../../utils/asyncStorage';
 import {Platform} from 'react-native';
 import {logoutUserWhenTokenExpires} from '../../../../utils/loggedInUserType';
-
 
 axios.defaults.timeout = 20000;
 axios.defaults.timeoutErrorMessage =
@@ -184,6 +186,43 @@ export const delete_Album = id => async (dispatch, getState) => {
     // });
   }
 };
+export const add_Song_To_Album =
+  (albumId, mediaId) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: ADD_SONG_TO_ALBUM_LOADING,
+      });
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+        },
+        params: {
+          media: mediaId,
+        },
+      };
+
+      const {data} = await axios.get(
+        `${BASE_URL2}/album/${albumId}/media`,
+        config,
+      );
+      console.log(data,'ADDTOALBUM')
+      dispatch({
+        type: ADD_SONG_TO_ALBUM_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, ADD_SONG_TO_ALBUM_FAIL);
+      // dispatch({
+      //   type: DELETE_PLAYLIST_FAIL,
+      //   payload:
+      //     error.response && error.response.data.description
+      //       ? error.response.data.description
+      //       : error.message,
+      // });
+    }
+  };
 
 export const update_Playlist_Details =
   (albumArt, fileType, name, description, year) =>

@@ -8,6 +8,7 @@ import SettingsAboutNapolloScreen from '../../screens/Settings/SubScreens/About 
 import SettingsNotificationsScreen from '../../screens/Settings/SubScreens/Notification/index';
 import HelpLineScreen from '../../screens/Settings/SubScreens/About Napollo/subscreen/index';
 import PremiumScreen from '../../screens/Premium/Premium';
+import AddSongToAlbum from '../../screens/Settings/SubScreens/AddSongsToAlbum/AddSong';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ const SettingStack = () => {
       />
       <Stack.Screen name="HelpLine" component={HelpLineScreen} />
       <Stack.Screen name="Premium" component={PremiumScreen} />
+      <Stack.Screen name="AddSongToAlbum" component={AddSongToAlbum} />
     </Stack.Navigator>
   );
 };

@@ -62,6 +62,13 @@ const Settings = ({navigation}) => {
                     onPress={() => navigation.navigate('SettingDiscover')}
                   />
                 )}
+                {type === 'ARTIST' && (
+                  <SingleSettingsCont
+                    title="Albums"
+                    text="Add songs to your album "
+                    onPress={() => navigation.navigate('AddSongToAlbum')}
+                  />
+                )}
 
                 <SingleSettingsCont
                   title="Notifications"

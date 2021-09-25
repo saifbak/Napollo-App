@@ -11,7 +11,7 @@ import moment from 'moment';
 const CreatePlaylist = props => {
   const {activityType, activityDateTime, playlist, album, creatingAccountUser} =
     props;
-  const date = moment(activityDateTime).startOf('hour').fromNow();
+  const date = moment(activityDateTime).startOf('hour').toNow();
 
   if (activityType === 'CREATE_PLAYLIST') {
     return (

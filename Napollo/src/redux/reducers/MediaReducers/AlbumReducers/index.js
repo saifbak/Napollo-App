@@ -19,6 +19,10 @@ import {
   UPDATE_ALBUM_DETAILS_SUCCESS,
   CLEAR_UPDATE_ALBUM_DETAILS,
   STORE_ACTIVE_ALBUM_DETAILS,
+  ADD_SONG_TO_ALBUM_FAIL,
+  ADD_SONG_TO_ALBUM_LOADING,
+  ADD_SONG_TO_ALBUM_SUCCESS,
+  // CLEAR_ERR
 } from '../../../constants/index';
 
 export const createAlbumReducer = (
@@ -127,6 +131,48 @@ export const deleteAlbumReducer = (
         loading: false,
         error: payload.error,
         status: null,
+        message: '',
+      };
+
+    default:
+      return state;
+  }
+};
+export const addSongToAlbumReducer = (
+  state = {loading: false, error: '', status: false, message: ''},
+  {type, payload},
+) => {
+  switch (type) {
+    case ADD_SONG_TO_ALBUM_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        message: '',
+        status: false,
+      };
+    case ADD_SONG_TO_ALBUM_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        status: payload.responseStatus,
+        message: payload.responseDescription,
+      };
+    case ADD_SONG_TO_ALBUM_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload.error,
+        status: false,
+        message: '',
+      };
+    case CLEAR_ALBUM_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        status: false,
         message: '',
       };
 
