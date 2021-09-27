@@ -74,7 +74,7 @@ const LoginScreen = ({navigation, route}) => {
 
   const onSubmitValues = () => {
     if (email || password) {
-      const newEmail = email.trim()
+      const newEmail = email.trim();
       setClientErr('');
       dispatch(clearData());
       // dispatch(clearRegisterError());
@@ -222,7 +222,9 @@ const LoginScreen = ({navigation, route}) => {
             </View>
           </>
           <View style={styles.otherContent}>
-            <TouchableOpacity activeOpacity={0.7}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('Enteryourmail')}>
               <Text style={styles.forgetText}>Forget Password ?</Text>
             </TouchableOpacity>
           </View>

@@ -66,29 +66,30 @@ import {
   CLOSE_NOTIFICATION_FILTER_MODAL,
   CLOSE_SONG_BOTTOM_SHEET,
   STORE_USER_LIKED_LIST,
+  SHOW_NOT_ACTIVE_ACCOUNT_MODAL,
+  HIDE_NOT_ACTIVE_ACCOUNT_MODAL,
+  CLOSE_MODAL,
 } from './src/redux/constants/index';
 import {getUserCallingCode} from './src/utils/loggedInUserType';
 import MainMusicPlayer from './src/Components/Modal/MainMusicPlayer';
 import ListenElsewhereModal from './src/Components/Modal/ListenElsewhereModal';
 import NoConnectionModal from './src/Components/Modal/NoConnectionModal';
 import SingleUserModal from './src/Components/Modal/SingleUserModal';
+import NotActiveAccount from './src/Components/Modal/NotActiveAccount';
 
 const App = () => {
   const dispatch = useDispatch();
   const [networkState, setNetworkState] = useState(false);
-  //APP GENRE LIST
-  const getAccessToken = useSelector(state => state.getAccessToken);
-  const {
-    loading: accessTokenLoading,
-    error: accessTokenError,
-    accessToken,
-  } = getAccessToken;
+
   const getUserProfile = useSelector(state => state.getUserProfile);
   const {userProfile, error} = getUserProfile;
   const userLogin = useSelector(state => state.userLogin);
   const getListenerLikedMedia = useSelector(
     state => state.getListenerLikedMedia,
   );
+
+  const notActiveAccount = useSelector(state => state.notActiveAccount);
+  const {showModal} = notActiveAccount;
   const {
     loading: listenerLoading,
     error: listenerError,
@@ -151,11 +152,11 @@ const App = () => {
 
   useEffect(() => {
     // if (!listenerData && !listenerError && listenerData.length > 0) {
-      const newMediaIds = listenerData?.map(item => item?.id);
-      dispatch({
-        type: STORE_USER_LIKED_LIST,
-        payload: newMediaIds,
-      });
+    const newMediaIds = listenerData?.map(item => item?.id);
+    dispatch({
+      type: STORE_USER_LIKED_LIST,
+      payload: newMediaIds,
+    });
     // }
   }, [listenerData]);
   // GOOGLE AUTH
@@ -173,20 +174,6 @@ const App = () => {
     });
   }, []);
 
-  //APPLICATION ACCESS TOKEN
-  useEffect(() => {
-    // if (!accessToken) {
-
-    try {
-      dispatch(get_Access_Token());
-      dispatch(clearData());
-    } catch (error) {
-      dispatch(get_Access_Token());
-      dispatch(clearData());
-      console.log(error);
-      // }
-    }
-  }, []);
   useEffect(() => {
     dispatch({type: CLOSE_COMMENT_MODAL});
     dispatch({type: CLOSE_GOOGLE_SEARCH_MODAL});
@@ -301,6 +288,10 @@ const App = () => {
           clearError={() => dispatch({type: CLEAR_LOGOUT_TOKEN_MESSAGE})}>
           {message}
         </MainErrorPopUp>
+        <NotActiveAccount
+          visible={showModal}
+          closeModal={() => dispatch({type: HIDE_NOT_ACTIVE_ACCOUNT_MODAL})}
+        />
       </PlayerContextProvider>
     </>
   );

@@ -14,7 +14,7 @@ import {persistStore, persistReducer} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 
-// clearDataFromStorage();
+// clearDataFromStorage(); 
 const initialState = {
   
 };

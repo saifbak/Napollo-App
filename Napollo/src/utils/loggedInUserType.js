@@ -1,7 +1,10 @@
 import {useSelector, useDispatch} from 'react-redux';
 import React from 'react';
 import {logout} from '../redux/actions/userActions';
-import {LOGOUT_USER_WHEN_TOKEN_EXPIRES} from '../redux/constants';
+import {
+  LOGOUT_USER_WHEN_TOKEN_EXPIRES,
+  SHOW_NOT_ACTIVE_ACCOUNT_MODAL,
+} from '../redux/constants';
 import {callingCodes} from '../data5';
 
 export const getLoggedInUserProfile = type => {
@@ -35,6 +38,14 @@ export const logoutUserWhenTokenExpires = (dispatch, error, type) => {
         error?.response && error?.response?.data?.responseDescription
           ? error?.response?.data?.responseDescription
           : error?.message,
+    });
+  } else if (
+    error?.response?.data.responseDescription ===
+      'Request failed with status code 103' ||
+    error?.message === 'Request failed with status code 103'
+  ) {
+    dispatch({
+      type: SHOW_NOT_ACTIVE_ACCOUNT_MODAL,
     });
   } else {
     dispatch({

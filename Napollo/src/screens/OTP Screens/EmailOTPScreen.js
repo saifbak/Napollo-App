@@ -15,8 +15,14 @@ import {
   verify_Email,
   resend_Email_Otp,
 } from '../../redux/actions/OtpActions/index';
-import {login} from '../../redux/actions/userActions';
-import {CLEAR_OTP_STATUSES} from '../../redux/constants/index';
+import {login, get_Access_Token} from '../../redux/actions/userActions';
+import {
+  CLEAR_ACCESS_TOKEN,
+  CLEAR_OTP_STATUSES,
+  CLEAR_OTP_STATUSES_1,
+  CLEAR_OTP_STATUSES_2,
+  CLEAR_OTP_STATUSES_3,
+} from '../../redux/constants/index';
 import {useSelector, useDispatch} from 'react-redux';
 import MainSuccessPopUp from '../../Components/Modal/MainSuccessPopUp';
 import MainErrorPopUp from '../../Components/Modal/MainErrorPopUp';
@@ -30,15 +36,23 @@ const {width, height} = Dimensions.get('window');
 const EmailOTPScreen = () => {
   const navigation = useNavigation();
   let textInput = useRef(null);
+  const [fromResend, setFromResend] = useState(false);
+  const [fromVerify, setFromVerify] = useState(false);
   const dispatch = useDispatch();
   const storeUserRegisterData = useSelector(
-    (state) => state.storeUserRegisterData,
+    state => state.storeUserRegisterData,
   );
-  const resendEmailOtp = useSelector((state) => state.resendEmailOtp);
+  const getAccessToken = useSelector(state => state.getAccessToken);
+  const {
+    loading: accessTokenLoading,
+    error: accessTokenError,
+    accessToken,
+  } = getAccessToken;
+  const resendEmailOtp = useSelector(state => state.resendEmailOtp);
 
-  const verifyEmail = useSelector((state) => state.verifyEmail);
+  const verifyEmail = useSelector(state => state.verifyEmail);
   const {userEmail, userPassword} = storeUserRegisterData;
-  const userLogin = useSelector((state) => state.userLogin);
+  const userLogin = useSelector(state => state.userLogin);
   const {token} = userLogin;
   const {
     loading: verifyLoading,
@@ -57,11 +71,20 @@ const EmailOTPScreen = () => {
   const [otp, setOtp] = useState('');
   const [focusedInput, setFocusedInput] = useState(false);
 
-  console.log(otp, 'OTP');
+  // console.log(otp, 'OTP');
+  useEffect(() => {
+    if (fromResend === true && accessToken && accessToken !== '') {
+      dispatch(resend_Email_Otp(userEmail, accessToken));
+    } else if (fromVerify === true && accessToken && accessToken !== '') {
+      dispatch(verify_Email(userEmail, otp, accessToken));
+    }
+  }, [accessToken, fromResend, fromVerify]);
 
   const resendOtpToEmail = () => {
     setOtp('');
-    dispatch(resend_Email_Otp(userEmail));
+    setFromResend(true);
+    setFromVerify(false);
+    dispatch(get_Access_Token());
   };
 
   useEffect(() => {
@@ -69,7 +92,7 @@ const EmailOTPScreen = () => {
     // textInput.focus();
   }, []);
 
-  const onChangeOtp = (val) => {
+  const onChangeOtp = val => {
     setOtp(val);
   };
   const resenedMail = () => {
@@ -81,61 +104,72 @@ const EmailOTPScreen = () => {
     if (otp.length === inputLength) {
       // alert('Done');
       Keyboard.dismiss();
-      dispatch(verify_Email(userEmail, otp));
-      setOtp('');
+      setFromResend(false);
+      setFromVerify(true);
+      dispatch(get_Access_Token());
+      // setOtp('');
     }
   }, [otp]);
+  useEffect(() => {
+    dispatch({type: CLEAR_OTP_STATUSES});
+    dispatch({type: CLEAR_OTP_STATUSES_1});
+    dispatch({type: CLEAR_OTP_STATUSES_2});
+    dispatch({type: CLEAR_OTP_STATUSES_3});
+  }, []);
 
   useEffect(() => {
     if (verifyStatus && verifyStatus === true) {
+      setFromResend(false);
+      setFromVerify(false);
       dispatch(login(userEmail, userPassword));
       setTimeout(() => {
         navigation.navigate('Login');
       }, 1000);
     }
-      return () => clearTimeout();
+    return () => clearTimeout(() => {}, 1000);
   }, [verifyStatus]);
 
-  let resendBtnView = null;
+  let mainLoadingView = null;
   let verifyLoadingView = null;
+  const clearStatus = () => {
+    dispatch({type: CLEAR_OTP_STATUSES});
+    dispatch({type: CLEAR_ACCESS_TOKEN});
+  };
 
-  if (resendLoading) {
-    resendBtnView = <ActivityIndicator color="#fee33e" size="small" />;
-  } else {
-    resendBtnView = (
-      <TouchableOpacity activeOpacity={0.7} onPress={() => resendOtpToEmail()}>
-        <Text style={styles.resendText}>Resend code </Text>
-      </TouchableOpacity>
-    );
-  }
-  if (verifyLoading) {
-    verifyLoadingView = <LoadingAnime width={70} height={70} />;
+  if (verifyLoading || resendLoading || accessTokenLoading) {
+    mainLoadingView = <LoadingAnime width={60} height={60} />;
   }
 
   return (
     <View style={styles.container}>
       <MainErrorPopUp
-        clearTime={3000}
+        clearTime={4000}
         errorState={resendError}
         clearError={() => dispatch({type: CLEAR_OTP_STATUSES})}>
         {resendError}
       </MainErrorPopUp>
       <MainErrorPopUp
-        clearTime={3000}
+        clearTime={4000}
+        errorState={accessTokenError}
+        clearError={() => dispatch({type: CLEAR_ACCESS_TOKEN})}>
+        {accessTokenError}
+      </MainErrorPopUp>
+      <MainErrorPopUp
+        clearTime={4000}
         errorState={verifyError}
         clearError={() => dispatch({type: CLEAR_OTP_STATUSES})}>
         {verifyError}
       </MainErrorPopUp>
       <MainSuccessPopUp
-        clearTime={3000}
+        clearTime={4000}
         successState={resendMessage}
-        clearSuccess={() => dispatch({type: CLEAR_OTP_STATUSES})}>
+        clearSuccess={() => clearStatus()}>
         {resendMessage}
       </MainSuccessPopUp>
       <MainSuccessPopUp
-        clearTime={3000}
+        clearTime={4000}
         successState={verifyMessage}
-        clearSuccess={() => dispatch({type: CLEAR_OTP_STATUSES})}>
+        clearSuccess={() => clearStatus()}>
         {verifyMessage}
       </MainSuccessPopUp>
       <View style={styles.header}>
@@ -150,7 +184,7 @@ const EmailOTPScreen = () => {
           Email Verification
         </Text>
       </View>
-      {verifyLoadingView}
+      {mainLoadingView}
       <KeyboardAvoidingView
         keyboardVerticalOffset={50}
         behavior={'padding'}
@@ -177,33 +211,26 @@ const EmailOTPScreen = () => {
             onChangeText={onChangeOtp}
             returnKeyType="done"
           />
-          {/* <View style={styles.containerInput}>
-            {Array(inputLength)
-              .fill()
-              .map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  hitSlop={{top: 5, left: 5, bottom: 5}}
-                  onPress={() => textInput.current.focus()}
-                  activeOpacity={0.7}
-                  style={[
-                    styles.cellView,
-                    {
-                      borderBottomColor:
-                        index === otp.length ? '#999' : '#f68128',
-                    },
-                  ]}>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => textInput.current.focus()}>
-                    <Text style={styles.cellText}>
-                      {otp && otp.length > 0 ? otp[index] : ''}
-                    </Text>
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              ))}
-          </View> */}
-          <View style={styles.resendContainer}>{resendBtnView}</View>
+          <View style={styles.resendContainer}>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('Login')}>
+                <Text style={[styles.resendText]}>Skip for now </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => resendOtpToEmail()}>
+                <Text style={styles.resendText}>Resend code </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
         {/* <View style={styles.bottomView}>
           <View style={{width: '100%'}}>
@@ -287,11 +314,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   resendContainer: {
-    width: '30%',
+    width: '100%',
     // alignItems: 'flex-end',
     flexDirection: 'row',
     marginVertical: '10%',
-    alignSelf: 'flex-end',
+    // alignSelf: 'flex-end',
     // borderBottomWidth: 0.5,
     // borderBottomColor: '#feee3e',
     paddingVertical: 3,

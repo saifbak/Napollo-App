@@ -14,7 +14,14 @@ import {
   RESEND_PHONE_NUMBER_OTP_CODE_SUCCESS,
   CLEAR_OTP_STATUSES_1,
   CLEAR_OTP_STATUSES_2,
-  CLEAR_OTP_STATUSES_3
+  CLEAR_OTP_STATUSES_3,
+  GET_PASSWORD_RECOVERY_CODE_FAIL,
+  GET_PASSWORD_RECOVERY_CODE_LOADING,
+  GET_PASSWORD_RECOVERY_CODE_SUCCESS,
+  RESET_FORGET_PASSWORD_FAIL,
+  RESET_FORGET_PASSWORD_LOADING,
+  RESET_FORGET_PASSWORD_SUCCESS,
+  CLEAR_ERROR,
 } from '../../constants/index';
 
 export const verifyEmailReducer = (
@@ -178,6 +185,92 @@ export const resendEmailOtpReducer = (
       return {
         ...state,
         error: null,
+        message: '',
+        status: false,
+        loading: false,
+      };
+
+    default:
+      return state;
+  }
+};
+export const getRecoveryCodeReducer = (
+  state = {loading: false, error: '', message: '', status: false},
+  {type, payload},
+) => {
+  switch (type) {
+    case GET_PASSWORD_RECOVERY_CODE_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        message: '',
+        status: false,
+      };
+    case GET_PASSWORD_RECOVERY_CODE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        message: payload.responseDescription,
+        status: payload.responseStatus,
+      };
+    case GET_PASSWORD_RECOVERY_CODE_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        message: '',
+        status: false,
+      };
+
+    case CLEAR_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        message: '',
+        status: false,
+      };
+
+    default:
+      return state;
+  }
+};
+export const resetForgetPasswordReducer = (
+  state = {loading: false, error: '', message: '', status: false},
+  {type, payload},
+) => {
+  switch (type) {
+    case RESET_FORGET_PASSWORD_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+        message: '',
+        status: false,
+      };
+    case RESET_FORGET_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        message: payload.responseDescription,
+        status: payload.responseStatus,
+      };
+    case RESET_FORGET_PASSWORD_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        message: '',
+        status: false,
+      };
+    case CLEAR_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: '',
         message: '',
         status: false,
       };

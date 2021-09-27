@@ -9,13 +9,8 @@ const SmallErrorPopUpModal = props => {
     if (props.errorState !== '' || props.errorState !== null) {
       setShowModal(true);
     }
-    setTimeout(
+    let timer = setTimeout(
       () => {
-        // setShowModal(false);
-        // if (props.clearClientsErr) {
-        //   props.clearClientsErr();
-        //   setShowModal(false);
-        // } else
         if (props.clearError) {
           setShowModal(false);
           props.clearError();
@@ -24,7 +19,7 @@ const SmallErrorPopUpModal = props => {
       },
       props.clearTime ? props.clearTime : 500,
     );
-    return () => clearTimeout(() => {},props.clearTime);
+    return () => clearTimeout(timer);
   }, [props.errorState]);
 
   if (props.errorState === '' || props.errorState === null) {
@@ -58,5 +53,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     paddingVertical: 5,
+    zIndex: 500,
   },
 });

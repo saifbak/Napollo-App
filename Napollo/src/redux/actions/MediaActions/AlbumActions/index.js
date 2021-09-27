@@ -187,7 +187,8 @@ export const delete_Album = id => async (dispatch, getState) => {
   }
 };
 export const add_Song_To_Album =
-  (albumId, mediaId) => async (dispatch, getState) => {
+  (albumId, mediaId, page = 0, size = 100) =>
+  async (dispatch, getState) => {
     try {
       dispatch({
         type: ADD_SONG_TO_ALBUM_LOADING,
@@ -207,11 +208,14 @@ export const add_Song_To_Album =
         `${BASE_URL2}/album/${albumId}/media`,
         config,
       );
-      console.log(data,'ADDTOALBUM')
+      console.log(data, 'ADDTOALBUM');
       dispatch({
         type: ADD_SONG_TO_ALBUM_SUCCESS,
         payload: data,
       });
+      if (data) {
+        dispatch(get_All_User_Album(page, size));
+      }
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, ADD_SONG_TO_ALBUM_FAIL);
       // dispatch({

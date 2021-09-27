@@ -154,6 +154,7 @@ export const register =
     state,
     countryCode,
     dateOfBirth,
+    accessTokens
   ) =>
   async (dispatch, getState) => {
     try {
@@ -167,15 +168,15 @@ export const register =
         userPhoneNumber: mobileNumber,
       };
 
-      const {
-        getAccessToken: {accessToken},
-      } = getState();
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
+      // const {
+      //   getAccessToken: {accessToken},
+      // } = getState();
+      // const config = {
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     Authorization: `Bearer ${accessToken}`,
+      //   },
+      // };
       const {data} = await axios.post(
         `${BASE_URL2}/accountuser`,
         {
@@ -193,18 +194,18 @@ export const register =
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessTokens}`,
           },
         },
       );
-      console.log(data, 'user success DATA');
+      // console.log(data, 'user success DATA');
       dispatch({
         type: USER_REGISTER_SUCCESS,
         payload: data,
       });
       dispatch(store_User_Register_Data(userDetails));
     } catch (error) {
-      console.log(error, 'ERROR');
+      // console.log(error, 'ERROR');
       dispatch({
         type: USER_REGISTER_FAIL,
         payload:
@@ -258,7 +259,7 @@ export const get_Access_Token = () => async dispatch => {
         'Content-Type': 'application/json',
       },
     });
-    console.log(data.data.responseBody);
+    // console.log(data.data.responseBody);
     dispatch({
       type: GET_ACCESS_TOKEN,
       payload: data.data.responseBody,

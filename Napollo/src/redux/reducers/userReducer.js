@@ -63,6 +63,9 @@ import {
   GET_USER_ACTIVITIES_FAIL,
   GET_USER_ACTIVITIES_LOADING,
   GET_USER_ACTIVITIES_SUCCESS,
+  SHOW_NOT_ACTIVE_ACCOUNT_MODAL,
+  HIDE_NOT_ACTIVE_ACCOUNT_MODAL,
+  CLOSE_MODAL,
 } from '../constants/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {State} from 'react-native-gesture-handler';
@@ -121,6 +124,33 @@ export const userLoginReducer = (state = initialState, {type, payload}) => {
         ...state,
         error: null,
         loading: false,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const notActiveAccountReducer = (
+  state = {showModal: false},
+  {type, payload},
+) => {
+  switch (type) {
+    case SHOW_NOT_ACTIVE_ACCOUNT_MODAL:
+      return {
+        ...state,
+        showModal: true,
+      };
+    case HIDE_NOT_ACTIVE_ACCOUNT_MODAL:
+      return {
+        ...state,
+        showModal: false,
+      };
+
+    case CLOSE_MODAL:
+      return {
+        ...state,
+        showModal: false,
       };
 
     default:

@@ -30,6 +30,7 @@ import {
   register,
   store_User_Coordinates,
   store_User_Location,
+  get_Access_Token,
 } from '../../redux/actions/userActions';
 import {getUserCallingCode} from '../../utils/loggedInUserType';
 import {getGenres} from '../../redux/actions/getGenreActions';
@@ -37,6 +38,7 @@ import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {
   CLEAR_REGISTER_ERROR,
   CLEAR_REGISTER_DATA,
+  CLEAR_ACCESS_TOKEN,
 } from '../../redux/constants/index';
 import {check, PERMISSIONS, RESULTS, request} from 'react-native-permissions';
 import LoadingAnime from '../../Components/Loading/Loading';
@@ -83,12 +85,19 @@ const SignInScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [googleErr, setGoogleErr] = useState('');
   const [countryModal, setCountryModal] = useState(false);
+  const [fromSignUp, setFromSignUp] = useState(false);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const onPageChange = () => {
     setPosition(position + 1);
   };
+  const getAccessToken = useSelector(state => state.getAccessToken);
+  const {
+    loading: accessTokenLoading,
+    error: accessTokenError,
+    accessToken,
+  } = getAccessToken;
 
   const storeUserLocation = useSelector(state => state.storeUserLocation);
   const {
@@ -113,6 +122,27 @@ const SignInScreen = () => {
   const chooseDOB = date => {
     setDOB(date);
   };
+
+  useEffect(() => {
+    const phoneNumber = countryCode?.concat(bookingNumber);
+    if (fromSignUp && accessToken && accessToken !== '') {
+      dispatch(
+        register(
+          firstName,
+          lastName,
+          emailAddress,
+          phoneNumber,
+          stageName,
+          password,
+          website,
+          city,
+          countryShortCode,
+          dob,
+          accessToken,
+        ),
+      );
+    }
+  }, [accessToken]);
 
   useEffect(() => {
     setCountryShortCode(userCountryCode);
@@ -183,7 +213,7 @@ const SignInScreen = () => {
   const {error, status, loading, message} = userRegister;
 
   const submitForm = () => {
-    const phoneNumber = countryCode.concat(bookingNumber);
+    const phoneNumber = countryCode?.concat(bookingNumber);
 
     setClientErr('');
     if (
@@ -196,20 +226,8 @@ const SignInScreen = () => {
       countryShortCode ||
       dob
     ) {
-      dispatch(
-        register(
-          firstName,
-          lastName,
-          emailAddress,
-          phoneNumber,
-          stageName,
-          password,
-          website,
-          city,
-          countryShortCode,
-          dob,
-        ),
-      );
+      setFromSignUp(true);
+      dispatch(get_Access_Token());
     } else {
       setClientErr('All fields are required');
     }
@@ -232,18 +250,22 @@ const SignInScreen = () => {
       setCity('');
       setCountryShortCode('');
       setDOB('');
-      setTimeout(() => {
-        navigation.navigate('EmailVerification');
-      }, 2000);
+      dispatch({type: CLEAR_ACCESS_TOKEN});
+      dispatch({
+        type: CLEAR_REGISTER_DATA,
+      });
+      setFromSignUp(false);
+      navigation.navigate('EmailVerification');
+      // let timer = setTimeout(() => {}, 3500);
     }
-    return () => clearTimeout();
+    // return () => clearTimeout(timer);
   }, [status]);
 
   useEffect(() => {
     if (address != '') {
       // const data = State.getStatesOfCountry(countryShortCode);
       const data = Data.getAllStatesFromCountry(address);
-      console.log(data, 'STATE');
+      // console.log(data, 'STATE');
       if (data) {
         setStatesData(data);
       }
@@ -251,13 +273,15 @@ const SignInScreen = () => {
   }, [address]);
 
   let mainView = null;
+  let accessView = null;
   let mainPosition = null;
   let stepView = null;
+
   if (error) {
     mainView = (
       <ErrorPopup
         errorstate={error}
-        clearTime={4000}
+        clearTime={3000}
         clearError={() => dispatch({type: CLEAR_REGISTER_ERROR})}>
         {error}
       </ErrorPopup>
@@ -268,7 +292,7 @@ const SignInScreen = () => {
     mainView = (
       <ErrorPopup
         errorstate={clientErr}
-        clearTime={4000}
+        clearTime={3000}
         clearError={() => setClientErr('')}>
         {clientErr}
       </ErrorPopup>
@@ -277,16 +301,27 @@ const SignInScreen = () => {
     mainView = (
       <SuccessPopUp
         successState={message}
-        clearTime={2000}
+        clearTime={3000}
         clearSuccess={() => dispatch({type: CLEAR_REGISTER_ERROR})}>
         {message}
       </SuccessPopUp>
+    );
+  } else if (accessTokenLoading) {
+    mainView = <LoadingAnime width={70} height={70} />;
+  } else if (accessTokenError) {
+    mainView = (
+      <ErrorPopup
+        errorstate={accessTokenError}
+        clearTime={3000}
+        clearError={() => dispatch({type: CLEAR_ACCESS_TOKEN})}>
+        {accessTokenError}
+      </ErrorPopup>
     );
   } else if (googleErr) {
     mainView = (
       <ErrorPopup
         errorstate={googleErr}
-        clearTime={4000}
+        clearTime={3000}
         clearError={() => setGoogleErr('')}>
         {googleErr}
       </ErrorPopup>

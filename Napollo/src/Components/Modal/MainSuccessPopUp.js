@@ -9,7 +9,7 @@ const SmallSuccessPopUpModal = props => {
     if (props.successState !== '' || props.successState !== null) {
       setShowModal(true);
     }
-    setTimeout(
+    let timer = setTimeout(
       () => {
         // setShowModal(false);
         // if (props.clearClientsErr) {
@@ -24,7 +24,7 @@ const SmallSuccessPopUpModal = props => {
       },
       props.clearTime ? props.clearTime : 500,
     );
-     return () => clearTimeout(() => {}, props.clearTime);
+    return () => clearTimeout(timer);
   }, [props.successState]);
 
   if (props.successState === '' || props.successState === null) {
@@ -61,5 +61,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     paddingVertical: 5,
+    zIndex: 500,
   },
 });

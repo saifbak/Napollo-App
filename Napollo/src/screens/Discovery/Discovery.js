@@ -28,7 +28,7 @@ import DiscoverSlide from './DiscoverSlide';
 import Icon from 'react-native-vector-icons/Ionicons';
 import TrackPlayer, {State} from 'react-native-track-player';
 import LoadingAnime from '../../Components/Loading/Loading';
-import ErrorView from '../../Components/ErrorScreen/ErrorScreen';
+import ErrorView from '../../Components/ErrorScreen/DiscoveryErrorScreen';
 import FocusEffect from './useFocusEffect';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 
@@ -41,7 +41,7 @@ class Discovery extends Component {
     currentIndex: 0,
 
     page: 0,
-    size: 30,
+    size: 50,
     data: this.props.getTrailerMedia,
     activeTab: false,
     genreValue: 'Hip-Hop & Rap',
@@ -103,6 +103,7 @@ class Discovery extends Component {
     //     this.context.play(this.props.getTrailerMedia.data);
     //   }
     // this.context.resetCurrentTrack();
+    this.props.get_Trailer_Media(this.state.page, this.state.size);
     this.setState({
       state: this.props.storeUserLocation.state,
     });
@@ -453,23 +454,24 @@ class Discovery extends Component {
     }
 
     let mainView = null;
-    if (this.props.getTrailerMedia.data.length <= 0) {
-      mainView = (
-        <View
-          style={{
-            width: '100%',
-            height: SCREEN_HEIGHT,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text
-            style={{color: '#fff', fontSize: scale(20), textAlign: 'center'}}>
-            Loading more songs...
-          </Text>
-        </View>
-      );
-    } else {
+    if (
+      !this.props.getTrailerMedia.loading &&
+      this.props.getTrailerMedia.data.length > 0
+    ) {
+      // mainView = loadingView = <LoadingAnime width={70} height={70} />;
       mainView = renderSongs();
+      // <View
+      //   style={{
+      //     width: '100%',
+      //     height: SCREEN_HEIGHT,
+      //     alignItems: 'center',
+      //     justifyContent: 'center',
+      //   }}>
+      //   <Text
+      //     style={{color: '#fff', fontSize: scale(20), textAlign: 'center'}}>
+      //     Loading more songs...
+      //   </Text>
+      // </View>
     }
     return (
       <SafeAreaView style={styles.container}>

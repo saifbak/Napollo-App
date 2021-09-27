@@ -31,6 +31,7 @@ import {
   userFollowerListReducer,
   grantLocationPermissionReducer,
   getAllUsersActivitiesReducer,
+  notActiveAccountReducer,
 } from './reducers/userReducer';
 
 import {
@@ -38,6 +39,8 @@ import {
   verifyPhoneNumberReducer,
   resendEmailOtpReducer,
   resendPhoneNumberOtpReducer,
+  getRecoveryCodeReducer,
+  resetForgetPasswordReducer,
 } from './reducers/OtpReducers/index';
 
 import {
@@ -149,6 +152,9 @@ const rootReducer = combineReducers({
   singleListenerModal: singleListenerModalReducer,
   getListenerLikedMedia: getListenerLikedMediaReducer,
   getSingleListenerLikedMedia: getSingleListenerLikedMediaReducer,
+  getRecoveryCode: getRecoveryCodeReducer,
+  notActiveAccount: notActiveAccountReducer,
+  resetForgetPassword: resetForgetPasswordReducer,
   getAlbumSearch: getAlbumSearchReducer,
   getArtistSearch: getArtistSearchReducer,
   getGenreSearch: getGenreSearchReducer,

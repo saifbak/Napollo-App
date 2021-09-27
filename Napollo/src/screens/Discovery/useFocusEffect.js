@@ -138,21 +138,21 @@ const FocusEffect = ({page, size, unLike, chooseState, countryCode}) => {
     React.useCallback(() => {
       // resetTrack();
       resetCurrentTrack();
-      dispatch({type: CLEAR_TRAILER_MEDIA_ERROR});
+      // dispatch({type: CLEAR_TRAILER_MEDIA_ERROR});
       const songData1 = [];
-      if (data && data.length <= 0 && loading === false) {
-        dispatch(get_Trailer_Media(currentPage, currentSize));
-        if (data) {
-          data.forEach(item =>
-            songData1.push({
-              ...item,
-              url: item.trailer,
-              artist: item.ownerAccountUser.username,
-            }),
-          );
-          play(songData1);
-        }
-      }
+      // if (data && data.length <= 0 && loading === false) {
+      //   dispatch(get_Trailer_Media(currentPage, currentSize));
+      //   if (data) {
+      //     data.forEach(item =>
+      //       songData1.push({
+      //         ...item,
+      //         url: item.trailer,
+      //         artist: item.ownerAccountUser.username,
+      //       }),
+      //     );
+      //     play(songData1);
+      //   }
+      // }
 
       const songData = [];
       if (data && data.length > 0 && loading !== true) {
