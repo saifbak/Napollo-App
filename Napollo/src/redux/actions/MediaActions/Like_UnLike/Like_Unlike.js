@@ -37,6 +37,7 @@ export const likeMedia =
       };
 
       const {data} = await axios.get(`${BASE_URL2}/media/${id}/like`, config);
+      // axiosInstance()
 
       dispatch({
         type: LIKE_MEDIA_SUCCESS,

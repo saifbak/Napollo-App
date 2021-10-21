@@ -22,6 +22,19 @@ import {
   ADD_SONG_TO_ALBUM_FAIL,
   ADD_SONG_TO_ALBUM_LOADING,
   ADD_SONG_TO_ALBUM_SUCCESS,
+  LIKE_ALBUM_FAIL,
+  LIKE_ALBUM_LOADING,
+  LIKE_ALBUM_SUCCESS,
+  UN_LIKE_ALBUM_FAIL,
+  UN_LIKE_ALBUM_LOADING,
+  UN_LIKE_ALBUM_SUCCESS,
+  GET_USER_LIKED_ALBUMS_FAIL,
+  GET_USER_LIKED_ALBUMS_LOADING,
+  GET_USER_LIKED_ALBUMS_SUCCESS,
+  ADD_ALBUM_TO_LIKED_LIST,
+  REMOVE_ALBUM_FROM_LIKED_LIST,
+  STORE_USER_LIKED_ALBUM,
+  CLEAR_DATA,
   // CLEAR_ERR
 } from '../../../constants/index';
 
@@ -273,6 +286,143 @@ export const storeActiveAlbumDetailsReducer = (
         id: payload.id,
         owner: payload.owner,
         url: payload.url,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const getUserLikedAlbumsReducer = (
+  state = {loading: false, error: '', data: []},
+  {type, payload},
+) => {
+  switch (type) {
+    case GET_USER_LIKED_ALBUMS_LOADING:
+      return {
+        ...state,
+        laoding: true,
+        error: '',
+      };
+    case GET_USER_LIKED_ALBUMS_SUCCESS:
+      return {
+        ...state,
+        laoding: false,
+        error: '',
+        data: payload,
+      };
+    case GET_USER_LIKED_ALBUMS_FAIL:
+      return {
+        ...state,
+        laoding: false,
+        error: payload,
+        data: [],
+      };
+    case CLEAR_DATA:
+      return {
+        ...state,
+        laoding: false,
+        error: '',
+        data: [],
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const LikeAlbumReducer = (
+  state = {loading: false, error: null, status: null, message: ''},
+  {type, payload},
+) => {
+  switch (type) {
+    case LIKE_ALBUM_LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
+    case LIKE_ALBUM_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        status: payload.responseStatus,
+        message: payload.responseDescription,
+      };
+    case LIKE_ALBUM_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        status: null,
+        message: '',
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const UnLikeAlbumReducer = (
+  state = {loading: false, error: null, status: null, message: ''},
+  {type, payload},
+) => {
+  switch (type) {
+    case UN_LIKE_ALBUM_LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
+    case UN_LIKE_ALBUM_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        status: payload.responseStatus,
+        message: payload.responseMessage,
+      };
+    case UN_LIKE_ALBUM_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        status: null,
+        message: '',
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const storeUserLikedAlbumReducer = (
+  state = {albumList: []},
+  {type, payload},
+) => {
+  switch (type) {
+    case STORE_USER_LIKED_ALBUM:
+      return {
+        ...state,
+        albumList: [...payload],
+      };
+    case ADD_ALBUM_TO_LIKED_LIST:
+      const mediaId = payload;
+      let newList = [];
+      newList = [...state.albumList, mediaId];
+      return {
+        ...state,
+        albumList: newList,
+      };
+
+    case REMOVE_ALBUM_FROM_LIKED_LIST:
+      const unLikeId = payload;
+      let newunLikedList = [];
+      if (state.albumList.includes(unLikeId)) {
+        newunLikedList = state.albumList.filter(x => x !== unLikeId);
+      }
+      return {
+        ...state,
+        albumList: newunLikedList,
       };
 
     default:

@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {openCommentModal} from '../../../../../../redux/actions/commentModal';
 
-const Footer = ({onPress}) => {
+const Footer = (props) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   // onPress={() => navigation.navigate('Comment')}
@@ -17,6 +17,7 @@ const Footer = ({onPress}) => {
       <LikeBtn />
 
       <CommentBtn
+        comment={props.comment}
         // onPress={() => navigation.navigate('Comment')}
         onPress={() => dispatch(openCommentModal())}
       />

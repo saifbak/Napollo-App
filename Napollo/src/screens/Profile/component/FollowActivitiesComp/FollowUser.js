@@ -38,7 +38,6 @@ const CreatePlaylist = props => {
               source={{uri: accountUser?.profileUrl}}
             />
           )}
-          {/* <Image source={ImageArt} style={styles.image} /> */}
         </View>
         <View style={styles.artistDetails}>
           <View style={styles.nameCont}>

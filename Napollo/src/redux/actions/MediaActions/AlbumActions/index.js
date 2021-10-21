@@ -22,6 +22,18 @@ import {
   ADD_SONG_TO_ALBUM_FAIL,
   ADD_SONG_TO_ALBUM_LOADING,
   ADD_SONG_TO_ALBUM_SUCCESS,
+  LIKE_ALBUM_FAIL,
+  LIKE_ALBUM_LOADING,
+  LIKE_ALBUM_SUCCESS,
+  UN_LIKE_ALBUM_FAIL,
+  UN_LIKE_ALBUM_LOADING,
+  UN_LIKE_ALBUM_SUCCESS,
+  GET_USER_LIKED_ALBUMS_FAIL,
+  GET_USER_LIKED_ALBUMS_LOADING,
+  GET_USER_LIKED_ALBUMS_SUCCESS,
+  ADD_ALBUM_TO_LIKED_LIST,
+  REMOVE_ALBUM_FROM_LIKED_LIST,
+  STORE_USER_LIKED_ALBUM,
 } from '../../../constants/index';
 
 import {BASE_URL2} from '@env';
@@ -40,7 +52,6 @@ export const create_Album =
       dispatch({
         type: CREATE_ALBUM_LOADING,
       });
-      console.log(fileType, 'FILETYPE');
       const token = getState().userLogin.token;
       const authorization = `Bearer ${token}`;
       const data = new FormData();
@@ -294,5 +305,125 @@ export const store_Active_Album_Details = data => {
   return {
     type: STORE_ACTIVE_ALBUM_DETAILS,
     payload: data,
+  };
+};
+
+export const get_User_Liked_Album =
+  (page = 0, size = 200) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({type: GET_USER_LIKED_ALBUMS_LOADING});
+
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+        },
+        params: {
+          page,
+          size,
+        },
+      };
+      const {data} = axios.get(`${BASE_URL2}/album/likes`, config);
+
+      dispatch({
+        type: GET_USER_LIKED_ALBUMS_SUCCESS,
+        payload: data.responseBody,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, GET_USER_LIKED_ALBUMS_FAIL);
+    }
+  };
+
+export const likeMedia =
+  (id, like = true, page = 0, size = 200) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: LIKE_ALBUM_LOADING,
+      });
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+      const config = {
+        params: {
+          like,
+        },
+        headers: {
+          Authorization: authorization,
+        },
+      };
+
+      const {data} = await axios.get(`${BASE_URL2}/album/${id}/like`, config);
+      // axiosInstance()
+
+      dispatch({
+        type: LIKE_ALBUM_SUCCESS,
+        payload: data,
+      });
+      if (data) {
+        dispatch(get_User_Liked_Album(page, size));
+      }
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, LIKE_ALBUM_FAIL);
+      // dispatch({
+      //   type: LIKE_MEDIA_FAIL,
+      //   payload:
+      //     error.response && error.response.data.responseDescription
+      //       ? error.response.data.responseDescription
+      //       : error.message,
+      // });
+    }
+  };
+
+export const unLikeAlbum =
+  (id, like = false, page = 0, size = 200) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: UN_LIKE_ALBUM_LOADING,
+      });
+      const token = getState().userLogin.token;
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+        },
+        params: {
+          like,
+        },
+      };
+
+      const {data} = await axios.get(`${BASE_URL2}/album/${id}/like`, config);
+
+      dispatch({
+        type: UN_LIKE_ALBUM_SUCCESS,
+        payload: data,
+      });
+      if (data) {
+        dispatch(get_User_Liked_Album(page, size));
+      }
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, UN_LIKE_ALBUM_FAIL);
+      // dispatch({
+      //   type: UNLIKE_MEDIA_FAIL,
+      //   payload:
+      //     error.response && error.response.data.responseDescription
+      //       ? error.response.data.responseDescription
+      //       : error.message,
+      // });
+    }
+  };
+
+export const addToAlbumLikedList = albumId => {
+  return {
+    type: ADD_ALBUM_TO_LIKED_LIST,
+    payload: albumId,
+  };
+};
+export const removeFromAlbumLikedList = albumId => {
+  return {
+    type: REMOVE_ALBUM_FROM_LIKED_LIST,
+    payload: albumId,
   };
 };

@@ -13,7 +13,11 @@ const FollowBtn = props => {
   const dispatch = useDispatch();
   const [userFollowers, setUserFollowers] = useState(props.followerCount);
   const userFollowerList = useSelector(state => state.userFollowerList);
-  const {followerList, status} = userFollowerList;
+  const storeUserFollowerList = useSelector(
+    state => state.storeUserFollowerList,
+  );
+  const {followerList} = storeUserFollowerList;
+  // const {followerList, status} = userFollowerList;
 
   const checkStatus = () => {
     if (followerList.includes(props.id)) {

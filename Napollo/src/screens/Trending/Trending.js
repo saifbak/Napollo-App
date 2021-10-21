@@ -138,26 +138,32 @@ const Trending = () => {
         <CommonHeader title="Trending" />
         {trendingDataLoading && <LoadingAnime width={60} height={60} />}
         <View style={styles.content}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            // onPress={onPress}
-            style={styles.search}>
+          <View style={styles.search}>
             <Icon name="search" color="#999" size={scale(20)} />
-            <Text
+            <TextInput
               style={{
                 paddingLeft: 10,
                 color: '#999',
                 fontSize: scale(12),
                 fontFamily: 'Helvetica-Medium',
-              }}>
-              Search
-            </Text>
-          </TouchableOpacity>
-          <View style={{width: '100%', marginTop: scale(20)}}>
+                width: '80%',
+                backgroundColor: 'transparent',
+              }}
+              placeholder="Search"
+              placeholderTextColor="#999"
+              value={text}
+              onChangeText={val => setText(val)}
+            />
+          </View>
+          <View style={{width: '100%', marginTop: scale(20), flex: 1}}>
             <ScrollView
               bounces={false}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{paddingLeft: 20, width: '100%'}}
+              contentContainerStyle={{
+                paddingLeft: 20,
+                width: '100%',
+                paddingBottom: 20,
+              }}
               scrollEventThrottle={16}>
               {mainTrendingView}
             </ScrollView>

@@ -66,6 +66,14 @@ import {
   SHOW_NOT_ACTIVE_ACCOUNT_MODAL,
   HIDE_NOT_ACTIVE_ACCOUNT_MODAL,
   CLOSE_MODAL,
+  GET_USER_NOTIFICATIONS_FAIL,
+  GET_USER_NOTIFICATIONS_LOADING,
+  GET_USER_NOTIFICATIONS_SUCCESS,
+  GET_USER_FOLLOWER_LIST_FAIL,
+  GET_USER_FOLLOWER_LIST_LOADING,
+  GET_USER_FOLLOWER_LIST_SUCCESS,
+  STORE_USER_FOLLOWER_LIST,
+  CLEAR_DATA,
 } from '../constants/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {State} from 'react-native-gesture-handler';
@@ -628,7 +636,7 @@ export const getAllUsersActivitiesReducer = (
         ...state,
         loading: true,
         error: '',
-        data: [],
+        // data: [],
       };
     case GET_USER_ACTIVITIES_SUCCESS:
       return {
@@ -638,6 +646,39 @@ export const getAllUsersActivitiesReducer = (
         data: payload,
       };
     case GET_USER_ACTIVITIES_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        data: [],
+      };
+    default:
+      return state;
+  }
+};
+export const getAllUsersNotificationsReducer = (
+  state = {
+    loading: false,
+    error: '',
+    data: [],
+  },
+  {type, payload},
+) => {
+  switch (type) {
+    case GET_USER_NOTIFICATIONS_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+      };
+    case GET_USER_NOTIFICATIONS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        data: payload,
+      };
+    case GET_USER_NOTIFICATIONS_FAIL:
       return {
         ...state,
         loading: false,
@@ -818,6 +859,84 @@ export const singleUserModalReducer = (
   }
 };
 
+export const getUserFollowerListReducer = (
+  state = {loading: false, error: '', data: []},
+  {type, payload},
+) => {
+  switch (type) {
+    case GET_USER_FOLLOWER_LIST_LOADING:
+      return {
+        ...state,
+        loading: true,
+        error: '',
+      };
+    case GET_USER_FOLLOWER_LIST_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: '',
+        data: payload,
+      };
+    case GET_USER_FOLLOWER_LIST_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        data: [],
+      };
+    case CLEAR_DATA:
+      return {
+        ...state,
+        loading: false,
+        error: payload,
+        data: [],
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const storeUserFollowerListReducer = (
+  state = {followerList: []},
+  {type, payload},
+) => {
+  switch (type) {
+    case STORE_USER_FOLLOWER_LIST:
+      return {
+        ...state,
+        followerList: [...payload],
+      };
+    case ADD_USER_TO_FOLLOWED_LIST:
+      const id = payload;
+      let newList = [];
+      newList = [...state.followerList, id];
+      return {
+        ...state,
+        followerList: newList,
+      };
+
+    case REMOVE_USER_FROM_FOLLOWED_LIST:
+      const unLikeId = payload;
+      let newunLikedList = [];
+      if (state.followerList.includes(unLikeId)) {
+        newunLikedList = state.followerList.filter(x => x !== unLikeId);
+      }
+      return {
+        ...state,
+        followerList: newunLikedList,
+      };
+    case CLEAR_DATA:
+      return {
+        ...state,
+        followerList: [],
+      };
+
+    default:
+      return state;
+  }
+};
+
 export const userFollowerListReducer = (
   state = {followerList: [], status: false},
   {type, payload},
@@ -844,6 +963,11 @@ export const userFollowerListReducer = (
         followerList: newunLikedList,
         status: false,
       };
+    case CLEAR_DATA:
+      return {
+        ...state,
+        followerList: [],
+      };
 
     default:
       return state;
@@ -864,6 +988,6 @@ export const grantLocationPermissionReducer = (
       };
 
     default:
-      return State;
+      return state;
   }
 };

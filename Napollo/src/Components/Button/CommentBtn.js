@@ -10,7 +10,7 @@ import {
   mainNumberFormat,
 } from '../../utils/loggedInUserType';
 
-const CommentBtn = ({onPress}) => {
+const CommentBtn = ({onPress, comment}) => {
   const dispatch = useDispatch();
 
   return (
@@ -33,7 +33,7 @@ const CommentBtn = ({onPress}) => {
             // marginTop: 2,
             fontFamily: 'Helvetica-Medium',
           }}>
-          {mainNumberFormat(100)} comments
+          {mainNumberFormat(comment)} comments
         </Text>
       </View>
     </TouchableOpacity>

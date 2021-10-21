@@ -60,6 +60,13 @@ import {
   GET_USER_ACTIVITIES_FAIL,
   GET_USER_ACTIVITIES_LOADING,
   GET_USER_ACTIVITIES_SUCCESS,
+  GET_USER_NOTIFICATIONS_FAIL,
+  GET_USER_NOTIFICATIONS_LOADING,
+  GET_USER_NOTIFICATIONS_SUCCESS,
+  GET_USER_FOLLOWER_LIST_FAIL,
+  GET_USER_FOLLOWER_LIST_LOADING,
+  GET_USER_FOLLOWER_LIST_SUCCESS,
+  CLEAR_DATA,
 } from '../constants/index';
 import axios from 'axios';
 import {Platform} from 'react-native';
@@ -140,6 +147,7 @@ export const logout = () => dispatch => {
     type: CLEAR_ALL_USER_PLAYLIST_ON_LOGOUT,
   });
   dispatch({type: CLEAR_ALL_USER_ALBUM_ON_LOGOUT});
+  dispatch({type: CLEAR_DATA});
 };
 
 export const register =
@@ -154,7 +162,7 @@ export const register =
     state,
     countryCode,
     dateOfBirth,
-    accessTokens
+    accessTokens,
   ) =>
   async (dispatch, getState) => {
     try {
@@ -342,6 +350,41 @@ export const get_User_Activities =
       });
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, GET_USER_ACTIVITIES_FAIL);
+    }
+  };
+export const get_User_Notifications =
+  (page = 0, size = 100) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: GET_USER_NOTIFICATIONS_LOADING,
+      });
+
+      const token = getState().userLogin.token;
+
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'application/json',
+        },
+        params: {
+          page,
+          size,
+        },
+      };
+
+      const {data} = await axios.get(
+        `${BASE_URL2}/activity/notifications`,
+        config,
+      );
+      console.log(data, 'NOTIFICATIONS');
+      dispatch({
+        type: GET_USER_NOTIFICATIONS_SUCCESS,
+        payload: data.responseBody.content,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, GET_USER_NOTIFICATIONS_FAIL);
     }
   };
 
@@ -683,6 +726,9 @@ export const follow_Artist =
         type: FOLLOW_ARTIST_SUCCESS,
         payload: res,
       });
+      if (res) {
+        dispatch(get_User_Follower_List());
+      }
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, FOLLOW_ARTIST_FAIL);
       // dispatch({
@@ -716,11 +762,15 @@ export const unFollow_Artist =
       };
 
       const res = await axios.get(`${BASE_URL2}/accountuser/follow`, config);
-      console.log(res.data, 'UNFOLLOW SUCCESSFUL');
+      // console.log(res.data, 'UNFOLLOW SUCCESSFUL');
+
       dispatch({
         type: UNFOLLOW_ARTIST_SUCCESS,
         payload: res,
       });
+      if (res) {
+        dispatch(get_User_Follower_List());
+      }
     } catch (error) {
       logoutUserWhenTokenExpires(dispatch, error, UNFOLLOW_ARTIST_FAIL);
       // dispatch({
@@ -730,6 +780,41 @@ export const unFollow_Artist =
       //       ? error.response.data.responseDescription
       //       : error.message,
       // });
+    }
+  };
+
+export const get_User_Follower_List =
+  (page = 0, size = 200) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({type: GET_USER_FOLLOWER_LIST_LOADING});
+
+      const token = getState().userLogin.token;
+
+      const authorization = `Bearer ${token}`;
+      const config = {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'application/json',
+        },
+        params: {
+          page,
+          size,
+        },
+      };
+
+      const {data} = await axios.get(
+        `${BASE_URL2}/accountuser/followers`,
+        config,
+      );
+      console.log(data, 'USER FOLLOWERS DATA');
+
+      dispatch({
+        type: GET_USER_FOLLOWER_LIST_SUCCESS,
+        payload: data.responseBody,
+      });
+    } catch (error) {
+      logoutUserWhenTokenExpires(dispatch, error, GET_USER_FOLLOWER_LIST_FAIL);
     }
   };
 

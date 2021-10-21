@@ -331,16 +331,7 @@ const ArtistEditProfile = (props) => {
               <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{paddingTop: 20}}>
-                {/* <ImageBackground
-                  source={{uri: headerImage}}
-                  style={styles.backgroundImage}>
-                
-                  <TouchableOpacity
-                    activeOpacity={0.6}
-                    onPress={() => openHeaderImageBottomSheet()}>
-                    <CameraIcon color="#fff" width={50} height={50} />
-                  </TouchableOpacity>
-                </ImageBackground> */}
+
                 <View style={styles.subContent}>
                   <View style={styles.profileImage}>
                     <ImageComponent
@@ -405,22 +396,7 @@ const ArtistEditProfile = (props) => {
                     </View>
                   </View>
                   {/* Single Input */}
-                  {/* <View style={styles.singleInput}>
-                    <Text
-                      style={{
-                        color: '#eee',
-                        fontSize: hp('2%'),
-                        fontFamily: 'Helvetica-Bold',
-                      }}>
-                      Username
-                    </Text>
-                    <TextInput
-                      style={styles.input}
-                      value={username}
-                      onChangeText={(val) => setUserName(val)}
-                      keyboardType="default"
-                    />
-                  </View> */}
+
                   {/* Single Input */}
                   <View style={styles.singleInput}>
                     <Text
@@ -451,32 +427,7 @@ const ArtistEditProfile = (props) => {
                         changeCountry={(val) => setCountryCode(val)}
                         openModal={() => setShowCountryModal(!showCountryModal)}
                       />
-                      {/* <TouchableOpacity
-                          activeOpacity={0.7}
-                          onPress={() => setShowCountryModal(true)}
-                          hitSlop={{top: 10, left: 10, right: 10, bottom: 10}}>
-                          <Icon
-                            name="chevron-down"
-                            size={18}
-                            style={[styles.inputIcon, {color: '#999'}]}
-                          />
-                        </TouchableOpacity> */}
-                      {/* <TextInput
-                          placeholder="country"
-                          placeholderTextColor="#484848"
-                          value={country}
-                          onChangeText={props.onChangeAddress}
-                          style={{width: '80%', color: '#fff'}}
-                        />
-                        <TouchableOpacity
-                          activeOpacity={0.7}
-                          hitSlop={{top: 10, left: 10, right: 10, bottom: 10}}>
-                          <Icon
-                            name="chevron-down"
-                            size={18}
-                            style={[styles.inputIcon, {color: '#999'}]}
-                          />
-                        </TouchableOpacity> */}
+ 
                     </View>
                   </View>
                   <TouchableOpacity
@@ -501,46 +452,7 @@ const ArtistEditProfile = (props) => {
                       />
                     </View>
                   </TouchableOpacity>
-                  {/* </View> */}
 
-                  {/* Song DESCRIPTION */}
-                  {/* <View style={styles.genre}> */}
-                  {/* <Text
-                      style={{
-                        color: '#eee',
-                        marginVertical: 8,
-                        fontSize: hp('2%'),
-                        fontFamily: 'Helvetica-Bold',
-                      }}>
-                      Bio
-                    </Text> */}
-                  {/* Description Input */}
-                  {/* <View style={styles.BioInput}>
-                      <Text
-                        style={{
-                          color: '#eee',
-                          marginVertical: 8,
-                          fontSize: 8,
-                          position: 'absolute',
-                          right: 10,
-                          fontFamily: 'Helvetica-Bold',
-                        }}>
-                        {bio && bio.length} / 400
-                      </Text>
-
-                      <TextInput
-                        multiline={true}
-                        style={{
-                          width: '100%',
-                          paddingHorizontal: 10,
-                          color: '#eee',
-                          paddingTop: 20,
-                        }}
-                        value={bio}
-                        onChangeText={(val) => setBio(val)}
-                      />
-                    </View> */}
-                  {/* </View> */}
                 </View>
               </ScrollView>
             </View>

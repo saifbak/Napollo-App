@@ -1,15 +1,12 @@
-import React, {useEffect, useState, Component, PureComponent} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
-  StyleSheet,
   Text,
   View,
-  Dimensions,
   Image,
   TouchableOpacity,
-  // Modal,
   TextInput,
-  FlatList,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import LoginBtn from '../Button/LoginBtn';
@@ -33,35 +30,29 @@ import GeneralModal from './GeneralModalCont';
 import SongPostView from '../../screens/Home/component/PostSongView/SongPost';
 import SongPostViewDesign from './components/SongPostView';
 import {useSelector, useDispatch} from 'react-redux';
-import {CLEAR_POST_SONG} from '../../redux/constants';
+import {CLEAR_POST_SONG, CLEAR_ERROR} from '../../redux/constants';
 import {getLoggedInUserProfile} from '../../utils/loggedInUserType';
 import {DEFAULT_IMAGE_URI} from '../../utils/ImagePicker';
+import ImageBottomSheetPicker from '../../Components/BottomSheet/ImagePicker';
+import {timeline_Post} from '../../redux/actions/TimelineActions';
+import MainErrorModal from '../../Components/Modal/MainErrorPopUp';
+import MainSuccessModal from '../../Components/Modal/MainSuccessPopUp';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const ArtistPostModal = props => {
   const dispatch = useDispatch();
-
-  const [pics, setPics] = useState('');
+  const [profilePics, setProfilePics] = useState('');
+  const [artistPost, setArtistPost] = useState('');
+  const [profilePicType, setProfilePicType] = useState('');
+  const [emptyErr, setEmptyErr] = useState('');
   const [songsModal, setSongsModal] = useState(false);
   const choosePostSong = useSelector(state => state.choosePostSong);
+  const timelinePost = useSelector(state => state.timelinePost);
+  const {loading, error, message} = timelinePost;
   const {title, id, likeCount, hitCount, image, artist} = choosePostSong;
-  // const artistData = getLoggedInUserProfile('ARTIST');
   const listenerData = getLoggedInUserProfile('LISTENER');
-
-  // const {
-  //   artistProfile: {profilePictureUrl: artistPics},
-  // } = artistData;
   const {
-    userProfile: {
-      firstName,
-      lastName,
-      username,
-      followerCount,
-      followingCount,
-      website,
-      state,
-      country,
-      profileUrl,
-    },
+    userProfile: {firstName, lastName, profileUrl},
   } = listenerData;
 
   const openSongsModal = () => {
@@ -70,35 +61,69 @@ const ArtistPostModal = props => {
   const closeSongsModal = () => {
     setSongsModal(false);
   };
+  const closeSongsModal2 = () => {
+    setProfilePics('');
+    setSongsModal(false);
+  };
   const closeandClear = () => {
     props.closePostModal();
     dispatch({type: CLEAR_POST_SONG});
-    setPics('');
+    setProfilePics('');
+    setArtistPost('');
   };
+  useEffect(() => {
+    if (message && message !== '') {
+      setTimeout(() => {
+        dispatch({type: CLEAR_POST_SONG});
+        dispatch({type: CLEAR_ERROR});
+        setProfilePicType('');
+        setProfilePics('');
+        setArtistPost('');
+        props.closePostModal();
+      }, 4000);
+    }
+    () => clearTimeout();
+  }, [message]);
 
+  // props.closePostModal();
+  // dispatch({type: CLEAR_POST_SONG});
+  // setProfilePics('');
   const submitPost = () => {
-    props.closePostModal();
-    dispatch({type: CLEAR_POST_SONG});
-    setPics('');
+    if (profilePics === '' && artistPost === '') {
+      setEmptyErr('You have nothing to post');
+    } else {
+      dispatch(timeline_Post(artistPost, profilePics, profilePicType));
+    }
   };
 
-  const choosePics = async () => {
-    dispatch({type: CLEAR_POST_SONG});
-    const image = await takePictureFromGallery();
-    setPics(image?.path);
-    console.log(image, 'POST IMAGE');
-  };
   const chooseSong = () => {
-    setPics('');
     setSongsModal(true);
   };
 
+  const chooseProfilePics = val => {
+    setProfilePics(val);
+  };
+  const setPicType = val => {
+    setProfilePicType(val);
+  };
+  const profileImageRef = useRef(null);
+
+  const openProfileImageBottomSheet = () => {
+    dispatch({type: CLEAR_POST_SONG});
+    profileImageRef.current.open();
+  };
+  const closeProfileImageBottomSheet = () => {
+    profileImageRef.current.close();
+  };
   let galleryView = null;
   let songView = null;
-  if (pics || pics !== '') {
+  if (profilePics || profilePics !== '') {
     galleryView = (
       <View style={styles.gallery}>
-        <Image source={{uri: pics}} style={{width: '100%', height: '100%'}} />
+        <Image
+          source={{uri: profilePics}}
+          style={{width: '100%', height: '100%'}}
+        />
       </View>
     );
   }
@@ -150,11 +175,35 @@ const ArtistPostModal = props => {
     );
   }
 
-  // const galleryView = (
-  //   <View style={styles.gallery}>
-  //     <Image source={pics} style={{width: '100%', height: 70}} />
-  //   </View>
-  // );
+  let mainStatusView = null;
+  if (error) {
+    mainStatusView = (
+      <MainErrorModal
+        clearError={() => dispatch({type: CLEAR_ERROR})}
+        clearTime={3000}
+        errorState={error}>
+        {error}
+      </MainErrorModal>
+    );
+  } else if (emptyErr) {
+    mainStatusView = (
+      <MainErrorModal
+        clearError={() => setEmptyErr('')}
+        clearTime={3000}
+        errorState={emptyErr}>
+        {emptyErr}
+      </MainErrorModal>
+    );
+  } else if (message) {
+    mainStatusView = (
+      <MainSuccessModal
+        clearSuccess={() => dispatch({type: CLEAR_ERROR})}
+        clearTime={3000}
+        successState={message}>
+        {message}
+      </MainSuccessModal>
+    );
+  }
 
   return (
     <Modal
@@ -166,95 +215,109 @@ const ArtistPostModal = props => {
         flex: 1,
         marginLeft: 0,
         marginRight: 0,
-        // height,
         marginTop: 0,
         marginBottom: 0,
-        // position: 'absolute',
-        // bottom: 0,
       }}
       onRequestClose={() => props.closePostModal()}
       onSwipeComplete={() => props.closePostModal()}>
-      <View style={styles.modalView}>
-        <GeneralModal
-          // bg="#000"
-          visible={songsModal}
-          closeModal={closeSongsModal}>
-          <SongPostView closeModal={closeSongsModal} />
-        </GeneralModal>
-        <TouchableOpacity
-          hitSlop={{top: 20, left: 20, right: 20, bottom: 20}}
-          activeOpacity={0.8}
-          onPress={() => closeandClear()}
-          style={styles.closeBtn}>
-          <Icon name="close-circle-outline" size={30} color="#f68128" />
-        </TouchableOpacity>
-        <View
-          style={[
-            styles.inputCont,
-            pics || pics !== '' ? {height: '50%'} : {height: '35%'},
-          ]}>
-          {profileUrl === '' || profileUrl === null ? (
-            <View style={styles.thumbNail}>
-              <Text style={[styles.thumbNailName, {marginRight: 10}]}>
-                {firstName ? firstName[0] : null}
-              </Text>
-              <Text style={styles.thumbNailName}>
-                {lastName ? lastName[0] : null}
-              </Text>
-            </View>
-          ) : (
-            <Image style={styles.profileImage} source={{uri: profileUrl}} />
-          )}
-          <View style={styles.secondCont}>
-            <TextInput
-              multiline={true}
-              placeholder="Share something with your fans"
-              placeholderTextColor="#999"
-              style={{
-                color: '#eee',
-                minHeight: 50,
-                fontFamily: 'Helvetica-Medium',
-              }}
+      <KeyboardAwareScrollView contentContainerStyle={{height: '100%'}}>
+        <View style={styles.modalView}>
+          <GeneralModal visible={songsModal} closeModal={closeSongsModal}>
+            <SongPostView
+              closeModal2={closeSongsModal}
+              closeModal={closeSongsModal2}
             />
-            {galleryView}
-            {songView}
-            <View style={styles.postType} />
-            {/* POST CHOICES VIEW */}
-            <View style={styles.postChoice}>
-              <View style={styles.iconContainer}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.singleIcon}
-                  onPress={() => choosePics()}>
-                  <GalleryIcon color="#999" width={20} height={20} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => chooseSong()}
-                  activeOpacity={0.8}
-                  style={styles.singleIcon}>
-                  <MusicIcon color="#999" width={20} height={20} />
-                </TouchableOpacity>
-                {/* <TouchableOpacity activeOpacity={0.8} style={styles.singleIcon}>
+          </GeneralModal>
+          {mainStatusView}
+          <ImageBottomSheetPicker
+            ref={profileImageRef}
+            closeImagePicker={closeProfileImageBottomSheet}
+            chooseImagePicture={val => chooseProfilePics(val)}
+            choosePicType={val => setPicType(val)}
+          />
+          <TouchableOpacity
+            hitSlop={{top: 20, left: 20, right: 20, bottom: 20}}
+            activeOpacity={0.8}
+            onPress={() => closeandClear()}
+            style={styles.closeBtn}>
+            <Icon name="close-circle-outline" size={30} color="#f68128" />
+          </TouchableOpacity>
+          <View
+            style={[
+              styles.inputCont,
+              // profilePics || profilePics !== ''
+              //   ? {height: '50%'}
+              //   : {height: '35%'},
+            ]}>
+            {profileUrl === '' || profileUrl === null ? (
+              <View style={styles.thumbNail}>
+                <Text style={[styles.thumbNailName, {marginRight: 10}]}>
+                  {firstName ? firstName[0] : null}
+                </Text>
+                <Text style={styles.thumbNailName}>
+                  {lastName ? lastName[0] : null}
+                </Text>
+              </View>
+            ) : (
+              <Image style={styles.profileImage} source={{uri: profileUrl}} />
+            )}
+            <View style={styles.secondCont}>
+              <TextInput
+                multiline={true}
+                placeholder="Share something with your fans"
+                placeholderTextColor="#999"
+                value={artistPost}
+                onChangeText={val => setArtistPost(val)}
+                style={{
+                  color: '#eee',
+                  // minHeight: 50,
+                  fontFamily: 'Helvetica-Medium',
+                }}
+              />
+              {galleryView}
+              {songView}
+              <View style={styles.postType} />
+              {/* POST CHOICES VIEW */}
+              <View style={styles.postChoice}>
+                <View style={styles.iconContainer}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={styles.singleIcon}
+                    onPress={() => openProfileImageBottomSheet()}>
+                    <GalleryIcon color="#999" width={20} height={20} />
+                  </TouchableOpacity>
+                  {/* <TouchableOpacity
+                    onPress={() => chooseSong()}
+                    activeOpacity={0.8}
+                    style={styles.singleIcon}>
+                    <MusicIcon color="#999" width={20} height={20} />
+                  </TouchableOpacity> */}
+                  {/* <TouchableOpacity activeOpacity={0.8} style={styles.singleIcon}>
                   <AlbumIcon color="#999" width={20} height={20} />
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={0.8} style={styles.singleIcon}>
                   <ArtistIcon color="#999" width={20} height={20} />
                 </TouchableOpacity> */}
+                </View>
               </View>
             </View>
           </View>
+          {/* POST TYPE */}
+          <View style={{width: '100%', alignItems: 'flex-end', marginTop: 30}}>
+            {loading ? (
+              <ActivityIndicator size="small" color="#f68128" />
+            ) : (
+              <LoginBtn
+                title="Post"
+                width="25%"
+                height="40%"
+                textSize={11}
+                onPress={() => submitPost()}
+              />
+            )}
+          </View>
         </View>
-        {/* POST TYPE */}
-        <View style={{width: '100%', alignItems: 'flex-end', marginTop: 30}}>
-          <LoginBtn
-            title="Post"
-            width="25%"
-            height="40%"
-            textSize={11}
-            onPress={() => submitPost()}
-          />
-        </View>
-      </View>
+      </KeyboardAwareScrollView>
     </Modal>
   );
 };
@@ -268,16 +331,12 @@ const styles = ScaledSheet.create({
     width: '100%',
     backgroundColor: '#1A1A1A',
     height: '100%',
-    // borderTopRightRadius: 10,
-    // borderTopLeftRadius: 10,
     zIndex: 500,
     padding: 15,
-    // flex: 1,
   },
   inputCont: {
     width: '100%',
     flexDirection: 'row',
-    // flex: 1,
     marginTop: 20,
     // backgroundColor: '#fff',
   },
@@ -293,13 +352,9 @@ const styles = ScaledSheet.create({
   },
   postChoice: {
     width: '100%',
-    // marginTop: 20,
-    // paddingLeft: '10%',
     flexDirection: 'row',
-    marginHorizontal: 10,
-    // backgroundColor: '#fff',
-    minHeight: 30,
-    // marginVertical: 10,
+    paddingHorizontal: 10,
+    marginTop: '20@s',
   },
   singleIcon: {
     marginRight: 30,
@@ -317,7 +372,6 @@ const styles = ScaledSheet.create({
     width: '80%',
     justifyContent: 'space-between',
     paddingBottom: 20,
-    minHeight: '100%',
     paddingRight: 10,
   },
   gallery: {

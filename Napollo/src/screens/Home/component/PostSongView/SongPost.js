@@ -67,7 +67,7 @@ const SongPost = props => {
           <TouchableOpacity
             hitSlop={{top: 20, left: 20, right: 20, bottom: 20}}
             activeOpacity={0.8}
-            onPress={() => props.closeModal()}
+            onPress={() => props.closeModal2()}
             style={styles.closeBtn}>
             <Icon name="close-circle-outline" size={30} color="#f68128" />
           </TouchableOpacity>
@@ -95,7 +95,7 @@ const SongPost = props => {
                 fontSize: 15,
                 marginTop: 20,
               }}>
-              You haven't Uploaded any Song yet.
+              You haven't uploaded any Song yet.
             </Text>
           </View>
         ) : (

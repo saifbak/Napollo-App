@@ -10,7 +10,7 @@ const Stack = createStackNavigator();
 const ArtistStack = ({navigation}) => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Artist" component={ArtistScreen} />
+      <Stack.Screen name="MainArtist" component={ArtistScreen} />
     </Stack.Navigator>
   );
 };

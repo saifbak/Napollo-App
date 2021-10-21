@@ -15,9 +15,11 @@ import CustomHeader from '../../Components/CustomHeader/CommonHeader';
 import SingleArtist from './component/SingleArtist';
 import NotificationsHeader from '../Notifications/component/NotificationsHeader';
 import SingleFilterView from './component/SingleFilterView';
+import ArtistContainer from '../../Components/LibrarySongs/components/ArtistComponent';
 import {alphaBets} from '../../data5';
 import {useDispatch, useSelector} from 'react-redux';
 import {get_All_Artist} from '../../redux/actions/artistActions';
+import {get_User_Follower_List} from '../../redux/actions/userActions';
 import LoadingAnime from '../../Components/Loading/Loading';
 import ErrorScreen from '../../Components/ErrorScreen/ErrorScreen';
 import {useFocusEffect} from '@react-navigation/native';
@@ -28,27 +30,35 @@ const data = [];
 
 const ArtistScreen = () => {
   const dispatch = useDispatch();
-  const getAllArtists = useSelector((state) => state.getAllArtists);
+  const getAllArtists = useSelector(state => state.getAllArtists);
   const {artists, error, loading, totalElements, totalPages} = getAllArtists;
+  const getUserFollowerList = useSelector(state => state.getUserFollowerList);
+  const {
+    loading: followLoading,
+    error: followError,
+    data: followData,
+  } = getUserFollowerList;
 
   // Modal
   const [filter, setFilter] = useState(false);
   const [filterValue, setFilterValue] = useState('All');
   const [filteredData, setFilteredData] = useState(artists);
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(5);
+  const [size, setSize] = useState(200);
 
   const showFilter = () => {
     setFilter(!filter);
   };
-  const fiterArtistData = (val) => {
+  const fiterArtistData = val => {
     if (val !== 'All' && val !== '') {
-      const filtered = artists.filter(
-        (item) => item.firstName?.toLowerCase().indexOf(val.toLowerCase()) >= 0,
-      );
+      const filtered = followData
+        .filter(item => item.accountUserType === 'ARTIST')
+        .filter(item =>
+          item.username?.toLowerCase().startsWith(val.toLowerCase()),
+        );
       return filtered;
     } else {
-      return artists;
+      return followData;
     }
   };
 
@@ -56,98 +66,83 @@ const ArtistScreen = () => {
     setFilterValue('All');
     // setFilteredData(artists)
   };
-  const chooseFilterValue = (val) => {
+  const chooseFilterValue = val => {
     setFilterValue(val);
     fiterArtistData(val);
   };
 
   const getArtists = () => {
-    dispatch(get_All_Artist(page, size));
+    dispatch(get_User_Follower_List(page, size));
   };
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     dispatch(get_All_Artist(page, size));
-  //     if (artists !== []) {
-  //       setFilteredData(artists);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(get_User_Follower_List(page, size));
+    }, []),
+  );
+
+  // const loadMoreData = () => {
+  //   console.log('hello');
+  //   if (page <= totalPages - 1) {
+  //     setPage(page + 1);
+  //     dispatch(get_User_Follower_List(page, size));
+  //     setFilteredData(prevData => prevData.concat(artists));
+  //     if (filteredData !== artists) {
+  //       setFilteredData(filteredData.concat(artists));
   //     }
-  //   }, []),
-  // );
-  // useEffect(() => {
-  //   if (loading === false) {
-  //     setFilteredData(artists);
   //   }
-  // }, [page]);
-  // console.log(filteredData, 'filteredData');
-
-  const loadMoreData = () => {
-    console.log('hello');
-    if (page <= totalPages - 1) {
-      setPage(page + 1);
-      dispatch(get_All_Artist(page, size));
-      setFilteredData((prevData) => prevData.concat(artists));
-      // if (filteredData !== artists) {
-      //   setFilteredData(filteredData.concat(artists));
-      // }
-    }
-    console.log(page, 'PAGEr');
-    // setFilteredData(filteredData.concat(artists));
-  };
-  const renderLoader = () => {
-    return (
-      <View style={styles.loader}>
-        <ActivityIndicator color="#F68128" size="large" />
-      </View>
-    );
-  };
+  //   console.log(page, 'PAGEr');
+  //   setFilteredData(filteredData.concat(artists));
+  // };
+  // const renderLoader = () => {
+  //   return (
+  //     <View style={styles.loader}>
+  //       <ActivityIndicator color="#F68128" size="large" />
+  //     </View>
+  //   );
+  // };
 
   return (
     <View style={{flex: 1, backgroundColor: '#000'}}>
       <SafeAreaView style={{flex: 1}}>
         <View style={styles.container}>
           {/* <CustomHeader title="Artists" /> */}
-          <NotificationsHeader
-            showBackBtn={true}
-            title="Artists"
-            onPress={() => showFilter()}
-          />
+          <CustomHeader title="Favourite Artists" />
           {/* ModalView */}
 
           {/* <ScrollView
           contentContainerStyle={{width}}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}> */}
-          {loading && <LoadingAnime width={70} height={70} />}
+          {followLoading && <LoadingAnime width={70} height={70} />}
           {error && (
             <ErrorScreen errorTitle={error} onPress={() => getArtists()} />
           )}
           <View style={styles.content}>
-            {filter && (
-              <View style={styles.filterStyle}>
-                <SingleFilterView
-                  title="All"
-                  value={filterValue}
-                  onPress={() => setDefaultData()}
-                />
-                <FlatList
-                  contentContainerStyle={{
-                    paddingBottom: 10,
-                  }}
-                  data={alphaBets}
-                  horizontal={true}
-                  keyExtractor={(item) => String(item.id)}
-                  renderItem={({item}) => (
-                    <>
-                      <SingleFilterView
-                        {...item}
-                        value={filterValue}
-                        onPress={() => chooseFilterValue(item.title)}
-                      />
-                    </>
-                  )}
-                />
-              </View>
-            )}
+            <View style={styles.filterStyle}>
+              <SingleFilterView
+                title="All"
+                value={filterValue}
+                onPress={() => setDefaultData()}
+              />
+              <FlatList
+                contentContainerStyle={{
+                  paddingBottom: 10,
+                }}
+                data={alphaBets}
+                horizontal={true}
+                keyExtractor={item => String(item.id)}
+                renderItem={({item}) => (
+                  <>
+                    <SingleFilterView
+                      {...item}
+                      value={filterValue}
+                      onPress={() => chooseFilterValue(item.title)}
+                    />
+                  </>
+                )}
+              />
+            </View>
 
             <View style={{flex: 1}}>
               {/* {filteredData.length === 0 && (
@@ -170,9 +165,11 @@ const ArtistScreen = () => {
                 }}
                 data={fiterArtistData(filterValue)}
                 // data={fiterArtistData(filterValue)}
-                keyExtractor={(item) => item.artistIdentity}
+                keyExtractor={item => item.id}
                 numColumns={2}
-                renderItem={({item}) => <SingleArtist {...item} />}
+                renderItem={({item}) => (
+                  <ArtistContainer {...item} user={item} />
+                )}
                 // onEndReached={loadMoreData}
                 // onEndReachedThreshold={0.1}
                 // ListFooterComponent={renderLoader}

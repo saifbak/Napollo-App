@@ -3,20 +3,42 @@ import {StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
 import {SharePost} from '../../../../utils/ShareSocals';
 import {DEFAULT_IMAGE_URI} from '../../../../utils/ImagePicker';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  store_Active_User_Details,
+  openSingleUserModal,
+} from '../../../../redux/actions/userActions';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const renderItem = ({icon, title}) => (
-  <View style={{flexDirection: 'row'}}>
-    <Icon name={icon} size={30} color="#999" style={{marginRight: 10}} />
-    <Text style={{color: '#f68128'}}>{title}</Text>
-  </View>
-);
 const BottomSheet = ({onPress}) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const storeActivePost = useSelector(state => state.storeActivePost);
+  const getUserProfile = useSelector(state => state.getUserProfile);
+  const {userProfile} = getUserProfile;
+  const {
+    post: {accountUser},
+  } = storeActivePost;
+  const share = () => {
+    onPress();
+    SharePost(options);
+  };
+
+  const goToArtist = () => {
+    if (userProfile?.username === accountUser?.username) {
+    onPress();
+      navigation.navigate('Profile')
+    } else {
+      dispatch(store_Active_User_Details(accountUser));
+      onPress();
+      dispatch(openSingleUserModal());
+    }
+  };
+
   const arr = [
     {icon: 'share-social-outline', title: 'Share', onPress: () => share()},
-    //    
+    //
     // {icon: 'ios-sync-outline', title: 'Repost @aye post', onPress: () => null},
     // {
     //   icon: 'add-circle-outline',
@@ -26,22 +48,23 @@ const BottomSheet = ({onPress}) => {
 
     {
       icon: 'return-up-forward',
-      title: 'Go to @aye profile page',
-      onPress: () => null,
+      title: `Go to @${accountUser?.username} profile page`,
+      onPress: () => goToArtist(),
     },
-    {icon: 'alert-circle-outline', title: 'Report', onPress: () => null},
+    {
+      icon: 'alert-circle-outline',
+      title: 'Report',
+      onPress: () => console.log('Hello'),
+    },
   ];
   const options = {
     message: 'Test message',
     // type: 'image/jpeg',
     // url: 'https://samplesongs.netlify.app/album-arts/death-bed.jpg',
   };
-  const share = () => {
-    onPress.current.snapTo(1);
-    SharePost(options);
-  };
+
   const navigateShare = () => {
-    onPress.current.snapTo(1);
+    // onPress.current.snapTo(1);
     navigation.navigate('Upload', {screen: 'Upload_Share'});
   };
   return (
@@ -50,17 +73,11 @@ const BottomSheet = ({onPress}) => {
         backgroundColor: '#1A1A1A',
         height: '100%',
         paddingHorizontal: 20,
-        paddingTop: 20,
+        paddingTop: 10,
       }}>
-      <TouchableOpacity
-        activeOpacity={0.6}
-        onPress={() => onPress.current.snapTo(1)}
-        hitSlop={{top: 20, right: 20, left: 20, bottom: 20}}>
-        <View style={styles.bar}></View>
-      </TouchableOpacity>
       <FlatList
         data={arr}
-        keyExtractor={(item) => item.icon}
+        keyExtractor={item => item.icon}
         renderItem={({item}) => (
           <TouchableOpacity
             onPress={() => item.onPress()}

@@ -110,9 +110,9 @@ const SongBottomModal = props => {
     if (artists === username) {
       closeBottomSheet();
     } else {
+      dispatch(store_Active_User_Details(artistDetails));
       closeBottomSheet();
       dispatch(openSingleUserModal());
-      dispatch(store_Active_User_Details(artistDetails));
     }
   };
 

@@ -24,7 +24,10 @@ import {
   get_All_User_Playlist,
   store_Active_Playlist_Details,
 } from '../../../redux/actions/MediaActions/PlayListActions/index';
-import {get_All_Artist} from '../../../redux/actions/artistActions';
+import {
+  get_User_Follower_List,
+  store_Active_User_Details,
+} from '../../../redux/actions/userActions';
 import SmallErrorModalPopUp from '../../../Components/Modal/SmallErrorModalPopUp';
 import {CLEAR_PLAYLIST_ERROR} from '../../../redux/constants';
 import SingleViewHeader from '../component/SingleViewHeader';
@@ -41,6 +44,7 @@ import {
 } from 'react-native-responsive-screen';
 import DiscoveryImage from '../../../assests/images/onBoarding7.jpg';
 import SongsContainer from '../../../Components/LibrarySongs/components/SongsContainer';
+import ArtistContainer from '../../../Components/LibrarySongs/components/ArtistComponent';
 import {scale, ScaledSheet} from 'react-native-size-matters';
 import DiscoveredSongContainer from '../../../Components/LibrarySongs/components/DiscoveredSongsCont';
 
@@ -55,6 +59,12 @@ const MainListenerLibraryPage = () => {
   const getListenerLikedMedia = useSelector(
     state => state.getListenerLikedMedia,
   );
+  const getUserFollowerList = useSelector(state => state.getUserFollowerList);
+  const {
+    loading: followLoading,
+    error: followError,
+    data: followData,
+  } = getUserFollowerList;
   const {
     loading: playlistLoading,
     error: playlistError,
@@ -75,6 +85,9 @@ const MainListenerLibraryPage = () => {
       }
       if (listenerData && listenerData.length <= 0) {
         dispatch(get_Listener_Liked_Media(page, size));
+      }
+      if (followData && followData.length <= 0) {
+        dispatch(get_User_Follower_List(page, size));
       }
     }, []),
   );
@@ -100,6 +113,13 @@ const MainListenerLibraryPage = () => {
       <SongsContainer {...data} allSongs={listenerData} key={index} />
     ));
 
+  const followList = followData
+    ?.filter(item => item.accountUserType === 'ARTIST')
+    .slice(0, 5)
+    .map((item, index) => (
+      <ArtistContainer key={index} user={item} {...item} />
+    ));
+
   const getPlaylistDataAgain = () => {
     dispatch({
       type: CLEAR_PLAYLIST_ERROR,
@@ -110,11 +130,15 @@ const MainListenerLibraryPage = () => {
   const getSongsAgain = () => {
     dispatch(get_Listener_Liked_Media(page, size));
   };
+  const getFollowList = () => {
+    dispatch(get_User_Follower_List(page, size));
+  };
 
   let playlistErrorView = null;
   let playlistLoadingView = null;
   let listenerLoadingView = null;
   let listenerMainStatusView = null;
+  let followMainView = null;
   if (playlistError) {
     playlistErrorView = (
       <TouchableOpacity
@@ -147,6 +171,33 @@ const MainListenerLibraryPage = () => {
   }
   if (listenerLoading) {
     listenerMainStatusView = <ActivityIndicator size="small" color="#F68128" />;
+  }
+  if (followLoading) {
+    followMainView = <ActivityIndicator size="small" color="#F68128" />;
+  } else if (followError) {
+    followMainView = (
+      <TouchableOpacity activeOpacity={0.7} onPress={() => getFollowList()}>
+        <Text
+          style={{
+            color: '#999',
+            fontSize: 12,
+            textAlign: 'center',
+            marginTop: 10,
+          }}>
+          {followError}
+        </Text>
+        <Text
+          style={{
+            color: '#F68128',
+            fontSize: 10,
+            textAlign: 'center',
+            marginTop: 5,
+            fontFamily: 'Helvetica-Bold',
+          }}>
+          Try Again
+        </Text>
+      </TouchableOpacity>
+    );
   }
   if (listenerError) {
     listenerMainStatusView = (
@@ -299,50 +350,13 @@ const MainListenerLibraryPage = () => {
                 )}
               {songList}
             </ScrollView>
-            {/* ARTIST VIEW */}
 
-            {/* <SingleViewHeader
-              title="Artists"
-              onPress={() => navigation.navigate('Artist')}
-            />
-            {artistErrorView}
-            {artistLoadingView}
-            <ScrollView
-              contentContainerStyle={{
-                marginBottom: 15,
-                marginTop: 10,
-              }}
-              horizontal={true}
-              scrollEventThrottle={16}
-              showsHorizontalScrollIndicator={false}>
-              {dataList2}
-            </ScrollView> */}
-            {/* RECENTLY DISCOVERED SONGS*/}
-            {/* <SingleViewHeader
-              title="Recently Discovered"
-              onPress={() => navigation.navigate('Artist')}
-            />
-            <ScrollView
-              contentContainerStyle={{
-                marginBottom: 15,
-                marginTop: 10,
-              }}
-              horizontal={true}
-              scrollEventThrottle={16}
-              showsHorizontalScrollIndicator={false}>
-              
-              <RecentlyDiscovered />
-              <RecentlyDiscovered />
-              <RecentlyDiscovered />
-              <RecentlyDiscovered />
-              <RecentlyDiscovered />
-            </ScrollView> */}
-            {/* RECENTLY DISCOVERED SONGS*/}
-            {/* Songs View */}
+            {/* FOLLOWED USERS View */}
             <SingleViewHeader
-              title="Albums"
-              onPress={() => navigation.navigate('Favorite')}
+              title="Favourite Artists"
+              onPress={() => navigation.navigate('Artist')}
             />
+            {followMainView}
             <ScrollView
               contentContainerStyle={{
                 marginBottom: 15,
@@ -351,12 +365,28 @@ const MainListenerLibraryPage = () => {
               horizontal={true}
               scrollEventThrottle={16}
               showsHorizontalScrollIndicator={false}>
-              <AlbumComponent />
-              <AlbumComponent />
-              <AlbumComponent />
-              <AlbumComponent />
-              <AlbumComponent />
-              <AlbumComponent />
+              {!followError &&
+                followLoading === false &&
+                followData.length <= 0 && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+
+                      justifyContent: 'center',
+                      width: '100%',
+                      marginTop: '10%',
+                    }}>
+                    <Text
+                      style={{
+                        color: '#eee',
+                        textAlign: 'center',
+                        fontSize: scale(12),
+                      }}>
+                      You have no favourite artist.Follow an artist
+                    </Text>
+                  </View>
+                )}
+              {followList}
             </ScrollView>
           </ScrollView>
         </View>

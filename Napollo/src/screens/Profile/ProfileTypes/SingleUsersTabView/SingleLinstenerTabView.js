@@ -86,7 +86,7 @@ const SingleListenerTabView = () => {
           </Text>
         </TouchableOpacity>
         {/* THIRD TAB */}
-        {/* <TouchableOpacity
+        <TouchableOpacity
           hitSlop={{top: 20, right: 20, left: 20, bottom: 20}}
           activeOpacity={0.6}
           onPress={() => segmentClicked(1)}
@@ -98,13 +98,13 @@ const SingleListenerTabView = () => {
                   borderRadius: 5,
                   flexDirection: 'row',
                   alignItems: 'center',
-                  width: '33.3%',
+                  width: '50%',
                   justifyContent: 'center',
                 }
               : {
                   flexDirection: 'row',
                   alignItems: 'center',
-                  width: '33.3%',
+                  width: '50%',
                   justifyContent: 'center',
                 },
           ]}>
@@ -125,9 +125,9 @@ const SingleListenerTabView = () => {
             ]}>
             Songs
           </Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         {/* FOURTH TAB */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           hitSlop={{top: 20, right: 20, left: 20, bottom: 20}}
           activeOpacity={0.6}
           onPress={() => segmentClicked(2)}
@@ -154,7 +154,6 @@ const SingleListenerTabView = () => {
               activeIndex == 2
                 ? {
                     color: '#fff',
-                    // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
                     fontSize: scale(14),
@@ -167,7 +166,7 @@ const SingleListenerTabView = () => {
             ]}>
             Activity
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View style={{paddingTop: 10, paddingHorizontal: 5}}>{renderViews}</View>
       {/* <ScrollView style={{paddingTop: 10, paddingHorizontal: 5}}>

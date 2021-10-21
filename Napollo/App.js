@@ -38,7 +38,9 @@ import {
   logout,
   store_User_Location,
   store_User_Coordinates,
+  get_User_Follower_List,
 } from './src/redux/actions/userActions';
+import {get_User_Liked_Album} from './src/redux/actions/MediaActions/AlbumActions/index';
 import {get_Listener_Liked_Media} from './src/redux/actions/MediaActions/getMediaActions';
 import NetInfo from '@react-native-community/netinfo';
 import {get_Artist_Profile} from './src/redux/actions/artistActions';
@@ -69,6 +71,8 @@ import {
   SHOW_NOT_ACTIVE_ACCOUNT_MODAL,
   HIDE_NOT_ACTIVE_ACCOUNT_MODAL,
   CLOSE_MODAL,
+  STORE_USER_FOLLOWER_LIST,
+  STORE_USER_LIKED_ALBUM,
 } from './src/redux/constants/index';
 import {getUserCallingCode} from './src/utils/loggedInUserType';
 import MainMusicPlayer from './src/Components/Modal/MainMusicPlayer';
@@ -87,6 +91,14 @@ const App = () => {
   const getListenerLikedMedia = useSelector(
     state => state.getListenerLikedMedia,
   );
+  const getUserFollowerList = useSelector(state => state.getUserFollowerList);
+  const {
+    loading: followerLoading,
+    error: followerError,
+    data: followerData,
+  } = getUserFollowerList;
+  const getUserLikedAlbums = useSelector(state => state.getUserLikedAlbums);
+  const {error: albumError, data: albumData} = getUserLikedAlbums;
 
   const notActiveAccount = useSelector(state => state.notActiveAccount);
   const {showModal} = notActiveAccount;
@@ -148,6 +160,12 @@ const App = () => {
     if (listenerError || listenerData.length <= 0)
       dispatch(get_Listener_Liked_Media(page, size));
     // }
+    if (followerError || followerData.length <= 0) {
+      dispatch(get_User_Follower_List());
+    }
+    if (albumError || albumData.length <= 0) {
+      dispatch(get_User_Liked_Album());
+    }
   }, [loginToken]);
 
   useEffect(() => {
@@ -159,6 +177,21 @@ const App = () => {
     });
     // }
   }, [listenerData]);
+  useEffect(() => {
+    const newFollowerIds = followerData?.map(item => item.id);
+    dispatch({
+      type: STORE_USER_FOLLOWER_LIST,
+      payload: newFollowerIds,
+    });
+  }, [followerData]);
+
+  useEffect(() => {
+    const newAlbumsId = albumData?.map(item => item.id);
+    dispatch({
+      type: STORE_USER_LIKED_ALBUM,
+      payload: newAlbumsId,
+    });
+  }, [albumData]);
   // GOOGLE AUTH
   useEffect(() => {
     GoogleSignin.configure({

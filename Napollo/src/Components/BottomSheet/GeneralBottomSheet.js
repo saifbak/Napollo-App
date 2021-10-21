@@ -14,7 +14,7 @@ const GeneralBottomSheet = React.forwardRef((props, ref) => {
         container: {
           borderTopRightRadius: props.radius ? props.radius : null,
           borderTopLeftRadius: props.radius ? props.radius : null,
-          backgroundColor: props.bg ? props.bg : '#222',
+          backgroundColor: props.bg ? props.bg : '#1a1a1a',
           zIndex: 1000,
         },
         draggableIcon: {

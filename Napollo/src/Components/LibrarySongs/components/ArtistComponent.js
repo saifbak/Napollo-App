@@ -7,28 +7,32 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-
+import {
+  store_Active_User_Details,
+  openSingleUserModal,
+} from '../../../redux/actions/userActions';
 import {DEFAULT_IMAGE_URI} from '../../../utils/ImagePicker';
+import {useDispatch} from 'react-redux';
+import {mainNumberFormat} from '../../../utils/loggedInUserType';
 
 const {width, height} = Dimensions.get('window');
 
-const ArtistContainer = ({
-  profilePictureUrl,
-  stageName,
-  followCount,
-  onPress,
-  firstName,
-  lastName,
-  artistIdentity,
-}) => {
+const ArtistContainer = props => {
+  const dispatch = useDispatch();
+  const openProfile = () => {
+    dispatch(store_Active_User_Details(props.user));
+    dispatch(openSingleUserModal());
+  };
+
   return (
     <TouchableOpacity
-      onPress={onPress ? () => onPress() : null}
+      onPress={() => openProfile()}
+      // onPress={onPress ? () => onPress() : null}
       activeOpacity={0.6}
       style={[styles.container, {}]}>
-      {profilePictureUrl && profilePictureUrl !== 'null' ? (
+      {props.profileUrl && props.profileUrl !== 'null' ? (
         <Image
-          source={{uri: profilePictureUrl}}
+          source={{uri: props.profileUrl}}
           style={{
             width: '100%',
             height: '70%',
@@ -39,10 +43,10 @@ const ArtistContainer = ({
       ) : (
         <View style={styles.thumbNail}>
           <Text style={[styles.thumbNailName, {marginRight: 10}]}>
-            {firstName ? firstName[0] : null}
+            {props.firstName ? props.firstName[0] : null}
           </Text>
           <Text style={styles.thumbNailName}>
-            {lastName ? lastName[0] : null}
+            {props.lastName ? props.lastName[0] : null}
           </Text>
         </View>
       )}
@@ -71,10 +75,10 @@ const ArtistContainer = ({
             fontFamily: 'Helvetica-Bold',
             textAlign: 'center',
           }}>
-          {stageName}
+          {props.username}
         </Text>
         <Text style={{color: '#f68128', fontSize: 12, textAlign: 'center'}}>
-          {followCount} followers
+          {mainNumberFormat(props.followerCount)} followers
         </Text>
       </View>
     </TouchableOpacity>

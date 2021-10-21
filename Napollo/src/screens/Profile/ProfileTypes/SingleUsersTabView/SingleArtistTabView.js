@@ -53,13 +53,13 @@ const SingleArtistTabView = () => {
                   borderRadius: 5,
                   flexDirection: 'row',
                   alignItems: 'center',
-                  width: '33.3%',
+                  width: '50%',
                   justifyContent: 'center',
                 }
               : {
                   flexDirection: 'row',
                   alignItems: 'center',
-                  width: '33.3%',
+                  width: '50%',
                   justifyContent: 'center',
                 },
           ]}>
@@ -95,13 +95,13 @@ const SingleArtistTabView = () => {
                   borderRadius: 5,
                   flexDirection: 'row',
                   alignItems: 'center',
-                  width: '33.3%',
+                  width: '50%',
                   justifyContent: 'center',
                 }
               : {
                   flexDirection: 'row',
                   alignItems: 'center',
-                  width: '33.3%',
+                  width: '50%',
                   justifyContent: 'center',
                 },
           ]}>
@@ -110,7 +110,6 @@ const SingleArtistTabView = () => {
               activeIndex == 1
                 ? {
                     color: '#fff',
-                    // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
                     fontSize: scale(14),
@@ -125,7 +124,7 @@ const SingleArtistTabView = () => {
           </Text>
         </TouchableOpacity>
         {/* FOURTH TAB */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           hitSlop={{top: 20, right: 20, left: 20, bottom: 20}}
           activeOpacity={0.6}
           onPress={() => segmentClicked(2)}
@@ -152,7 +151,6 @@ const SingleArtistTabView = () => {
               activeIndex == 2
                 ? {
                     color: '#fff',
-                    // transform: [{translateY: -10}],
                     fontFamily: 'Helvetica-Bold',
                     textAlign: 'center',
                     fontSize: scale(14),
@@ -165,7 +163,7 @@ const SingleArtistTabView = () => {
             ]}>
             Activity
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
