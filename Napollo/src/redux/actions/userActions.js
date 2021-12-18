@@ -107,7 +107,6 @@ export const login =
       };
 
       const data = await axios(config);
-      console.log(data.responseBody);
       dispatch({
         type: USER_LOGIN_SUCCESS,
         payload: data.data.responseBody,

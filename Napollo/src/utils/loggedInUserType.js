@@ -41,8 +41,9 @@ export const logoutUserWhenTokenExpires = (dispatch, error, type) => {
     });
   } else if (
     error?.response?.data.responseDescription ===
-      'Request failed with status code 103' ||
-    error?.message === 'Request failed with status code 103'
+      'Your account is not active. Please activate your account with the token sent to your email address' ||
+    error?.status === 401
+    // 'Your account is not active. Please activate your account with the token sent to your email address'
   ) {
     dispatch({
       type: SHOW_NOT_ACTIVE_ACCOUNT_MODAL,

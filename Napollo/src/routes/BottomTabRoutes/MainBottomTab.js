@@ -66,7 +66,8 @@ function MyMainTabs() {
             }),
           },
         }}
-        initialRouteName={type === 'ARTIST' ? 'Home' : 'MainDiscovery'}
+        initialRouteName="Home"
+        // "MainDiscovery"
         // tabBarOptions={{
         //   activeTintColor: '#f68128',
         //   borderWidth: 0,
@@ -118,19 +119,26 @@ function MyMainTabs() {
             ),
           }}
         />
-        {type === 'ARTIST' ? null : (
+        <MainTab.Screen
+          name="MainDiscovery"
+          component={DiscoveryStack}
+          options={{
+            tabBarLabel: 'Discover',
+            tabBarIcon: ({color}) => <DiscoverIcon color={color} />,
+          }}
+        />
+        {/* {type === 'ARTIST' ? null : (
           <MainTab.Screen
             name="MainDiscovery"
             component={DiscoveryStack}
             options={{
               tabBarLabel: 'Discover',
               tabBarIcon: ({color}) => (
-                // <Icon name="podcast" color={color} size={26} />
                 <DiscoverIcon color={color} />
               ),
             }}
           />
-        )}
+        )} */}
         <MainTab.Screen
           name="MainNotification"
           component={NotificationStack}
