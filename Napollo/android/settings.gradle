@@ -1,4 +1,6 @@
 rootProject.name = 'Napollo'
+include ':@thehanimo_react-native-audiokit'
+project(':@thehanimo_react-native-audiokit').projectDir = new File(rootProject.projectDir, '../node_modules/@thehanimo/react-native-audiokit/android')
 include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-push-notification/android')
 include ':react-native-vector-icons'

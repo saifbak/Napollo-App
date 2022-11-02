@@ -1,13 +1,13 @@
 #import "AppDelegate.h"
 
+#import <UserNotifications/UserNotifications.h>
+#import <RNCPushNotificationIOS.h>
+
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <GoogleMaps/GoogleMaps.h>
 #import <GooglePlaces/GooglePlaces.h>
-#import <UserNotifications/UserNotifications.h>
-#import <RNCPushNotificationIOS.h>
-
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -71,14 +71,11 @@ static void InitializeFlipper(UIApplication *application) {
   return YES;
 }
 
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
-#if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-#else
-  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-#endif
+  completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
 }
+
 // Required for the register event.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
@@ -98,14 +95,20 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 // Required for localNotification event
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
-  withCompletionHandler:(void (^)(void))completionHandler
+         withCompletionHandler:(void (^)(void))completionHandler
 {
   [RNCPushNotificationIOS didReceiveNotificationResponse:response];
 }
-//Called when a notification is delivered to a foreground app.
--(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+
+
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
-  completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
+#if DEBUG
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+#else
+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
 }
+
 
 @end
